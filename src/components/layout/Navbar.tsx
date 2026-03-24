@@ -3,7 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { Volume2, VolumeX } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAudio } from "@/components/layout/AudioProvider";
 
 const navLinks = [
   { href: "/manifesto", label: "Manifesto" },
@@ -17,6 +19,7 @@ const navLinks = [
 export function Navbar() {
   const pathname = usePathname();
   const { scrollY } = useScroll();
+  const { isPlaying, toggle } = useAudio();
 
   const bgOpacity = useTransform(scrollY, [0, 80], [0, 0.92]);
   const borderOpacity = useTransform(scrollY, [0, 80], [0, 1]);
@@ -75,13 +78,36 @@ export function Navbar() {
           })}
         </ul>
 
-        {/* CTA */}
-        <Link
-          href="/community"
-          className="hidden rounded-full bg-oe-aurora-violet px-5 py-2 text-sm font-medium text-white transition-opacity duration-200 hover:opacity-85 md:block"
-        >
-          Mitmachen
-        </Link>
+        {/* Audio toggle + CTA */}
+        <div className="hidden items-center gap-3 md:flex">
+          <motion.button
+            onClick={toggle}
+            aria-label={isPlaying ? "Ambient-Ton ausschalten" : "Ambient-Ton einschalten"}
+            className={cn(
+              "relative flex h-8 w-8 items-center justify-center rounded-full border transition-colors duration-500",
+              isPlaying
+                ? "border-oe-spirit-cyan/60 text-oe-spirit-cyan"
+                : "border-oe-pure-light/20 text-oe-pure-light/40 hover:border-oe-pure-light/40 hover:text-oe-pure-light/70"
+            )}
+            whileTap={{ scale: 0.9 }}
+          >
+            {isPlaying && (
+              <motion.span
+                className="absolute inset-0 rounded-full bg-oe-spirit-cyan/10"
+                animate={{ scale: [1, 1.35, 1], opacity: [0.5, 0, 0.5] }}
+                transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+              />
+            )}
+            {isPlaying ? <Volume2 size={14} strokeWidth={1.5} /> : <VolumeX size={14} strokeWidth={1.5} />}
+          </motion.button>
+
+          <Link
+            href="/community"
+            className="rounded-full bg-oe-aurora-violet px-5 py-2 text-sm font-medium text-white transition-opacity duration-200 hover:opacity-85"
+          >
+            Mitmachen
+          </Link>
+        </div>
 
         {/* Mobile menu button (placeholder) */}
         <button
