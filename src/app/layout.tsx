@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Cormorant } from "next/font/google";
 import "./globals.css";
+import { Navbar } from "@/components/layout/Navbar";
+import { Footer } from "@/components/layout/Footer";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -24,10 +26,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="de" className={`${inter.variable} ${cormorant.variable}`}>
-      <body className="font-sans">
+      <body className="font-sans bg-oe-deep-space">
+        <Navbar />
         <main className="min-h-screen">
           {children}
         </main>
+        <Footer />
       </body>
     </html>
   );
