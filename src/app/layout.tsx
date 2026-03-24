@@ -4,6 +4,8 @@ import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { AudioProvider } from "@/components/layout/AudioProvider";
+import { SmoothScroll } from "@/components/layout/SmoothScroll";
+import { CustomCursor } from "@/components/ui/CustomCursor";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -27,14 +29,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="de" className={`${inter.variable} ${cormorant.variable}`}>
-      <body className="font-sans bg-oe-deep-space">
-        <AudioProvider>
-          <Navbar />
-          <main className="min-h-screen">
-            {children}
-          </main>
-          <Footer />
-        </AudioProvider>
+      <body className="font-sans bg-oe-deep-space cursor-none">
+        <SmoothScroll>
+          <AudioProvider>
+            <CustomCursor />
+            <Navbar />
+            <main className="min-h-screen">
+              {children}
+            </main>
+            <Footer />
+          </AudioProvider>
+        </SmoothScroll>
       </body>
     </html>
   );
