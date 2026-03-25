@@ -17,9 +17,52 @@ const cormorant = Cormorant({
   subsets: ["latin"],
 });
 
+const baseUrl = "https://oneemergence.org";
+
 export const metadata: Metadata = {
-  title: "OneEmergence | Einheit, Freiheit, Liebe",
-  description: "Eine Plattform, die Menschen in eine Erfahrung von Einheit, Freiheit und Liebe einlädt.",
+  metadataBase: new URL(baseUrl),
+  title: {
+    default: "OneEmergence | Einheit, Freiheit, Liebe",
+    template: "%s | OneEmergence",
+  },
+  description:
+    "Eine Plattform, die Menschen in eine Erfahrung von Einheit, Freiheit und Liebe einlädt.",
+  openGraph: {
+    type: "website",
+    locale: "de_DE",
+    url: baseUrl,
+    siteName: "OneEmergence",
+    title: "OneEmergence | Einheit, Freiheit, Liebe",
+    description:
+      "Eine Plattform, die Menschen in eine Erfahrung von Einheit, Freiheit und Liebe einlädt.",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "OneEmergence — Einheit, Freiheit, Liebe",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "OneEmergence | Einheit, Freiheit, Liebe",
+    description:
+      "Eine Plattform, die Menschen in eine Erfahrung von Einheit, Freiheit und Liebe einlädt.",
+    images: ["/og-image.png"],
+  },
+  alternates: {
+    canonical: baseUrl,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+    },
+  },
 };
 
 export default function RootLayout({
