@@ -1,17 +1,13 @@
-# AUTO_REVIEW_PLAN.md
+# Auto-Review Plan (Updated 2026-03-26)
 
-## Aktueller Status (2026-03-25)
+## Status Update
+- Phase 1 (MDX/Content Hub) is complete.
+- Phase 2 (Visuelle Exzellenz) is currently being worked on (Lenis, Custom Cursor, Magnetic Buttons have some modified/untracked files, but need completion/integration).
 
-Die Architektur-Basis (Phase 1) aus `NEXT_STEPS_MASTERPLAN.md` ist in Arbeit.
-Derzeit fehlt noch die MDX/Markdown-Engine und die Implementierung der Content/Journal-Seiten.
+## Review Findings & Next Steps
+- There are uncommitted changes and untracked files related to the content hub, MDX setup, and initial Phase 2 work (`CustomCursor.tsx`, `SmoothScroll.tsx`, `MagneticButton.tsx`).
+- These should be reviewed, tested, and committed before moving too far ahead.
 
-## Identifizierte Aufgaben für asynchrone Delegierung:
-
-1.  **MDX/Markdown Engine bauen (`src/lib/content.ts`)**: Implementierung der Kernfunktionen zum Lesen von lokalen Markdown-Dateien für Blog/Journal-Beiträge.
-2.  **Content Hub & Journal Pages implementieren**: Erstellung der Next.js-Routen (`src/app/content/page.tsx`, `src/app/journal/[slug]/page.tsx`) und einiger Test-Dateien.
-
-## Nächste Schritte:
-
-- [x] Repo-Status analysiert.
-- [x] Review-Plan aktualisiert.
-- [x] Asynchrone Claude-Code-Agenten für Phase 1 (MDX Engine & Pages) gestartet.
+## Delegated Tasks (Parallel)
+1. **Task A (UI/Motion Polish):** Finish integrating and polishing the Lenis smooth scroll, Custom Cursor, and Magnetic Buttons. Ensure they work flawlessly across the site without breaking existing functionality. (Delegating to Claude Sonnet)
+2. **Task B (IA Pages):** Start building the missing `/about`, `/events`, and `/community` pages as outlined in Phase 3 of the Masterplan. (Delegating to Claude Sonnet)
