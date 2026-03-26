@@ -192,7 +192,7 @@ export default function ContactPage() {
   return (
     <div className="bg-oe-deep-space text-oe-pure-light">
       {/* Hero */}
-      <section className="flex flex-col items-center justify-center min-h-[50vh] px-6 pt-24 pb-12 text-center">
+      <section className="flex flex-col items-center justify-center min-h-[40vh] sm:min-h-[50vh] px-6 pt-20 sm:pt-24 pb-10 sm:pb-12 text-center">
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -263,9 +263,9 @@ export default function ContactPage() {
                 exit={{ opacity: 0, y: -16 }}
                 transition={{ duration: 0.6 }}
                 onSubmit={handleSubmit}
-                className="rounded-2xl border border-oe-aurora-violet/20 bg-oe-aurora-violet/5 px-5 py-8 sm:px-8 sm:py-10 md:px-12 space-y-7"
+                className="rounded-2xl border border-oe-aurora-violet/20 bg-oe-aurora-violet/5 px-4 py-7 sm:px-8 sm:py-10 md:px-12 space-y-5 sm:space-y-7"
               >
-                <div className="grid grid-cols-1 gap-7 md:grid-cols-2">
+                <div className="grid grid-cols-1 gap-5 md:gap-7 md:grid-cols-2">
                   <InputField
                     label="Name"
                     id="name"

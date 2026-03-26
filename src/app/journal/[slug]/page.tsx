@@ -36,7 +36,7 @@ export default async function JournalPost({
     <div className="min-h-screen bg-oe-deep-space">
       {/* Hero Cover */}
       {post.cover && (
-        <div className="relative h-[400px] w-full">
+        <div className="relative h-[220px] sm:h-[300px] md:h-[400px] w-full">
           <Image
             src={post.cover}
             alt={post.title}
@@ -97,7 +97,7 @@ export default async function JournalPost({
 
         {/* Prose */}
         <article
-          className="prose prose-invert prose-lg max-w-none
+          className="prose prose-invert prose-base sm:prose-lg max-w-none
             prose-headings:font-serif prose-headings:text-oe-pure-light
             prose-h2:text-3xl prose-h3:text-xl
             prose-p:text-oe-pure-light/70 prose-p:leading-relaxed

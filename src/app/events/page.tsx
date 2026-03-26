@@ -111,7 +111,7 @@ function EventCard({ event, index }: { event: Event; index: number }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.55, delay: index * 0.08 }}
-      className={`relative rounded-2xl border p-5 sm:p-8 transition-all duration-300 group hover:-translate-y-1 ${
+      className={`relative rounded-2xl border p-4 sm:p-6 md:p-8 transition-all duration-300 group hover:-translate-y-1 ${
         event.featured
           ? "border-oe-solar-gold/30 bg-gradient-to-br from-oe-solar-gold/5 to-oe-aurora-violet/5"
           : "border-oe-aurora-violet/20 bg-oe-aurora-violet/5 hover:border-oe-aurora-violet/40"
@@ -172,7 +172,7 @@ export default function EventsPage() {
   return (
     <div className="bg-oe-deep-space text-oe-pure-light">
       {/* Hero */}
-      <section className="flex flex-col items-center justify-center min-h-[60vh] px-6 pt-24 pb-16 text-center">
+      <section className="flex flex-col items-center justify-center min-h-[50vh] sm:min-h-[60vh] px-6 pt-24 pb-16 text-center">
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -185,7 +185,7 @@ export default function EventsPage() {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.1 }}
-          className="font-serif text-4xl sm:text-5xl leading-tight text-oe-solar-gold md:text-7xl"
+          className="font-serif text-3xl sm:text-5xl leading-tight text-oe-solar-gold md:text-6xl lg:text-7xl"
         >
           Räume der
           <br />

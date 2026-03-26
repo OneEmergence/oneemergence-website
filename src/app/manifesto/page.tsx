@@ -59,7 +59,7 @@ export default function ManifestoPage() {
   return (
     <div className="bg-oe-deep-space text-oe-pure-light">
       {/* Hero Section */}
-      <section className="flex flex-col items-center justify-center min-h-[70vh] md:min-h-screen px-6 pt-20 pb-16 text-center">
+      <section className="flex flex-col items-center justify-center min-h-[60vh] sm:min-h-[70vh] md:min-h-screen px-6 pt-20 pb-16 text-center">
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -72,7 +72,7 @@ export default function ManifestoPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.1 }}
-          className="font-serif text-4xl sm:text-5xl leading-tight text-oe-solar-gold md:text-7xl"
+          className="font-serif text-3xl sm:text-5xl leading-tight text-oe-solar-gold md:text-6xl lg:text-7xl"
         >
           Eine Einladung
           <br />
@@ -121,7 +121,7 @@ export default function ManifestoPage() {
             />
           </div>
 
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 md:gap-8 md:grid-cols-2 lg:grid-cols-3">
             {principles.map((principle, i) => (
               <motion.div
                 key={principle.name}
@@ -130,7 +130,7 @@ export default function ManifestoPage() {
                 whileInView="visible"
                 viewport={{ once: true }}
                 variants={fadeUp}
-                className="group rounded-2xl border border-oe-aurora-violet/20 bg-oe-aurora-violet/5 p-8 transition-colors duration-300 hover:border-oe-aurora-violet/40 hover:bg-oe-aurora-violet/10"
+                className="group rounded-2xl border border-oe-aurora-violet/20 bg-oe-aurora-violet/5 p-5 sm:p-6 md:p-8 transition-colors duration-300 hover:border-oe-aurora-violet/40 hover:bg-oe-aurora-violet/10"
               >
                 <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-oe-spirit-cyan">
                   {principle.summary}

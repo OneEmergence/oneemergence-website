@@ -53,7 +53,7 @@ export function Footer() {
   return (
     <footer className="border-t border-oe-aurora-violet/20 bg-oe-deep-space text-oe-pure-light">
       <div className="mx-auto max-w-7xl px-6 py-16">
-        <div className="grid grid-cols-1 gap-8 md:gap-12 md:grid-cols-4">
+        <div className="grid grid-cols-1 gap-6 md:gap-12 md:grid-cols-4">
           {/* Brand */}
           <div className="flex flex-col gap-4 md:col-span-1">
             <Link href="/" className="font-serif text-2xl text-oe-solar-gold">

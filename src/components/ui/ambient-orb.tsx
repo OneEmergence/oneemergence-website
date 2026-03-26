@@ -16,8 +16,8 @@ export function AmbientOrb({ className }: AmbientOrbProps) {
       <motion.div
         className="absolute rounded-full"
         style={{
-          width: 600,
-          height: 600,
+          width: "min(600px, 90vw)",
+          height: "min(600px, 90vw)",
           background:
             "radial-gradient(circle, rgba(124,92,255,0.35) 0%, rgba(124,92,255,0.08) 50%, transparent 70%)",
           filter: "blur(60px)",
@@ -43,8 +43,8 @@ export function AmbientOrb({ className }: AmbientOrbProps) {
       <motion.div
         className="absolute rounded-full"
         style={{
-          width: 400,
-          height: 400,
+          width: "min(400px, 70vw)",
+          height: "min(400px, 70vw)",
           background:
             "radial-gradient(circle, rgba(84,226,233,0.25) 0%, rgba(84,226,233,0.06) 55%, transparent 70%)",
           filter: "blur(50px)",
@@ -70,8 +70,8 @@ export function AmbientOrb({ className }: AmbientOrbProps) {
       <motion.div
         className="absolute rounded-full"
         style={{
-          width: 300,
-          height: 300,
+          width: "min(300px, 60vw)",
+          height: "min(300px, 60vw)",
           background:
             "radial-gradient(circle, rgba(246,196,83,0.2) 0%, rgba(246,196,83,0.05) 55%, transparent 70%)",
           filter: "blur(45px)",

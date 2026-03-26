@@ -49,7 +49,7 @@ export function Navbar() {
         {/* Logo */}
         <Link href="/" onClick={closeMenu} className="group flex items-center gap-2">
           <motion.span
-            className="font-serif text-xl text-oe-solar-gold"
+            className="font-serif text-lg sm:text-xl text-oe-solar-gold"
             whileHover={{ opacity: 0.85 }}
             transition={{ duration: 0.2 }}
           >
@@ -126,7 +126,7 @@ export function Navbar() {
           onClick={() => setMenuOpen((o) => !o)}
           aria-label={menuOpen ? "Menü schließen" : "Menü öffnen"}
           aria-expanded={menuOpen}
-          className="flex flex-col gap-1.5 p-1 md:hidden"
+          className="flex flex-col gap-1.5 p-2 -m-1 md:hidden"
         >
           <span
             className={cn(

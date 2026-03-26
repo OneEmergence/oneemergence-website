@@ -47,7 +47,7 @@ export function ContentGrid({ posts }: { posts: PostPreview[] }) {
             {post.cover && (
               <ParallaxImage
                 offset={20}
-                className={index === 0 ? "h-64 md:h-80" : "h-48"}
+                className={index === 0 ? "h-48 md:h-64 lg:h-80" : "h-36 sm:h-40 md:h-48"}
               >
                 <Image
                   src={post.cover}

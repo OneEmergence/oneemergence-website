@@ -52,7 +52,7 @@ export default function AboutPage() {
   return (
     <div className="bg-oe-deep-space text-oe-pure-light">
       {/* Hero */}
-      <section className="flex flex-col items-center justify-center min-h-[70vh] md:min-h-screen px-6 pt-20 pb-16 text-center">
+      <section className="flex flex-col items-center justify-center min-h-[60vh] sm:min-h-[70vh] md:min-h-screen px-6 pt-20 pb-16 text-center">
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -65,7 +65,7 @@ export default function AboutPage() {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.1 }}
-          className="font-serif text-4xl sm:text-5xl leading-tight text-oe-solar-gold md:text-7xl"
+          className="font-serif text-3xl sm:text-5xl leading-tight text-oe-solar-gold md:text-6xl lg:text-7xl"
         >
           Woher wir kommen.
           <br />
@@ -98,7 +98,7 @@ export default function AboutPage() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 0.7, delay: 0.1 }}
-              className={`flex flex-col gap-8 md:flex-row md:items-center ${
+              className={`flex flex-col gap-5 md:gap-8 md:flex-row md:items-center ${
                 block.align === "right" ? "md:flex-row-reverse" : ""
               }`}
             >
@@ -145,7 +145,7 @@ export default function AboutPage() {
             </h2>
           </motion.div>
 
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 md:gap-8 md:grid-cols-3">
             {team.map((member, i) => (
               <motion.div
                 key={member.name}
