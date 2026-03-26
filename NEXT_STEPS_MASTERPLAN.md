@@ -6,13 +6,15 @@ Dieses Dokument dient als zentrale Orchestrierungs-Roadmap für die parallelen A
 *Derzeit fehlt uns das gesamte CMS/MDX Fundament für Artikel, Readings und Events.*
 
 - [x] **Abhängigkeiten installieren:** `gray-matter`, `marked` (oder `next-mdx-remote`) für lokales Markdown-Parsing, `lenis` für Smooth-Scrolling.
-- [ ] **MDX/Markdown Engine bauen (`src/lib/content.ts`):** 
-  - Funktion `getPosts()` und `getPostBySlug()`
-  - Definition des Typs `Post` (Title, Date, Cover, Excerpt, Content)
-- [ ] **Content Hub & Journal Pages implementieren:**
-  - `src/app/content/page.tsx` (Übersicht als schickes Masonry oder CSS Grid)
-  - `src/app/journal/[slug]/page.tsx` (Detail-Ansicht mit großem Header, feiner Typo, Lesezeit-Kalkulation)
-  - Anlage von 2-3 Seed-Dateien (Dummy-Posts) in `src/content/journal/` zum Testen.
+- [x] **MDX/Markdown Engine bauen (`src/lib/content.ts`):**
+  - Funktion `getPosts()`, `getPostBySlug()`, `getAdjacentPosts()`
+  - Typ `Post` (Title, Date, Cover, Tags, Excerpt, Content, ReadingTime)
+  - `marked.parse()` für korrekte v17-API, `gray-matter` für Frontmatter
+- [x] **Content Hub & Journal Pages implementieren:**
+  - `src/app/content/page.tsx` — CSS Grid mit Featured-First-Layout, Cover-Images, Tags
+  - `src/app/journal/[slug]/page.tsx` — Hero-Cover, Prose-Typo, Prev/Next-Navigation, CTA
+  - 3 Seed-Dateien in `src/content/journal/` angelegt
+  - `public/images/journal/` Verzeichnis für Cover-Bilder vorbereitet
 
 ## Phase 2: Visuelle & Immersive Exzellenz (Das "Kunst-Gefühl")
 *Die Website soll sich anfühlen wie ein lebendiges Spielfeld, nicht wie eine statische Dokumentation.*
@@ -29,11 +31,11 @@ Dieses Dokument dient als zentrale Orchestrierungs-Roadmap für die parallelen A
 ## Phase 3: Fehlende IA-Seiten & Feature-Komplettierung
 *Laut PLAN.md gibt es noch mehrere unvollendete Platzhalter.*
 
-- [ ] **`/about` (Team/Ursprung):** 
+- [x] **`/about` (Team/Ursprung):**
   - Storytelling-Layout mit wechselnden Text/Bild-Blöcken.
-- [ ] **`/events` (Live & Digital):**
+- [x] **`/events` (Live & Digital):**
   - Timeline/Listen-Ansicht für kommende Gatherings/Readings mit "Add to Calendar" / "Join" CTAs.
-- [ ] **`/community` (Mitmachen):**
+- [x] **`/community` (Mitmachen):**
   - Erklärung der Onboarding-Schritte, Link zu Discord/Telegram.
 - [ ] **Formulare & Kontakt (`/contact`):**
   - Wunderschönes, minimales Kontaktformular. Visuelles Feedback (Success-State) ohne Reload.
