@@ -111,7 +111,7 @@ function EventCard({ event, index }: { event: Event; index: number }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-60px" }}
       transition={{ duration: 0.55, delay: index * 0.08 }}
-      className={`relative rounded-2xl border p-8 transition-all duration-300 group hover:-translate-y-1 ${
+      className={`relative rounded-2xl border p-5 sm:p-8 transition-all duration-300 group hover:-translate-y-1 ${
         event.featured
           ? "border-oe-solar-gold/30 bg-gradient-to-br from-oe-solar-gold/5 to-oe-aurora-violet/5"
           : "border-oe-aurora-violet/20 bg-oe-aurora-violet/5 hover:border-oe-aurora-violet/40"
@@ -147,17 +147,17 @@ function EventCard({ event, index }: { event: Event; index: number }) {
         {event.description}
       </p>
 
-      <div className="flex flex-wrap items-center justify-between gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
         <div className="space-y-1">
           <p className="text-xs font-semibold text-oe-pure-light/80">{event.date}</p>
           <p className="text-xs text-oe-pure-light/40">{event.time}</p>
           <p className="text-xs text-oe-pure-light/40">{event.location}</p>
         </div>
         <div className="flex gap-3">
-          <button className="px-4 py-2 rounded-lg border border-oe-aurora-violet/30 text-xs text-oe-pure-light/70 hover:border-oe-aurora-violet/60 hover:text-oe-pure-light transition-colors duration-200">
+          <button className="flex-1 sm:flex-none px-4 py-2.5 rounded-lg border border-oe-aurora-violet/30 text-xs text-oe-pure-light/70 hover:border-oe-aurora-violet/60 hover:text-oe-pure-light transition-colors duration-200">
             Kalender
           </button>
-          <button className="px-4 py-2 rounded-lg bg-oe-aurora-violet/20 border border-oe-aurora-violet/40 text-xs text-oe-pure-light hover:bg-oe-aurora-violet/35 transition-colors duration-200">
+          <button className="flex-1 sm:flex-none px-4 py-2.5 rounded-lg bg-oe-aurora-violet/20 border border-oe-aurora-violet/40 text-xs text-oe-pure-light hover:bg-oe-aurora-violet/35 transition-colors duration-200">
             Anmelden
           </button>
         </div>
@@ -185,7 +185,7 @@ export default function EventsPage() {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.1 }}
-          className="font-serif text-5xl leading-tight text-oe-solar-gold md:text-7xl"
+          className="font-serif text-4xl sm:text-5xl leading-tight text-oe-solar-gold md:text-7xl"
         >
           Räume der
           <br />
@@ -203,7 +203,7 @@ export default function EventsPage() {
       </section>
 
       {/* Events Grid */}
-      <section className="px-6 py-16">
+      <section className="px-4 sm:px-6 py-12 md:py-16">
         <div className="mx-auto max-w-4xl space-y-8">
           {events.map((event, i) => (
             <EventCard key={event.id} event={event} index={i} />

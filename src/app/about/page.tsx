@@ -52,7 +52,7 @@ export default function AboutPage() {
   return (
     <div className="bg-oe-deep-space text-oe-pure-light">
       {/* Hero */}
-      <section className="flex flex-col items-center justify-center min-h-screen px-6 pt-20 pb-16 text-center">
+      <section className="flex flex-col items-center justify-center min-h-[70vh] md:min-h-screen px-6 pt-20 pb-16 text-center">
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -65,7 +65,7 @@ export default function AboutPage() {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.1 }}
-          className="font-serif text-5xl leading-tight text-oe-solar-gold md:text-7xl"
+          className="font-serif text-4xl sm:text-5xl leading-tight text-oe-solar-gold md:text-7xl"
         >
           Woher wir kommen.
           <br />
@@ -89,8 +89,8 @@ export default function AboutPage() {
       </section>
 
       {/* Story Blocks */}
-      <section className="px-6 py-24">
-        <div className="mx-auto max-w-5xl space-y-32">
+      <section className="px-6 py-16 md:py-24">
+        <div className="mx-auto max-w-5xl space-y-16 md:space-y-32">
           {story.map((block, i) => (
             <motion.div
               key={block.year}
@@ -114,7 +114,7 @@ export default function AboutPage() {
               </div>
 
               {/* Content card */}
-              <div className="flex-1 rounded-2xl border border-oe-aurora-violet/20 bg-oe-aurora-violet/5 p-8 hover:border-oe-aurora-violet/40 transition-colors duration-300">
+              <div className="flex-1 rounded-2xl border border-oe-aurora-violet/20 bg-oe-aurora-violet/5 p-6 sm:p-8 hover:border-oe-aurora-violet/40 transition-colors duration-300">
                 <h2 className="font-serif text-3xl text-oe-solar-gold mb-4">
                   {block.heading}
                 </h2>
@@ -153,7 +153,7 @@ export default function AboutPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.12 }}
-                className="rounded-2xl border border-oe-aurora-violet/20 bg-oe-deep-space p-8 hover:border-oe-spirit-cyan/30 transition-colors duration-300"
+                className="rounded-2xl border border-oe-aurora-violet/20 bg-oe-deep-space p-6 sm:p-8 hover:border-oe-spirit-cyan/30 transition-colors duration-300"
               >
                 {/* Avatar placeholder */}
                 <div className="mb-6 h-16 w-16 rounded-full bg-gradient-to-br from-oe-aurora-violet/40 to-oe-spirit-cyan/20 flex items-center justify-center">

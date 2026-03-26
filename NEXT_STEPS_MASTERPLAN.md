@@ -19,12 +19,12 @@ Dieses Dokument dient als zentrale Orchestrierungs-Roadmap für die parallelen A
 ## Phase 2: Visuelle & Immersive Exzellenz (Das "Kunst-Gefühl")
 *Die Website soll sich anfühlen wie ein lebendiges Spielfeld, nicht wie eine statische Dokumentation.*
 
-- [ ] **Smooth Scroll (Lenis):** 
+- [x] **Smooth Scroll (Lenis):**
   - Integration von Studio Freight's `lenis` im Root-Layout für butterweiches Scrollen.
-- [ ] **Magnetische Buttons & Cursor (Motion):**
+- [x] **Magnetische Buttons & Cursor (Motion):**
   - Ein globaler, custom Cursor (kleiner Dot), der sich invertiert, wenn er über Links hovert.
   - "Magnetic" Hover-Effekt für die Navbar-Links und den Primary Button (ziehen sich leicht zum Cursor).
-- [ ] **Scroll-Triggered Animations (Parallax & Reveal):**
+- [x] **Scroll-Triggered Animations (Parallax & Reveal):**
   - Parallax-Effekt für Hintergrundbilder in Content-Cards.
   - Großformatige Text-Enthüllungen (Character-by-Character Fade-In für Philosophie-Zitate beim Runterscrollen).
 
@@ -37,12 +37,24 @@ Dieses Dokument dient als zentrale Orchestrierungs-Roadmap für die parallelen A
   - Timeline/Listen-Ansicht für kommende Gatherings/Readings mit "Add to Calendar" / "Join" CTAs.
 - [x] **`/community` (Mitmachen):**
   - Erklärung der Onboarding-Schritte, Link zu Discord/Telegram.
-- [ ] **Formulare & Kontakt (`/contact`):**
+- [x] **Formulare & Kontakt (`/contact`):**
   - Wunderschönes, minimales Kontaktformular. Visuelles Feedback (Success-State) ohne Reload.
-- [ ] **Legal (`/legal/imprint`, `/legal/privacy`):**
+- [x] **Legal (`/legal/imprint`, `/legal/privacy`):**
   - Minimalistisches Markdown-Rendering für rechtliche Pflichttexte.
+  - Inhalte als Markdown in `src/content/pages/` — Server Components mit `@tailwindcss/typography` prose styling.
+  - `getPage()` Funktion in `src/lib/content.ts` ergänzt.
 
 ## Phase 4: SEO, Performance & Polish
-- [ ] **Dynamische Meta-Tags (SEO):** OpenGraph Images, Twitter Cards, kanonische URLs.
-- [ ] **Sitemap & Robots.txt:** Automatische Generierung via Next.js `sitemap.ts`.
-- [ ] **Responsive Audit:** Pixel-perfecting auf Mobile & Tablet.
+- [x] **Dynamische Meta-Tags (SEO):** OpenGraph Images, Twitter Cards, kanonische URLs.
+  - Per-Seite Metadata via transparente `layout.tsx` Server Components in allen Route-Segmenten.
+  - `/contact`, `/manifesto`, `/about`, `/events`, `/community`, `/journal` — alle mit vollständigen OG/Twitter-Tags.
+  - Legal-Seiten direkt mit `export const metadata` im Server Component.
+- [x] **Sitemap & Robots.txt:** Automatische Generierung via Next.js `sitemap.ts`.
+  - Alle statischen Routen inkl. `/content` und `/journal`.
+  - Journal-Posts dynamisch aus `getPosts()` generiert.
+- [x] **Responsive Audit:** Pixel-perfecting auf Mobile & Tablet.
+  - Navbar: functional mobile menu (hamburger → animated drawer) mit AnimatePresence.
+  - Home/About/Events/Community/Contact/Content/Manifesto/Legal: `sm:` breakpoints, konsistente Hero-Heights, Card-Padding auf Mobile.
+  - Contact-Form: submit row wraps sauber auf kleinen Screens, form-padding progressiv.
+  - Footer: gap-Scaling auf Mobile.
+  - ParallaxImage: parallax disabled für coarse-pointer (touch) und `prefers-reduced-motion`.

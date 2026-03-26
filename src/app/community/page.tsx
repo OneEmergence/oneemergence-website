@@ -82,7 +82,7 @@ export default function CommunityPage() {
   return (
     <div className="bg-oe-deep-space text-oe-pure-light">
       {/* Hero */}
-      <section className="flex flex-col items-center justify-center min-h-[65vh] px-6 pt-24 pb-16 text-center">
+      <section className="flex flex-col items-center justify-center min-h-[55vh] md:min-h-[65vh] px-6 pt-24 pb-16 text-center">
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -95,7 +95,7 @@ export default function CommunityPage() {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.1 }}
-          className="font-serif text-5xl leading-tight text-oe-solar-gold md:text-7xl"
+          className="font-serif text-4xl sm:text-5xl leading-tight text-oe-solar-gold md:text-7xl"
         >
           Du gehörst
           <br />
@@ -113,7 +113,7 @@ export default function CommunityPage() {
       </section>
 
       {/* 3-Step Onboarding */}
-      <section className="px-6 py-24">
+      <section className="px-4 sm:px-6 py-16 md:py-24">
         <div className="mx-auto max-w-6xl">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -146,7 +146,7 @@ export default function CommunityPage() {
                 )}
 
                 <div
-                  className={`rounded-2xl border p-8 h-full transition-all duration-300 hover:-translate-y-1 ${accentMap[step.accent]}`}
+                  className={`rounded-2xl border p-6 sm:p-8 h-full transition-all duration-300 hover:-translate-y-1 ${accentMap[step.accent]}`}
                 >
                   <span
                     className={`font-serif text-5xl font-light ${numberColorMap[step.accent]} opacity-40 block mb-4`}

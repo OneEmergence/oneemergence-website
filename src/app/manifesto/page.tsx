@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { motion, type Variants } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { ScrollReveal } from "@/components/ui/ScrollReveal";
 
 const principles = [
   {
@@ -58,7 +59,7 @@ export default function ManifestoPage() {
   return (
     <div className="bg-oe-deep-space text-oe-pure-light">
       {/* Hero Section */}
-      <section className="flex flex-col items-center justify-center min-h-screen px-6 pt-20 pb-16 text-center">
+      <section className="flex flex-col items-center justify-center min-h-[70vh] md:min-h-screen px-6 pt-20 pb-16 text-center">
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -71,7 +72,7 @@ export default function ManifestoPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.1 }}
-          className="font-serif text-5xl leading-tight text-oe-solar-gold md:text-7xl"
+          className="font-serif text-4xl sm:text-5xl leading-tight text-oe-solar-gold md:text-7xl"
         >
           Eine Einladung
           <br />
@@ -100,22 +101,25 @@ export default function ManifestoPage() {
       </section>
 
       {/* Principles Section */}
-      <section className="px-6 py-24">
+      <section className="px-4 sm:px-6 py-16 md:py-24">
         <div className="mx-auto max-w-7xl">
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="mb-16 text-center"
-          >
-            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-oe-aurora-violet">
+          <div className="mb-16 text-center">
+            <motion.p
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5 }}
+              className="mb-3 text-xs font-semibold uppercase tracking-widest text-oe-aurora-violet"
+            >
               Prinzipien
-            </p>
-            <h2 className="font-serif text-4xl text-oe-solar-gold md:text-5xl">
-              Wofür wir stehen
-            </h2>
-          </motion.div>
+            </motion.p>
+            <ScrollReveal
+              text="Wofür wir stehen"
+              as="h2"
+              className="font-serif text-4xl text-oe-solar-gold md:text-5xl justify-center"
+              delay={0.1}
+            />
+          </div>
 
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
             {principles.map((principle, i) => (
@@ -145,20 +149,22 @@ export default function ManifestoPage() {
 
       {/* Closing CTA */}
       <section className="px-6 py-24 text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mx-auto max-w-2xl"
-        >
-          <h2 className="font-serif text-4xl text-oe-pure-light md:text-5xl">
-            Bereit, tiefer einzutauchen?
-          </h2>
-          <p className="mt-6 text-lg text-oe-pure-light/60">
+        <div className="mx-auto max-w-2xl">
+          <ScrollReveal
+            text="Bereit, tiefer einzutauchen?"
+            as="h2"
+            className="font-serif text-4xl text-oe-pure-light md:text-5xl justify-center"
+          />
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.55, delay: 0.3 }}
+            className="mt-6 text-lg text-oe-pure-light/60"
+          >
             Werde Teil der Community und gestalte gemeinsam mit uns den Raum für
             Einheit, Freiheit und Liebe.
-          </p>
+          </motion.p>
           <div className="mt-10 flex flex-wrap justify-center gap-4">
             <Button variant="primary" size="lg" onClick={() => router.push("/community")}>
               Community beitreten
@@ -167,7 +173,7 @@ export default function ManifestoPage() {
               Kontakt aufnehmen
             </Button>
           </div>
-        </motion.div>
+        </div>
       </section>
     </div>
   );

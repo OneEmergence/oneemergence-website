@@ -1,8 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion, useMotionTemplate, useScroll, useTransform } from "framer-motion";
+import { motion, AnimatePresence, useMotionTemplate, useScroll, useTransform } from "framer-motion";
 import { Volume2, VolumeX } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAudio } from "@/components/layout/AudioProvider";
@@ -21,10 +22,15 @@ export function Navbar() {
   const pathname = usePathname();
   const { scrollY } = useScroll();
   const { isPlaying, toggle } = useAudio();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const bgOpacity = useTransform(scrollY, [0, 80], [0, 0.92]);
   const borderOpacity = useTransform(scrollY, [0, 80], [0, 1]);
   const bgColor = useMotionTemplate`rgba(10, 15, 31, ${bgOpacity})`;
+
+  function closeMenu() {
+    setMenuOpen(false);
+  }
 
   return (
     <motion.header
@@ -41,7 +47,7 @@ export function Navbar() {
       />
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         {/* Logo */}
-        <Link href="/" className="group flex items-center gap-2">
+        <Link href="/" onClick={closeMenu} className="group flex items-center gap-2">
           <motion.span
             className="font-serif text-xl text-oe-solar-gold"
             whileHover={{ opacity: 0.85 }}
@@ -82,7 +88,7 @@ export function Navbar() {
           })}
         </ul>
 
-        {/* Audio toggle + CTA */}
+        {/* Audio toggle + CTA (desktop) */}
         <div className="hidden items-center gap-3 md:flex">
           <motion.button
             onClick={toggle}
@@ -115,16 +121,76 @@ export function Navbar() {
           </MagneticButton>
         </div>
 
-        {/* Mobile menu button (placeholder) */}
+        {/* Mobile hamburger */}
         <button
-          aria-label="Menü öffnen"
-          className="flex flex-col gap-1.5 md:hidden"
+          onClick={() => setMenuOpen((o) => !o)}
+          aria-label={menuOpen ? "Menü schließen" : "Menü öffnen"}
+          aria-expanded={menuOpen}
+          className="flex flex-col gap-1.5 p-1 md:hidden"
         >
-          <span className="block h-px w-6 bg-oe-pure-light" />
-          <span className="block h-px w-6 bg-oe-pure-light" />
-          <span className="block h-px w-4 bg-oe-pure-light" />
+          <span
+            className={cn(
+              "block h-px w-6 bg-oe-pure-light origin-center transition-all duration-300",
+              menuOpen ? "translate-y-[7px] rotate-45" : ""
+            )}
+          />
+          <span
+            className={cn(
+              "block h-px w-6 bg-oe-pure-light transition-all duration-300",
+              menuOpen ? "opacity-0 scale-x-0" : ""
+            )}
+          />
+          <span
+            className={cn(
+              "block h-px bg-oe-pure-light origin-center transition-all duration-300",
+              menuOpen ? "w-6 -translate-y-[7px] -rotate-45" : "w-4"
+            )}
+          />
         </button>
       </nav>
+
+      {/* Mobile dropdown menu */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            key="mobile-menu"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.28, ease: "easeInOut" }}
+            className="overflow-hidden border-t border-oe-aurora-violet/20 md:hidden"
+            style={{ backgroundColor: "rgba(10, 15, 31, 0.97)", backdropFilter: "blur(12px)" }}
+          >
+            <div className="flex flex-col px-6 py-5 gap-1">
+              {navLinks.map(({ href, label }) => {
+                const isActive = pathname === href;
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    onClick={closeMenu}
+                    className={cn(
+                      "py-3 text-base font-medium border-b border-oe-aurora-violet/10 last:border-0 transition-colors duration-200",
+                      isActive
+                        ? "text-oe-solar-gold"
+                        : "text-oe-pure-light/70 hover:text-oe-pure-light"
+                    )}
+                  >
+                    {label}
+                  </Link>
+                );
+              })}
+              <Link
+                href="/community"
+                onClick={closeMenu}
+                className="mt-4 rounded-full bg-oe-aurora-violet px-5 py-3 text-sm font-medium text-white text-center transition-opacity duration-200 hover:opacity-85"
+              >
+                Mitmachen
+              </Link>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.header>
   );
 }

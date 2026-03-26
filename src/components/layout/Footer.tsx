@@ -53,7 +53,7 @@ export function Footer() {
   return (
     <footer className="border-t border-oe-aurora-violet/20 bg-oe-deep-space text-oe-pure-light">
       <div className="mx-auto max-w-7xl px-6 py-16">
-        <div className="grid grid-cols-1 gap-12 md:grid-cols-4">
+        <div className="grid grid-cols-1 gap-8 md:gap-12 md:grid-cols-4">
           {/* Brand */}
           <div className="flex flex-col gap-4 md:col-span-1">
             <Link href="/" className="font-serif text-2xl text-oe-solar-gold">
@@ -68,7 +68,7 @@ export function Footer() {
           {/* Link columns */}
           <div
             className={cn(
-              "grid grid-cols-2 gap-8 md:col-span-3 md:grid-cols-3"
+              "grid grid-cols-2 gap-6 sm:gap-8 md:col-span-3 md:grid-cols-3"
             )}
           >
             {Object.entries(footerLinks).map(([title, links]) => (

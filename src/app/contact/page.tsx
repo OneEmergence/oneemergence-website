@@ -205,7 +205,7 @@ export default function ContactPage() {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.1 }}
-          className="font-serif text-5xl leading-tight text-oe-solar-gold md:text-6xl"
+          className="font-serif text-4xl sm:text-5xl leading-tight text-oe-solar-gold md:text-6xl"
         >
           Schreib uns.
         </motion.h1>
@@ -231,7 +231,7 @@ export default function ContactPage() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.96 }}
                 transition={{ duration: 0.5 }}
-                className="rounded-2xl border border-oe-spirit-cyan/30 bg-oe-spirit-cyan/5 px-10 py-16 text-center"
+                className="rounded-2xl border border-oe-spirit-cyan/30 bg-oe-spirit-cyan/5 px-6 py-12 sm:px-10 sm:py-16 text-center"
               >
                 <motion.div
                   initial={{ scale: 0 }}
@@ -263,7 +263,7 @@ export default function ContactPage() {
                 exit={{ opacity: 0, y: -16 }}
                 transition={{ duration: 0.6 }}
                 onSubmit={handleSubmit}
-                className="rounded-2xl border border-oe-aurora-violet/20 bg-oe-aurora-violet/5 px-8 py-10 md:px-12 space-y-7"
+                className="rounded-2xl border border-oe-aurora-violet/20 bg-oe-aurora-violet/5 px-5 py-8 sm:px-8 sm:py-10 md:px-12 space-y-7"
               >
                 <div className="grid grid-cols-1 gap-7 md:grid-cols-2">
                   <InputField
@@ -302,7 +302,7 @@ export default function ContactPage() {
                   required
                 />
 
-                <div className="flex items-center justify-between pt-2">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-2">
                   <p className="text-xs text-oe-pure-light/30">
                     Felder mit{" "}
                     <span className="text-oe-solar-gold">*</span> sind
@@ -313,7 +313,7 @@ export default function ContactPage() {
                     disabled={state === "submitting"}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="px-8 py-3 rounded-xl bg-oe-aurora-violet/20 border border-oe-aurora-violet/40 text-sm font-semibold text-oe-pure-light hover:bg-oe-aurora-violet/35 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+                    className="w-full sm:w-auto px-8 py-3 rounded-xl bg-oe-aurora-violet/20 border border-oe-aurora-violet/40 text-sm font-semibold text-oe-pure-light hover:bg-oe-aurora-violet/35 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                   >
                     {state === "submitting" ? (
                       <span className="flex items-center gap-2">
@@ -339,7 +339,7 @@ export default function ContactPage() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="flex flex-wrap justify-center gap-10 text-center"
+            className="flex flex-wrap justify-center gap-6 sm:gap-10 text-center"
           >
             {[
               { label: "E-Mail", value: "hello@oneemergence.com" },
