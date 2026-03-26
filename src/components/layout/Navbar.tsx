@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useMotionTemplate, useScroll, useTransform } from "framer-motion";
 import { Volume2, VolumeX } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAudio } from "@/components/layout/AudioProvider";
+import { MagneticButton } from "@/components/ui/MagneticButton";
 
 const navLinks = [
   { href: "/manifesto", label: "Manifesto" },
@@ -23,12 +24,13 @@ export function Navbar() {
 
   const bgOpacity = useTransform(scrollY, [0, 80], [0, 0.92]);
   const borderOpacity = useTransform(scrollY, [0, 80], [0, 1]);
+  const bgColor = useMotionTemplate`rgba(10, 15, 31, ${bgOpacity})`;
 
   return (
     <motion.header
       className="fixed top-0 left-0 right-0 z-50"
       style={{
-        backgroundColor: `rgba(10, 15, 31, ${bgOpacity.get()})`,
+        backgroundColor: bgColor,
         backdropFilter: "blur(12px)",
         WebkitBackdropFilter: "blur(12px)",
       }}
@@ -55,24 +57,26 @@ export function Navbar() {
             const isActive = pathname === href;
             return (
               <li key={href}>
-                <Link
-                  href={href}
-                  className={cn(
-                    "relative text-sm font-medium transition-colors duration-200",
-                    isActive
-                      ? "text-oe-solar-gold"
-                      : "text-oe-pure-light/70 hover:text-oe-pure-light"
-                  )}
-                >
-                  {label}
-                  {isActive && (
-                    <motion.span
-                      layoutId="nav-indicator"
-                      className="absolute -bottom-1 left-0 right-0 h-px bg-oe-solar-gold"
-                      transition={{ duration: 0.25, ease: "easeInOut" }}
-                    />
-                  )}
-                </Link>
+                <MagneticButton as="span" strength={0.3}>
+                  <Link
+                    href={href}
+                    className={cn(
+                      "relative text-sm font-medium transition-colors duration-200",
+                      isActive
+                        ? "text-oe-solar-gold"
+                        : "text-oe-pure-light/70 hover:text-oe-pure-light"
+                    )}
+                  >
+                    {label}
+                    {isActive && (
+                      <motion.span
+                        layoutId="nav-indicator"
+                        className="absolute -bottom-1 left-0 right-0 h-px bg-oe-solar-gold"
+                        transition={{ duration: 0.25, ease: "easeInOut" }}
+                      />
+                    )}
+                  </Link>
+                </MagneticButton>
               </li>
             );
           })}
@@ -101,12 +105,14 @@ export function Navbar() {
             {isPlaying ? <Volume2 size={14} strokeWidth={1.5} /> : <VolumeX size={14} strokeWidth={1.5} />}
           </motion.button>
 
-          <Link
-            href="/community"
-            className="rounded-full bg-oe-aurora-violet px-5 py-2 text-sm font-medium text-white transition-opacity duration-200 hover:opacity-85"
-          >
-            Mitmachen
-          </Link>
+          <MagneticButton as="span" strength={0.3}>
+            <Link
+              href="/community"
+              className="rounded-full bg-oe-aurora-violet px-5 py-2 text-sm font-medium text-white transition-opacity duration-200 hover:opacity-85"
+            >
+              Mitmachen
+            </Link>
+          </MagneticButton>
         </div>
 
         {/* Mobile menu button (placeholder) */}

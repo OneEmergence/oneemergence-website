@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getPostBySlug, getPosts } from "@/lib/content";
+import Image from "next/image";
+import { getPostBySlug, getPosts, getAdjacentPosts } from "@/lib/content";
 
 export async function generateStaticParams() {
   return getPosts().map((p) => ({ slug: p.slug }));
@@ -29,10 +30,26 @@ export default async function JournalPost({
   const post = getPostBySlug(slug);
   if (!post) notFound();
 
+  const { prev, next } = getAdjacentPosts(slug);
+
   return (
-    <div className="min-h-screen bg-oe-deep-space pt-28 pb-24">
-      {/* Hero */}
-      <div className="mx-auto max-w-3xl px-6">
+    <div className="min-h-screen bg-oe-deep-space">
+      {/* Hero Cover */}
+      {post.cover && (
+        <div className="relative h-[400px] w-full">
+          <Image
+            src={post.cover}
+            alt={post.title}
+            fill
+            priority
+            className="object-cover"
+          />
+          {/* Gradient overlay: transparent top → oe-deep-space bottom */}
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0A0F1F]" />
+        </div>
+      )}
+
+      <div className={`mx-auto max-w-3xl px-6 ${post.cover ? "relative -mt-20 pb-24" : "pt-28 pb-24"}`}>
         <Link
           href="/content"
           className="mb-10 inline-flex items-center gap-2 text-sm text-oe-pure-light/40 transition-colors hover:text-oe-pure-light/70"
@@ -48,7 +65,7 @@ export default async function JournalPost({
           {post.title}
         </h1>
 
-        <div className="mt-5 flex items-center gap-4 text-sm text-oe-pure-light/40">
+        <div className="mt-5 flex flex-wrap items-center gap-4 text-sm text-oe-pure-light/40">
           <time>
             {new Date(post.date).toLocaleDateString("de-DE", {
               day: "numeric",
@@ -58,6 +75,21 @@ export default async function JournalPost({
           </time>
           <span>·</span>
           <span>{post.readingTime} Min. Lesezeit</span>
+          {post.tags && post.tags.length > 0 && (
+            <>
+              <span>·</span>
+              <div className="flex gap-2">
+                {post.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="rounded-full bg-oe-aurora-violet/10 px-2.5 py-0.5 text-xs text-oe-aurora-violet/70"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </>
+          )}
         </div>
 
         {/* Divider */}
@@ -77,6 +109,42 @@ export default async function JournalPost({
             prose-li:marker:text-oe-aurora-violet"
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
+
+        {/* Prev/Next Navigation */}
+        {(prev || next) && (
+          <div className="mt-16 grid gap-4 sm:grid-cols-2">
+            {prev ? (
+              <Link
+                href={`/journal/${prev.slug}`}
+                className="group rounded-2xl border border-oe-pure-light/8 bg-oe-pure-light/[0.03] p-6 transition-all duration-300 hover:border-oe-aurora-violet/40 hover:bg-oe-aurora-violet/5"
+              >
+                <span className="text-xs text-oe-pure-light/30 uppercase tracking-wider">
+                  ← Vorheriger
+                </span>
+                <p className="mt-2 font-serif text-lg text-oe-pure-light transition-colors duration-200 group-hover:text-oe-solar-gold leading-snug">
+                  {prev.title}
+                </p>
+              </Link>
+            ) : (
+              <div />
+            )}
+            {next ? (
+              <Link
+                href={`/journal/${next.slug}`}
+                className="group rounded-2xl border border-oe-pure-light/8 bg-oe-pure-light/[0.03] p-6 text-right transition-all duration-300 hover:border-oe-aurora-violet/40 hover:bg-oe-aurora-violet/5"
+              >
+                <span className="text-xs text-oe-pure-light/30 uppercase tracking-wider">
+                  Nächster →
+                </span>
+                <p className="mt-2 font-serif text-lg text-oe-pure-light transition-colors duration-200 group-hover:text-oe-solar-gold leading-snug">
+                  {next.title}
+                </p>
+              </Link>
+            ) : (
+              <div />
+            )}
+          </div>
+        )}
 
         {/* Footer CTA */}
         <div className="mt-16 rounded-2xl border border-oe-aurora-violet/20 bg-oe-aurora-violet/5 p-8 text-center">

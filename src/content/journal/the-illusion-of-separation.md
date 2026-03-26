@@ -3,6 +3,7 @@ title: "Die Illusion der Trennung"
 date: "2026-03-10"
 excerpt: "Was wäre, wenn die tiefste Quelle unseres Leidens ein einziger Irrtum ist – die Überzeugung, dass wir getrennte Wesen sind?"
 cover: "/images/journal/separation.jpg"
+tags: ["Philosophie", "Nicht-Dualität"]
 ---
 
 ## Das Fundament des Schmerzes

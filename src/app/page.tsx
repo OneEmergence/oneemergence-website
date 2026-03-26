@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { AmbientOrb } from "@/components/ui/ambient-orb";
+import { MagneticButton } from "@/components/ui/MagneticButton";
 
 export default function Home() {
   const router = useRouter();
@@ -18,12 +19,16 @@ export default function Home() {
           Eine digitale Heimat, die dich einlädt in eine Erfahrung von Einheit, Freiheit und Liebe.
         </p>
         <div className="flex gap-4 flex-wrap justify-center">
-          <Button variant="primary" size="md" onClick={() => router.push("/manifesto")}>
-            Manifesto lesen
-          </Button>
-          <Button variant="outline" size="md" onClick={() => router.push("/community")}>
-            Community beitreten
-          </Button>
+          <MagneticButton strength={0.3}>
+            <Button variant="primary" size="md" onClick={() => router.push("/manifesto")}>
+              Manifesto lesen
+            </Button>
+          </MagneticButton>
+          <MagneticButton strength={0.3}>
+            <Button variant="outline" size="md" onClick={() => router.push("/community")}>
+              Community beitreten
+            </Button>
+          </MagneticButton>
         </div>
       </div>
     </div>

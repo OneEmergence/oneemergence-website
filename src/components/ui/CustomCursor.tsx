@@ -6,17 +6,32 @@ import { motion, useMotionValue, useSpring } from "framer-motion";
 export function CustomCursor() {
   const [hovered, setHovered] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
 
   const rawX = useMotionValue(-100);
   const rawY = useMotionValue(-100);
 
-  const x = useSpring(rawX, { stiffness: 500, damping: 40, mass: 0.3 });
-  const y = useSpring(rawY, { stiffness: 500, damping: 40, mass: 0.3 });
+  // Dot: follows exactly with tight spring
+  const dotX = useSpring(rawX, { stiffness: 500, damping: 28 });
+  const dotY = useSpring(rawY, { stiffness: 500, damping: 28 });
 
-  const trailX = useSpring(rawX, { stiffness: 120, damping: 28, mass: 0.5 });
-  const trailY = useSpring(rawY, { stiffness: 120, damping: 28, mass: 0.5 });
+  // Ring: follows with lag for trailing effect
+  const ringX = useSpring(rawX, { stiffness: 150, damping: 15 });
+  const ringY = useSpring(rawY, { stiffness: 150, damping: 15 });
 
   useEffect(() => {
+    // Only render on desktop (fine pointer)
+    const mq = window.matchMedia("(pointer: fine)");
+    setIsDesktop(mq.matches);
+
+    const handleChange = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
+    mq.addEventListener("change", handleChange);
+    return () => mq.removeEventListener("change", handleChange);
+  }, []);
+
+  useEffect(() => {
+    if (!isDesktop) return;
+
     const move = (e: MouseEvent) => {
       rawX.set(e.clientX);
       rawY.set(e.clientY);
@@ -25,7 +40,9 @@ export function CustomCursor() {
 
     const over = (e: MouseEvent) => {
       const target = e.target as Element;
-      const isInteractive = target.closest("a, button, [data-cursor-hover]");
+      const isInteractive = target.closest(
+        'a, button, [data-cursor="magnetic"], [data-cursor-hover]'
+      );
       setHovered(!!isInteractive);
     };
 
@@ -36,46 +53,53 @@ export function CustomCursor() {
       window.removeEventListener("mousemove", move);
       window.removeEventListener("mouseover", over);
     };
-  }, [rawX, rawY, visible]);
+  }, [rawX, rawY, visible, isDesktop]);
 
-  if (typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches) {
-    return null;
-  }
+  if (!isDesktop) return null;
 
   return (
     <>
       {/* Trail ring */}
       <motion.div
-        className="pointer-events-none fixed top-0 left-0 z-[9999] rounded-full border border-oe-aurora-violet/50"
+        className="pointer-events-none fixed top-0 left-0 z-[9998] rounded-full"
         style={{
-          x: trailX,
-          y: trailY,
+          x: ringX,
+          y: ringY,
           translateX: "-50%",
           translateY: "-50%",
         }}
         animate={{
-          width: hovered ? 44 : 28,
-          height: hovered ? 44 : 28,
+          width: hovered ? 48 : 32,
+          height: hovered ? 48 : 32,
           opacity: visible ? 1 : 0,
+          borderWidth: 2,
           borderColor: hovered
-            ? "rgba(246, 196, 83, 0.7)"
-            : "rgba(124, 92, 255, 0.5)",
+            ? "rgba(255, 255, 255, 0.8)"
+            : "rgba(255, 255, 255, 0.4)",
+          scale: hovered ? 1.5 : 1,
         }}
         transition={{ duration: 0.2, ease: "easeOut" }}
+        initial={{
+          borderStyle: "solid",
+          borderWidth: 2,
+          borderColor: "rgba(255, 255, 255, 0.4)",
+          background: "transparent",
+        }}
       />
 
       {/* Inner dot */}
       <motion.div
-        className="pointer-events-none fixed top-0 left-0 z-[9999] rounded-full bg-oe-solar-gold"
+        className="pointer-events-none fixed top-0 left-0 z-[9999] rounded-full"
         style={{
-          x,
-          y,
+          x: dotX,
+          y: dotY,
           translateX: "-50%",
           translateY: "-50%",
+          backgroundColor: "#a855f7",
         }}
         animate={{
-          width: hovered ? 6 : 5,
-          height: hovered ? 6 : 5,
+          width: hovered ? 6 : 8,
+          height: hovered ? 6 : 8,
           opacity: visible ? 1 : 0,
         }}
         transition={{ duration: 0.15 }}

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 @theme {
   --color-background: var(--background);
@@ -32,4 +33,11 @@ body {
 ::selection {
   background-color: var(--color-oe-aurora-violet);
   color: #fff;
+}
+
+/* Custom cursor — hide default on desktop */
+@media (pointer: fine) {
+  * {
+    cursor: none !important;
+  }
 }

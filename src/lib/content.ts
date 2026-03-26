@@ -9,6 +9,7 @@ export type Post = {
   date: string;
   excerpt: string;
   cover?: string;
+  tags?: string[];
   readingTime: number;
   content: string;
 };
@@ -34,6 +35,7 @@ export function getPosts(): Omit<Post, "content">[] {
         date: data.date ?? "",
         excerpt: data.excerpt ?? "",
         cover: data.cover,
+        tags: Array.isArray(data.tags) ? data.tags : undefined,
         readingTime: calcReadingTime(content),
       };
     })
@@ -53,7 +55,22 @@ export function getPostBySlug(slug: string): Post | null {
     date: data.date ?? "",
     excerpt: data.excerpt ?? "",
     cover: data.cover,
+    tags: Array.isArray(data.tags) ? data.tags : undefined,
     readingTime: calcReadingTime(content),
-    content: marked(content) as string,
+    content: marked.parse(content) as string,
+  };
+}
+
+export function getAdjacentPosts(
+  slug: string
+): { prev: Omit<Post, "content"> | null; next: Omit<Post, "content"> | null } {
+  const posts = getPosts();
+  const index = posts.findIndex((p) => p.slug === slug);
+
+  if (index === -1) return { prev: null, next: null };
+
+  return {
+    prev: index < posts.length - 1 ? posts[index + 1] : null,
+    next: index > 0 ? posts[index - 1] : null,
   };
 }

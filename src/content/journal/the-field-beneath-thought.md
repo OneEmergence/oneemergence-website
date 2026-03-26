@@ -3,6 +3,7 @@ title: "Das Feld unter dem Denken"
 date: "2026-03-18"
 excerpt: "Zwischen zwei Gedanken gibt es einen Spalt. In diesem Spalt liegt alles, was wir suchen."
 cover: "/images/journal/field.jpg"
+tags: ["Meditation", "Bewusstsein"]
 ---
 
 ## Die Stille, die bleibt
