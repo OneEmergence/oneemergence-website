@@ -9,13 +9,13 @@ export default function Home() {
   const router = useRouter();
 
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen bg-oe-deep-space text-oe-pure-light px-6 text-center pt-20">
+    <div className="relative flex flex-col items-center justify-center min-h-screen bg-oe-deep-space text-oe-pure-light px-4 sm:px-6 text-center pt-16 sm:pt-20">
       <AmbientOrb />
       <div className="relative z-10 flex flex-col items-center">
-        <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-serif text-oe-solar-gold mb-6">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-serif text-oe-solar-gold mb-6">
           OneEmergence
         </h1>
-        <p className="text-base sm:text-xl md:text-2xl max-w-2xl text-oe-spirit-cyan mb-10 sm:mb-12">
+        <p className="text-base sm:text-lg md:text-xl lg:text-2xl max-w-2xl text-oe-spirit-cyan mb-10 sm:mb-12">
           Eine digitale Heimat, die dich einlädt in eine Erfahrung von Einheit, Freiheit und Liebe.
         </p>
         <div className="flex gap-4 flex-wrap justify-center">

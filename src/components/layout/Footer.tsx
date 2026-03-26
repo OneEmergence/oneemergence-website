@@ -52,11 +52,11 @@ export function Footer() {
 
   return (
     <footer className="border-t border-oe-aurora-violet/20 bg-oe-deep-space text-oe-pure-light">
-      <div className="mx-auto max-w-7xl px-6 py-16">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-16">
         <div className="grid grid-cols-1 gap-6 md:gap-12 md:grid-cols-4">
           {/* Brand */}
           <div className="flex flex-col gap-4 md:col-span-1">
-            <Link href="/" className="font-serif text-2xl text-oe-solar-gold">
+            <Link href="/" className="font-serif text-xl sm:text-2xl text-oe-solar-gold">
               OneEmergence
             </Link>
             <p className="max-w-xs text-sm leading-relaxed text-oe-pure-light/50">

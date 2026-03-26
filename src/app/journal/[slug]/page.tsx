@@ -49,7 +49,7 @@ export default async function JournalPost({
         </div>
       )}
 
-      <div className={`mx-auto max-w-3xl px-6 ${post.cover ? "relative -mt-20 pb-24" : "pt-28 pb-24"}`}>
+      <div className={`mx-auto max-w-3xl px-4 sm:px-6 ${post.cover ? "relative -mt-12 sm:-mt-16 md:-mt-20 pb-24" : "pt-24 sm:pt-28 pb-24"}`}>
         <Link
           href="/content"
           className="mb-10 inline-flex items-center gap-2 text-sm text-oe-pure-light/40 transition-colors hover:text-oe-pure-light/70"

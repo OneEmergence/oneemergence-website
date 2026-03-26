@@ -126,7 +126,7 @@ export function Navbar() {
           onClick={() => setMenuOpen((o) => !o)}
           aria-label={menuOpen ? "Menü schließen" : "Menü öffnen"}
           aria-expanded={menuOpen}
-          className="flex flex-col gap-1.5 p-2 -m-1 md:hidden"
+          className="flex flex-col gap-1.5 p-2.5 -m-1 min-h-[44px] min-w-[44px] items-center justify-center md:hidden"
         >
           <span
             className={cn(
@@ -161,7 +161,7 @@ export function Navbar() {
             className="overflow-hidden border-t border-oe-aurora-violet/20 md:hidden"
             style={{ backgroundColor: "rgba(10, 15, 31, 0.97)", backdropFilter: "blur(12px)" }}
           >
-            <div className="flex flex-col px-6 py-5 gap-1">
+            <div className="flex flex-col px-6 py-5 gap-1 max-h-[calc(100dvh-64px)] overflow-y-auto">
               {navLinks.map(({ href, label }) => {
                 const isActive = pathname === href;
                 return (

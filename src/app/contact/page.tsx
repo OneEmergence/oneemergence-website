@@ -221,7 +221,7 @@ export default function ContactPage() {
       </section>
 
       {/* Form Section */}
-      <section className="px-6 pb-32">
+      <section className="px-4 sm:px-6 pb-24 sm:pb-32">
         <div className="mx-auto max-w-2xl">
           <AnimatePresence mode="wait">
             {state === "success" ? (

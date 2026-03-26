@@ -82,7 +82,7 @@ export default function CommunityPage() {
   return (
     <div className="bg-oe-deep-space text-oe-pure-light">
       {/* Hero */}
-      <section className="flex flex-col items-center justify-center min-h-[55vh] md:min-h-[65vh] px-6 pt-24 pb-16 text-center">
+      <section className="flex flex-col items-center justify-center min-h-[50vh] sm:min-h-[55vh] md:min-h-[65vh] px-4 sm:px-6 pt-20 sm:pt-24 pb-16 text-center">
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -95,7 +95,7 @@ export default function CommunityPage() {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.1 }}
-          className="font-serif text-4xl sm:text-5xl leading-tight text-oe-solar-gold md:text-7xl"
+          className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl leading-tight text-oe-solar-gold"
         >
           Du gehörst
           <br />
