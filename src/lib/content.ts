@@ -61,6 +61,16 @@ export function getPostBySlug(slug: string): Post | null {
   };
 }
 
+const PAGES_DIR = path.join(process.cwd(), "src/content/pages");
+
+export function getPage(slug: string): { content: string } | null {
+  const filePath = path.join(PAGES_DIR, `${slug}.md`);
+  if (!fs.existsSync(filePath)) return null;
+  const raw = fs.readFileSync(filePath, "utf-8");
+  const { content } = matter(raw);
+  return { content: marked.parse(content) as string };
+}
+
 export function getAdjacentPosts(
   slug: string
 ): { prev: Omit<Post, "content"> | null; next: Omit<Post, "content"> | null } {
