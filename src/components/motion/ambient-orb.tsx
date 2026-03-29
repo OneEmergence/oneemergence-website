@@ -1,12 +1,14 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 interface AmbientOrbProps {
   className?: string;
 }
 
 export function AmbientOrb({ className }: AmbientOrbProps) {
+  const prefersReduced = useReducedMotion();
+
   return (
     <div
       aria-hidden="true"
@@ -25,13 +27,13 @@ export function AmbientOrb({ className }: AmbientOrbProps) {
           left: "50%",
           translateX: "-50%",
         }}
-        animate={{
+        animate={prefersReduced ? { opacity: 0.85 } : {
           scale: [1, 1.15, 1],
           opacity: [0.7, 1, 0.7],
           y: [0, -30, 0],
           x: [0, 20, 0],
         }}
-        transition={{
+        transition={prefersReduced ? { duration: 0 } : {
           duration: 8,
           ease: "easeInOut",
           repeat: Infinity,
@@ -51,13 +53,13 @@ export function AmbientOrb({ className }: AmbientOrbProps) {
           bottom: "15%",
           left: "15%",
         }}
-        animate={{
+        animate={prefersReduced ? { opacity: 0.65 } : {
           scale: [1, 1.2, 1],
           opacity: [0.5, 0.85, 0.5],
           y: [0, 25, 0],
           x: [0, -15, 0],
         }}
-        transition={{
+        transition={prefersReduced ? { duration: 0 } : {
           duration: 11,
           ease: "easeInOut",
           repeat: Infinity,
@@ -78,13 +80,13 @@ export function AmbientOrb({ className }: AmbientOrbProps) {
           top: "20%",
           right: "10%",
         }}
-        animate={{
+        animate={prefersReduced ? { opacity: 0.55 } : {
           scale: [1, 1.1, 1],
           opacity: [0.4, 0.75, 0.4],
           y: [0, 20, 0],
           x: [0, 10, 0],
         }}
-        transition={{
+        transition={prefersReduced ? { duration: 0 } : {
           duration: 13,
           ease: "easeInOut",
           repeat: Infinity,

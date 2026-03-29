@@ -66,12 +66,13 @@ export function BreathworkGuide() {
     }
   }, [])
 
+  const advancePhaseRef = useRef<() => void>(undefined)
+
   const advancePhase = useCallback(() => {
     const pattern = selectedPattern
     const nextIndex = phaseIndexRef.current + 1
 
     if (nextIndex >= pattern.phases.length) {
-      // Completed a full cycle
       phaseIndexRef.current = 0
       setCurrentPhaseIndex(0)
       setCycleCount((prev) => prev + 1)
@@ -80,11 +81,14 @@ export function BreathworkGuide() {
       setCurrentPhaseIndex(nextIndex)
     }
 
-    // Schedule next phase
     const nextPhaseIndex = phaseIndexRef.current
     const nextPhase = pattern.phases[nextPhaseIndex]
-    timerRef.current = setTimeout(advancePhase, nextPhase.duration * 1000)
+    timerRef.current = setTimeout(() => advancePhaseRef.current?.(), nextPhase.duration * 1000)
   }, [selectedPattern])
+
+  useEffect(() => {
+    advancePhaseRef.current = advancePhase
+  }, [advancePhase])
 
   function handleStart() {
     setIsRunning(true)

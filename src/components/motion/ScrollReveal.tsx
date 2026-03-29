@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 type HeadingTag = "h1" | "h2" | "h3" | "h4" | "p" | "span";
@@ -33,15 +33,22 @@ export function ScrollReveal({
 }: ScrollRevealProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { once: true, margin: "-10% 0px" });
+  const prefersReduced = useReducedMotion();
 
   const words = text.split(" ");
+
+  if (prefersReduced) {
+    return (
+      <Tag className={cn(className)}>
+        {text}
+      </Tag>
+    );
+  }
 
   return (
     <div ref={containerRef}>
       <Tag className={cn(className)} aria-label={text}>
         {words.map((word, i) => (
-          // overflow-hidden clips the slide-up; padding/margin prevents
-          // descender cropping while keeping natural line-height.
           <span
             key={i}
             className="mr-[0.25em] inline-block overflow-hidden pb-[0.1em] mb-[-0.1em] last:mr-0"

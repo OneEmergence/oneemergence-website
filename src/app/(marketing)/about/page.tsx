@@ -91,7 +91,7 @@ export default function AboutPage() {
       {/* Story Blocks */}
       <section className="px-6 py-16 md:py-24">
         <div className="mx-auto max-w-5xl space-y-16 md:space-y-32">
-          {story.map((block, i) => (
+          {story.map((block) => (
             <motion.div
               key={block.year}
               initial={{ opacity: 0, y: 40 }}

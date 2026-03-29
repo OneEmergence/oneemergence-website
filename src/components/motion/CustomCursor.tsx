@@ -1,12 +1,32 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
+
+const FINE_POINTER_QUERY = "(pointer: fine)";
+
+function subscribeFinePointer(callback: () => void) {
+  const mql = window.matchMedia(FINE_POINTER_QUERY);
+  mql.addEventListener("change", callback);
+  return () => mql.removeEventListener("change", callback);
+}
+
+function getFinePointerSnapshot() {
+  return window.matchMedia(FINE_POINTER_QUERY).matches;
+}
+
+function getFinePointerServerSnapshot() {
+  return false;
+}
 
 export function CustomCursor() {
   const [hovered, setHovered] = useState(false);
   const [visible, setVisible] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(false);
+  const isDesktop = useSyncExternalStore(
+    subscribeFinePointer,
+    getFinePointerSnapshot,
+    getFinePointerServerSnapshot,
+  );
 
   const rawX = useMotionValue(-100);
   const rawY = useMotionValue(-100);
@@ -18,16 +38,6 @@ export function CustomCursor() {
   // Ring: follows with lag for trailing effect
   const ringX = useSpring(rawX, { stiffness: 150, damping: 15 });
   const ringY = useSpring(rawY, { stiffness: 150, damping: 15 });
-
-  useEffect(() => {
-    // Only render on desktop (fine pointer)
-    const mq = window.matchMedia("(pointer: fine)");
-    setIsDesktop(mq.matches);
-
-    const handleChange = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
-    mq.addEventListener("change", handleChange);
-    return () => mq.removeEventListener("change", handleChange);
-  }, []);
 
   useEffect(() => {
     if (!isDesktop) return;

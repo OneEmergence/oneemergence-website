@@ -8,6 +8,8 @@ import { StarField } from '@/components/scene/StarField'
 import { NewsletterSignup } from '@/components/sections/NewsletterSignup'
 import { Button } from '@/components/ui/button'
 
+type AccentColor = 'oe-spirit-cyan' | 'oe-aurora-violet' | 'oe-solar-gold'
+
 interface Experience {
   slug: string
   title: string
@@ -15,9 +17,27 @@ interface Experience {
   typeLabel: string
   description: string
   duration: string
-  accentColor: string
+  accentColor: AccentColor
   icon: typeof Eye
   available: boolean
+}
+
+const ACCENT_ICON_CLASSES: Record<AccentColor, { container: string; icon: string; label: string }> = {
+  'oe-spirit-cyan': {
+    container: 'border-oe-spirit-cyan/20 bg-oe-spirit-cyan/5',
+    icon: 'text-oe-spirit-cyan/70',
+    label: 'text-oe-spirit-cyan/70',
+  },
+  'oe-aurora-violet': {
+    container: 'border-oe-aurora-violet/20 bg-oe-aurora-violet/5',
+    icon: 'text-oe-aurora-violet/70',
+    label: 'text-oe-aurora-violet/70',
+  },
+  'oe-solar-gold': {
+    container: 'border-oe-solar-gold/20 bg-oe-solar-gold/5',
+    icon: 'text-oe-solar-gold/70',
+    label: 'text-oe-solar-gold/70',
+  },
 }
 
 const experiences: Experience[] = [
@@ -119,6 +139,7 @@ export function ExperiencesClient() {
           <div className="grid gap-6 md:grid-cols-1 lg:gap-8">
             {experiences.map((exp, i) => {
               const Icon = exp.icon
+              const accent = ACCENT_ICON_CLASSES[exp.accentColor]
               return (
                 <motion.div
                   key={exp.slug}
@@ -137,16 +158,16 @@ export function ExperiencesClient() {
                   >
                     {/* Icon area */}
                     <div
-                      className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-xl border border-${exp.accentColor}/20 bg-${exp.accentColor}/5`}
+                      className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-xl border ${accent.container}`}
                     >
-                      <Icon size={24} className={`text-${exp.accentColor}/70`} />
+                      <Icon size={24} className={accent.icon} />
                     </div>
 
                     {/* Content */}
                     <div className="mt-5 flex-1 md:mt-0">
                       <div className="flex flex-wrap items-center gap-3">
                         <span
-                          className={`text-[10px] font-semibold uppercase tracking-[0.2em] text-${exp.accentColor}/70`}
+                          className={`text-[10px] font-semibold uppercase tracking-[0.2em] ${accent.label}`}
                         >
                           {exp.typeLabel}
                         </span>

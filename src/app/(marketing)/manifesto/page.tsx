@@ -1,12 +1,20 @@
 'use client'
 
 import Link from 'next/link'
-import { motion, useScroll, useTransform, type Variants } from 'framer-motion'
+import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { ScrollReveal } from '@/components/motion/ScrollReveal'
 import { StarField } from '@/components/scene/StarField'
 import { NewsletterSignup } from '@/components/sections/NewsletterSignup'
+
+type PrincipleAccent = 'oe-spirit-cyan' | 'oe-aurora-violet' | 'oe-solar-gold'
+
+const PRINCIPLE_ACCENT_CLASSES: Record<PrincipleAccent, { number: string; label: string }> = {
+  'oe-spirit-cyan': { number: 'text-oe-spirit-cyan/15', label: 'text-oe-spirit-cyan/70' },
+  'oe-aurora-violet': { number: 'text-oe-aurora-violet/15', label: 'text-oe-aurora-violet/70' },
+  'oe-solar-gold': { number: 'text-oe-solar-gold/15', label: 'text-oe-solar-gold/70' },
+}
 
 const principles = [
   {
@@ -87,7 +95,7 @@ function PrincipleSection({
           className="flex shrink-0 flex-col items-center"
         >
           <span
-            className={`font-serif text-7xl font-bold text-${principle.accent}/15 md:text-9xl`}
+            className={`font-serif text-7xl font-bold md:text-9xl ${PRINCIPLE_ACCENT_CLASSES[principle.accent as PrincipleAccent]?.number}`}
           >
             {String(index + 1).padStart(2, '0')}
           </span>
@@ -100,7 +108,7 @@ function PrincipleSection({
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className={`mb-2 text-xs font-semibold uppercase tracking-[0.3em] text-${principle.accent}/70`}
+            className={`mb-2 text-xs font-semibold uppercase tracking-[0.3em] ${PRINCIPLE_ACCENT_CLASSES[principle.accent as PrincipleAccent]?.label}`}
           >
             {principle.summary}
           </motion.p>

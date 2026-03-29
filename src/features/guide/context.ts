@@ -1,4 +1,4 @@
-import { eq, desc, gte } from 'drizzle-orm'
+import { eq, desc } from 'drizzle-orm'
 import { requireDb } from '@/lib/db'
 import { journalEntries, practices, userPreferences } from '@/lib/db/schema'
 import type { UserContext } from './prompts'

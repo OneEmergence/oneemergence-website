@@ -3,7 +3,6 @@ import path from 'path'
 import matter from 'gray-matter'
 import {
   JournalMeta,
-  AnyContentMeta,
   ContentType,
   CONTENT_TYPE_DIRS,
   getSchemaForType,

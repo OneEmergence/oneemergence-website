@@ -12,6 +12,12 @@ import { Button } from '@/components/ui/button'
 import { NewsletterSignup } from '@/components/sections/NewsletterSignup'
 import type { Post } from '@/lib/content'
 
+const EXP_ACCENT_CLASSES: Record<string, string> = {
+  'oe-spirit-cyan': 'text-oe-spirit-cyan/70',
+  'oe-aurora-violet': 'text-oe-aurora-violet/70',
+  'oe-solar-gold': 'text-oe-solar-gold/70',
+}
+
 type PostPreview = Omit<Post, 'content'>
 
 const sectionFade: Variants = {
@@ -273,7 +279,7 @@ export function LivingPortalClient({ posts }: { posts: PostPreview[] }) {
                   data-cursor-hover
                   className="group block rounded-2xl border border-oe-pure-light/8 bg-oe-pure-light/[0.02] p-6 text-left transition-all duration-300 hover:border-oe-spirit-cyan/30 hover:bg-oe-spirit-cyan/5"
                 >
-                  <span className={`text-[10px] font-semibold uppercase tracking-[0.2em] text-${exp.accent}/70`}>
+                  <span className={`text-[10px] font-semibold uppercase tracking-[0.2em] ${EXP_ACCENT_CLASSES[exp.accent] ?? 'text-oe-pure-light/70'}`}>
                     {exp.type}
                   </span>
                   <h3 className="mt-2 font-serif text-lg text-oe-pure-light transition-colors group-hover:text-oe-solar-gold">
