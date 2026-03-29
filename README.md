@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# OneEmergence
+
+A digital consciousness portal built with Next.js 15, React 19, TypeScript, and Tailwind CSS v4.
+
+> Einheit. Freiheit. Liebe.
+
+## Stack
+
+- **Framework:** Next.js 15+ (App Router)
+- **Language:** TypeScript (strict)
+- **Styling:** Tailwind CSS v4 + design tokens
+- **Animation:** Framer Motion
+- **Content:** Markdown + frontmatter
+- **Icons:** Lucide React
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+  app/           → Pages (App Router)
+  components/
+    ui/          → Reusable primitives (Button, ScrollReveal, etc.)
+    sections/    → Page sections (ContentGrid, etc.)
+    layout/      → Navbar, Footer, AudioProvider, SmoothScroll
+  content/       → Markdown content (journal articles, legal pages)
+  lib/           → Utilities (cn, content helpers)
+  styles/        → Global styles
+```
 
-## Learn More
+## Pages
 
-To learn more about Next.js, take a look at the following resources:
+| Route | Status |
+|---|---|
+| `/` | Home — Living Portal with AmbientOrb |
+| `/manifesto` | Vision, values, principles |
+| `/about` | Origin story, team |
+| `/content` | Content hub — journal articles |
+| `/journal/[slug]` | Individual articles |
+| `/events` | Gatherings, retreats, sessions |
+| `/community` | Onboarding, values, join flow |
+| `/contact` | Contact form |
+| `/legal/imprint` | Impressum |
+| `/legal/privacy` | Datenschutz |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Planning
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- [VISION.md](./VISION.md) — Product vision, UX philosophy, AI Guide, content system, product staging
+- [ARCHITECTURE.md](./ARCHITECTURE.md) — Technical stack, coding paradigms, folder structure, migration path
 
-## Deploy on Vercel
+## Design Tokens
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Token | Hex | Role |
+|---|---|---|
+| `oe-deep-space` | `#0A0F1F` | Background |
+| `oe-aurora-violet` | `#7C5CFF` | Accent |
+| `oe-solar-gold` | `#F6C453` | Headlines |
+| `oe-spirit-cyan` | `#54E2E9` | Secondary accent |
+| `oe-pure-light` | `#F7F8FB` | Text |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Deploy
+
+Hosted on [Vercel](https://vercel.com). Push to `main` triggers production deployment.
