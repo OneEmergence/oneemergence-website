@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
 import { requireAuth } from '@/lib/auth/session'
+import { getMapData } from '@/features/map/actions'
 import { DashboardClient } from './DashboardClient'
+import { MapPreview } from '@/features/map/components/MapPreview'
+import type { MapData } from '@/lib/schemas/map'
 
 export const metadata: Metadata = {
   title: 'Innerer Raum — Dashboard',
@@ -53,11 +56,31 @@ export default async function InnerDashboardPage() {
   const user = await requireAuth()
   const impulse = getDailyImpulse()
 
+  // Load map data for preview (non-critical — gracefully handle failure)
+  let mapData: MapData | null = null
+  try {
+    const mapResult = await getMapData()
+    if (mapResult.success) {
+      mapData = mapResult.data
+    }
+  } catch {
+    // Map data not available — show empty preview
+  }
+
   return (
-    <DashboardClient
-      userName={user.name}
-      impulseText={impulse.text}
-      impulseSource={impulse.source}
-    />
+    <>
+      <DashboardClient
+        userName={user.name}
+        impulseText={impulse.text}
+        impulseSource={impulse.source}
+      />
+      {/* Map preview widget */}
+      <div className="mx-auto max-w-3xl px-0 pb-8">
+        <MapPreview
+          nodes={mapData?.nodes ?? []}
+          edges={mapData?.edges ?? []}
+        />
+      </div>
+    </>
   )
 }

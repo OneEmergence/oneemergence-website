@@ -27,8 +27,8 @@ const navItems = [
   { href: '/inner', label: 'Dashboard', icon: Home, disabled: false },
   { href: '/inner/journal', label: 'Journal', icon: BookOpen, disabled: false },
   { href: '/inner/practice', label: 'Praxis', icon: Flame, disabled: false },
-  { href: '/inner/map', label: 'Karte', icon: Map, disabled: true },
-  { href: '/inner/guide', label: 'Guide', icon: Sparkles, disabled: true },
+  { href: '/inner/map', label: 'Karte', icon: Map, disabled: false },
+  { href: '/inner/guide', label: 'Guide', icon: Sparkles, disabled: false },
   { href: '/inner/paths', label: 'Pfade', icon: Compass, disabled: true },
 ] as const
 

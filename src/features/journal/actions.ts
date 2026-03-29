@@ -6,6 +6,7 @@ import { requireDb } from '@/lib/db'
 import { requireAuth } from '@/lib/auth/session'
 import { journalEntries } from '@/lib/db/schema'
 import { JournalEntryInputSchema } from './schemas'
+import { generateNodesFromJournal } from '@/features/map/generate-nodes'
 import type { JournalEntry } from './types'
 
 type ActionResult<T> =
@@ -42,7 +43,20 @@ export async function createEntry(
       })
       .returning()
 
+    // Generate consciousness map nodes from journal content
+    try {
+      await generateNodesFromJournal(
+        user.id!,
+        entry.id,
+        parsed.data.title,
+        parsed.data.content
+      )
+    } catch {
+      // Map node generation is non-critical — don't fail the journal save
+    }
+
     revalidatePath('/inner/journal')
+    revalidatePath('/inner/map')
 
     return {
       success: true,

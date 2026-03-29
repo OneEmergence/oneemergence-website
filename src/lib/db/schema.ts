@@ -96,6 +96,49 @@ export const practices = pgTable('practices', {
   notes: text('notes'),
 })
 
+// =============================================================================
+// Consciousness Map tables
+// =============================================================================
+
+export const mapNodes = pgTable('map_nodes', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  type: text('type')
+    .$type<'theme' | 'insight' | 'journal-entry' | 'practice' | 'archetype'>()
+    .notNull(),
+  label: text('label').notNull(),
+  description: text('description'),
+  sourceId: text('source_id'),
+  sourceType: text('source_type'),
+  color: text('color'),
+  size: integer('size').default(1).notNull(),
+  x: integer('x'),
+  y: integer('y'),
+  createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
+})
+
+export const mapEdges = pgTable('map_edges', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  sourceNodeId: text('source_node_id')
+    .notNull()
+    .references(() => mapNodes.id, { onDelete: 'cascade' }),
+  targetNodeId: text('target_node_id')
+    .notNull()
+    .references(() => mapNodes.id, { onDelete: 'cascade' }),
+  label: text('label'),
+  strength: integer('strength').default(1).notNull(),
+  createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
+})
+
 export const userPreferences = pgTable('user_preferences', {
   id: text('id')
     .primaryKey()
@@ -109,4 +152,49 @@ export const userPreferences = pgTable('user_preferences', {
   focusThemes: jsonb('focus_themes').$type<string[]>().default([]),
   onboardingCompleted: boolean('onboarding_completed').default(false),
   updatedAt: timestamp('updated_at', { mode: 'date' }).defaultNow().notNull(),
+})
+
+// =============================================================================
+// AI Guide tables
+// =============================================================================
+
+export const guideConversations = pgTable('guide_conversations', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  title: text('title'),
+  role: text('role').$type<'seer' | 'scientist' | 'architect' | 'mirror'>().notNull(),
+  createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { mode: 'date' }).defaultNow().notNull(),
+})
+
+export const guideMessages = pgTable('guide_messages', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  conversationId: text('conversation_id')
+    .notNull()
+    .references(() => guideConversations.id, { onDelete: 'cascade' }),
+  role: text('role').$type<'user' | 'assistant'>().notNull(),
+  content: text('content').notNull(),
+  structuredResponse: jsonb('structured_response'),
+  createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
+})
+
+export const savedPromptCards = pgTable('saved_prompt_cards', {
+  id: text('id')
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  question: text('question').notNull(),
+  context: text('context'),
+  type: text('type').$type<'reflection' | 'inquiry' | 'practice' | 'vision'>().notNull(),
+  sourceConversationId: text('source_conversation_id')
+    .references(() => guideConversations.id, { onDelete: 'set null' }),
+  savedAt: timestamp('saved_at', { mode: 'date' }).defaultNow().notNull(),
 })
