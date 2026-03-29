@@ -155,7 +155,7 @@ export function MeditationTimer() {
         {/* Time display */}
         <div className="absolute inset-0 flex items-center justify-center">
           <span
-            className="font-[family-name:var(--font-cormorant)] text-5xl font-light tracking-wider text-oe-pure-light"
+            className="font-serif text-5xl font-light tracking-wider text-oe-pure-light"
             aria-live="polite"
             aria-atomic="true"
           >

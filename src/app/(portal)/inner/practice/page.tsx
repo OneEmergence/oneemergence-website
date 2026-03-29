@@ -24,7 +24,7 @@ const practices = [
   {
     title: 'Klanglandschaft',
     description:
-      'Heilsame Klänge und Frequenzen. Bald verfügbar.',
+      'Heilsame Klänge und Frequenzen für tiefere Präsenz.',
     href: '#',
     accent: 'oe-solar-gold',
     disabled: true,
@@ -34,7 +34,7 @@ const practices = [
 export default function PracticePage() {
   return (
     <div className="mx-auto max-w-2xl">
-      <h1 className="font-[family-name:var(--font-cormorant)] text-3xl font-semibold text-oe-pure-light md:text-4xl">
+      <h1 className="font-serif text-3xl font-semibold text-oe-pure-light md:text-4xl">
         Praxis
       </h1>
       <p className="mt-3 text-sm text-oe-pure-light/50">
@@ -48,11 +48,11 @@ export default function PracticePage() {
               key={practice.title}
               className={`rounded-xl border p-6 transition-colors ${
                 practice.disabled
-                  ? 'cursor-not-allowed border-white/5 bg-white/[0.02] opacity-50'
-                  : 'border-white/10 bg-white/5 hover:border-white/20'
+                  ? 'cursor-not-allowed border-oe-pure-light/5 bg-oe-pure-light/[0.02] opacity-50'
+                  : 'border-oe-pure-light/10 bg-oe-pure-light/[0.03] hover:border-oe-pure-light/20'
               }`}
             >
-              <h2 className="font-[family-name:var(--font-cormorant)] text-xl font-semibold text-oe-pure-light">
+              <h2 className="font-serif text-xl font-semibold text-oe-pure-light">
                 {practice.title}
               </h2>
               <p className="mt-2 text-sm text-oe-pure-light/50">
@@ -60,7 +60,7 @@ export default function PracticePage() {
               </p>
               {practice.disabled && (
                 <span className="mt-3 inline-block text-xs text-oe-pure-light/30">
-                  Demnächst verfügbar
+                  Bald verfügbar
                 </span>
               )}
             </div>

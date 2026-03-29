@@ -5,8 +5,8 @@ const footerLinks = {
   Erkunden: [
     { href: "/manifesto", label: "Manifesto" },
     { href: "/about", label: "Über uns" },
-    { href: "/content", label: "Inhalte" },
-    { href: "/journal", label: "Journal" },
+    { href: "/library", label: "Bibliothek" },
+    { href: "/experiences", label: "Erfahrungen" },
   ],
   Mitmachen: [
     { href: "/community", label: "Community" },

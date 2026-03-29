@@ -6,14 +6,17 @@ import { Button } from '@/components/ui/button'
 
 export function NewsletterSignup() {
   const [email, setEmail] = useState('')
-  const [status, setStatus] = useState<'idle' | 'success'>('idle')
+  const [status, setStatus] = useState<'idle' | 'submitting' | 'success'>('idle')
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!email.trim()) return
+    setStatus('submitting')
     // Placeholder: in production this would call a server action
-    setStatus('success')
-    setEmail('')
+    setTimeout(() => {
+      setStatus('success')
+      setEmail('')
+    }, 600)
   }
 
   if (status === 'success') {
@@ -46,10 +49,16 @@ export function NewsletterSignup() {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="deine@email.de"
-        className="w-full max-w-xs rounded-full border border-oe-aurora-violet/30 bg-oe-pure-light/5 px-5 py-3 text-sm text-oe-pure-light placeholder:text-oe-pure-light/30 focus:border-oe-aurora-violet/60 focus:outline-none focus:ring-1 focus:ring-oe-aurora-violet/40 transition-colors"
+        disabled={status === 'submitting'}
+        className="w-full max-w-sm rounded-full border border-oe-aurora-violet/30 bg-oe-pure-light/5 px-5 py-3 text-sm text-oe-pure-light placeholder:text-oe-pure-light/30 focus:border-oe-aurora-violet/60 focus:outline-none focus:ring-1 focus:ring-oe-aurora-violet/40 transition-colors disabled:opacity-50"
       />
-      <Button variant="primary" size="md" type="submit">
-        Eintauchen
+      <Button
+        variant="primary"
+        size="md"
+        type="submit"
+        disabled={status === 'submitting'}
+      >
+        {status === 'submitting' ? 'Wird gesendet...' : 'Eintauchen'}
       </Button>
     </form>
   )

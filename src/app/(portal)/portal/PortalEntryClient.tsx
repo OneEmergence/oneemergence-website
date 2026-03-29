@@ -95,6 +95,17 @@ export function PortalEntryClient() {
           ))}
         </motion.div>
 
+        {/* Privacy note */}
+        <motion.p
+          className="max-w-xs text-center text-[11px] leading-relaxed text-oe-pure-light/20"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.0, duration: 0.6 }}
+        >
+          Deine Daten gehören dir. Wir nutzen OAuth nur zur Identifikation —
+          keine Daten werden an Dritte weitergegeben.
+        </motion.p>
+
         {/* Subtle return link */}
         <motion.a
           href="/"

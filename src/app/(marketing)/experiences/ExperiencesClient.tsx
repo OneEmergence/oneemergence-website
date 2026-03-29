@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { motion, type Variants } from 'framer-motion'
-import { Clock, Eye, Compass } from 'lucide-react'
+import { Clock, Eye, Compass, Sparkles } from 'lucide-react'
 import { ScrollReveal } from '@/components/motion/ScrollReveal'
 import { StarField } from '@/components/scene/StarField'
 import { NewsletterSignup } from '@/components/sections/NewsletterSignup'
@@ -54,7 +54,7 @@ const experiences: Experience[] = [
       'Erforsche das Prinzip der Emergenz — wie aus einfachen Verbindungen komplexe Schönheit entsteht. Von Ameisen bis zu Galaxien, von Neuronen bis zu Gemeinschaften.',
     duration: '12 Min.',
     accentColor: 'oe-solar-gold',
-    icon: Eye,
+    icon: Sparkles,
     available: false,
   },
 ]

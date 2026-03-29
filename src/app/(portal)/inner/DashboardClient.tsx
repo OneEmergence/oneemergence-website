@@ -29,12 +29,12 @@ const quickActions = [
     disabled: false,
   },
   {
-    href: '#',
+    href: '/inner/guide',
     label: 'Guide fragen',
     description: 'Dein KI-Begleiter für innere Arbeit',
     icon: Sparkles,
     color: 'oe-aurora-violet',
-    disabled: true,
+    disabled: false,
   },
 ] as const
 

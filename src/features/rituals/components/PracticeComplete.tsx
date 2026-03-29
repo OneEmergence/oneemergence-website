@@ -71,7 +71,7 @@ export function PracticeComplete({
       </motion.div>
 
       <div>
-        <h3 className="font-[family-name:var(--font-cormorant)] text-2xl font-semibold text-oe-pure-light">
+        <h3 className="font-serif text-2xl font-semibold text-oe-pure-light">
           Praxis abgeschlossen
         </h3>
         <p className="mt-2 text-sm text-oe-pure-light/60">

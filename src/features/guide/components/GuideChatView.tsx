@@ -71,7 +71,13 @@ export function GuideChatView({
         const data = await res.json()
 
         if (!res.ok) {
-          setError(data.error ?? 'Ein Fehler ist aufgetreten.')
+          if (res.status === 503 && data.configurationRequired) {
+            setError(
+              'Der Guide ist noch nicht bereit — die nötigen Dienste (API-Schlüssel oder Datenbank) sind noch nicht konfiguriert. Bitte versuche es später erneut.'
+            )
+          } else {
+            setError(data.error ?? 'Ein Fehler ist aufgetreten.')
+          }
           return
         }
 

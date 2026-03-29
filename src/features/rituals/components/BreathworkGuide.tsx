@@ -204,7 +204,7 @@ export function BreathworkGuide() {
                 initial={{ opacity: 0, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
                 className={cn(
-                  'font-[family-name:var(--font-cormorant)] text-2xl font-semibold',
+                  'font-serif text-2xl font-semibold',
                   PHASE_COLORS[phaseAction]
                 )}
                 aria-live="assertive"

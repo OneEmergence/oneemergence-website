@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function MeditationPage() {
   return (
     <div className="mx-auto max-w-2xl">
-      <h1 className="text-center font-[family-name:var(--font-cormorant)] text-3xl font-semibold text-oe-pure-light md:text-4xl">
+      <h1 className="text-center font-serif text-3xl font-semibold text-oe-pure-light md:text-4xl">
         Meditation
       </h1>
       <p className="mt-3 text-center text-sm text-oe-pure-light/50">
