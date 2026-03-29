@@ -349,4 +349,4 @@ The current codebase (Phase 1 complete) needs these structural changes to suppor
 
 ---
 
-*This is the canonical technical architecture for OneEmergence. For product vision, see [VISION.md](./VISION.md). For agent instructions, see [CLAUDE.md](./CLAUDE.md).*
+*This is the canonical technical architecture for OneEmergence. For product vision, see [VISION.md](./VISION.md). For agent instructions, see [CLAUDE.md](./CLAUDE.md). For the tech stack evaluation and Supabase migration recommendation, see [TECH_STACK_RECOMMENDATION.md](./TECH_STACK_RECOMMENDATION.md).*
