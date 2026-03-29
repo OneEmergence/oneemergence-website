@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { AmbientOrb } from "@/components/ui/ambient-orb";
+import { AmbientOrb } from "@/components/motion/ambient-orb";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 
 export default function Home() {

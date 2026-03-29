@@ -5,7 +5,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { AudioProvider } from "@/components/layout/AudioProvider";
 import { SmoothScroll } from "@/components/layout/SmoothScroll";
-import { CustomCursor } from "@/components/ui/CustomCursor";
+import { CustomCursor } from "@/components/motion/CustomCursor";
 
 const inter = Inter({
   variable: "--font-inter",

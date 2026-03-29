@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { motion, type Variants } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ScrollReveal } from "@/components/ui/ScrollReveal";
+import { ScrollReveal } from "@/components/motion/ScrollReveal";
 
 const principles = [
   {

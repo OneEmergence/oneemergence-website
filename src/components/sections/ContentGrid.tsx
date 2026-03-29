@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { motion, type Variants } from "framer-motion";
-import { ParallaxImage } from "@/components/ui/ParallaxImage";
+import { ParallaxImage } from "@/components/motion/ParallaxImage";
 import type { Post } from "@/lib/content";
 
 type PostPreview = Omit<Post, "content">;
