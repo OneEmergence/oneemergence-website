@@ -11,11 +11,11 @@ import { MagneticButton } from "@/components/ui/MagneticButton";
 
 const navLinks = [
   { href: "/manifesto", label: "Manifesto" },
-  { href: "/about", label: "Über uns" },
-  { href: "/content", label: "Inhalte" },
+  { href: "/experiences", label: "Erfahrungen" },
+  { href: "/library", label: "Bibliothek" },
   { href: "/events", label: "Events" },
   { href: "/community", label: "Community" },
-  { href: "/contact", label: "Kontakt" },
+  { href: "/about", label: "Über uns" },
 ];
 
 export function Navbar() {

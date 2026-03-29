@@ -13,11 +13,11 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = await getPostBySlug(slug);
   if (!post) return {};
   return {
-    title: `${post.title} | OneEmergence`,
-    description: post.excerpt,
+    title: `${post.meta.title} | OneEmergence`,
+    description: post.meta.excerpt,
   };
 }
 
@@ -27,7 +27,7 @@ export default async function JournalPost({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = await getPostBySlug(slug);
   if (!post) notFound();
 
   const { prev, next } = getAdjacentPosts(slug);
@@ -35,11 +35,11 @@ export default async function JournalPost({
   return (
     <div className="min-h-screen bg-oe-deep-space">
       {/* Hero Cover */}
-      {post.cover && (
+      {post.meta.cover && (
         <div className="relative h-[220px] sm:h-[300px] md:h-[400px] w-full">
           <Image
-            src={post.cover}
-            alt={post.title}
+            src={post.meta.cover}
+            alt={post.meta.title}
             fill
             priority
             className="object-cover"
@@ -49,7 +49,7 @@ export default async function JournalPost({
         </div>
       )}
 
-      <div className={`mx-auto max-w-3xl px-4 sm:px-6 ${post.cover ? "relative -mt-12 sm:-mt-16 md:-mt-20 pb-24" : "pt-24 sm:pt-28 pb-24"}`}>
+      <div className={`mx-auto max-w-3xl px-4 sm:px-6 ${post.meta.cover ? "relative -mt-12 sm:-mt-16 md:-mt-20 pb-24" : "pt-24 sm:pt-28 pb-24"}`}>
         <Link
           href="/content"
           className="mb-10 inline-flex items-center gap-2 text-sm text-oe-pure-light/40 transition-colors hover:text-oe-pure-light/70"
@@ -62,12 +62,12 @@ export default async function JournalPost({
         </p>
 
         <h1 className="font-serif text-4xl leading-tight text-oe-pure-light md:text-5xl">
-          {post.title}
+          {post.meta.title}
         </h1>
 
         <div className="mt-5 flex flex-wrap items-center gap-4 text-sm text-oe-pure-light/40">
           <time>
-            {new Date(post.date).toLocaleDateString("de-DE", {
+            {new Date(post.meta.date).toLocaleDateString("de-DE", {
               day: "numeric",
               month: "long",
               year: "numeric",
@@ -75,11 +75,11 @@ export default async function JournalPost({
           </time>
           <span>·</span>
           <span>{post.readingTime} Min. Lesezeit</span>
-          {post.tags && post.tags.length > 0 && (
+          {post.meta.tags && post.meta.tags.length > 0 && (
             <>
               <span>·</span>
               <div className="flex gap-2">
-                {post.tags.map((tag) => (
+                {post.meta.tags.map((tag) => (
                   <span
                     key={tag}
                     className="rounded-full bg-oe-aurora-violet/10 px-2.5 py-0.5 text-xs text-oe-aurora-violet/70"
@@ -95,7 +95,7 @@ export default async function JournalPost({
         {/* Divider */}
         <div className="my-10 h-px bg-gradient-to-r from-oe-aurora-violet/30 via-oe-spirit-cyan/20 to-transparent" />
 
-        {/* Prose */}
+        {/* MDX Content */}
         <article
           className="prose prose-invert prose-base sm:prose-lg max-w-none
             prose-headings:font-serif prose-headings:text-oe-pure-light
@@ -107,8 +107,9 @@ export default async function JournalPost({
             prose-hr:border-oe-pure-light/10
             prose-ol:text-oe-pure-light/70 prose-ul:text-oe-pure-light/70
             prose-li:marker:text-oe-aurora-violet"
-          dangerouslySetInnerHTML={{ __html: post.content }}
-        />
+        >
+          {post.content}
+        </article>
 
         {/* Prev/Next Navigation */}
         {(prev || next) && (

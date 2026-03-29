@@ -8,8 +8,8 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function ImprintPage() {
-  const page = getPage("imprint");
+export default async function ImprintPage() {
+  const page = await getPage("imprint");
   if (!page) notFound();
 
   return (
@@ -20,8 +20,9 @@ export default function ImprintPage() {
         </h1>
         <div
           className="prose prose-invert prose-headings:font-serif prose-headings:text-oe-spirit-cyan prose-p:text-oe-pure-light/80 prose-p:leading-relaxed prose-a:text-oe-aurora-violet prose-strong:text-oe-pure-light max-w-none"
-          dangerouslySetInnerHTML={{ __html: page.content }}
-        />
+        >
+          {page.content}
+        </div>
       </div>
     </div>
   );

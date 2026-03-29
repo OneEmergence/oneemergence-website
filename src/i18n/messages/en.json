@@ -1,0 +1,41 @@
+{
+  "nav": {
+    "home": "Home",
+    "manifesto": "Manifesto",
+    "about": "About",
+    "content": "Content",
+    "library": "Library",
+    "events": "Events",
+    "community": "Community",
+    "contact": "Contact"
+  },
+  "common": {
+    "readMore": "Read more",
+    "back": "Back",
+    "backToOverview": "Back to overview",
+    "readingTime": "{minutes} min read",
+    "previous": "Previous",
+    "next": "Next",
+    "joinCommunity": "Join community",
+    "noContent": "No content available yet."
+  },
+  "content": {
+    "teaching": "Teaching",
+    "reflection": "Reflection",
+    "practice": "Practice",
+    "transmission": "Transmission",
+    "visualEssay": "Visual Essay",
+    "soundJourney": "Sound Journey",
+    "journal": "Journal"
+  },
+  "intensity": {
+    "still": "Still",
+    "balanced": "Balanced",
+    "immersive": "Immersive"
+  },
+  "footer": {
+    "tagline": "Unity, Freedom, Love",
+    "imprint": "Imprint",
+    "privacy": "Privacy"
+  }
+}

@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Cormorant } from "next/font/google";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -65,24 +67,29 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
-    <html lang="de" className={`${inter.variable} ${cormorant.variable}`}>
+    <html lang={locale} className={`${inter.variable} ${cormorant.variable}`}>
       <body className="font-sans bg-oe-deep-space cursor-none">
-        <SmoothScroll>
-          <AudioProvider>
-            <CustomCursor />
-            <Navbar />
-            <main className="min-h-screen">
-              {children}
-            </main>
-            <Footer />
-          </AudioProvider>
-        </SmoothScroll>
+        <NextIntlClientProvider messages={messages}>
+          <SmoothScroll>
+            <AudioProvider>
+              <CustomCursor />
+              <Navbar />
+              <main className="min-h-screen">
+                {children}
+              </main>
+              <Footer />
+            </AudioProvider>
+          </SmoothScroll>
+        </NextIntlClientProvider>
       </body>
     </html>
   );
