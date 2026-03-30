@@ -2,12 +2,18 @@
 
 > Build the authenticated inner space: auth system, database, portal entry, dashboard, journal, and ritual room.
 
-## Status: ✅ Foundation Complete (2026-03-29)
+## ⚠️ SUPERSEDED — Stack migrated to Supabase (2026-03-30)
+>
+> The Neon + Auth.js foundation described below has been **replaced** by Supabase Auth + Supabase Postgres.
+> See `STACK_DECISION.md` and `MIGRATION_PLAN.md` for the canonical architecture.
+> The code migration was applied in commit `feat(auth): migrate from Neon/Auth.js to Supabase backend platform`.
 
-### What was built
-- **Database**: Drizzle ORM + Neon Postgres schema (users, accounts, sessions, verification_tokens, journal_entries, practices, user_preferences)
-- **Auth**: Auth.js v5 (next-auth@beta) with Google + GitHub OAuth, Drizzle adapter, database sessions
-- **Middleware**: Auth middleware protecting all `/inner/*` routes → redirects to `/portal`
+## Status: ✅ Foundation Complete (2026-03-29) → 🔄 Migrated to Supabase (2026-03-30)
+
+### What was built (original, now migrated)
+- **Database**: Drizzle ORM + ~~Neon Postgres~~ → Supabase Postgres (postgres-js driver)
+- **Auth**: ~~Auth.js v5 (next-auth@beta)~~ → Supabase Auth via @supabase/ssr
+- **Middleware**: ~~Auth.js middleware~~ → Supabase session refresh middleware
 - **Portal Entry**: Threshold experience page (`/portal`) — animated, dark-space portal with OAuth sign-in
 - **Inner Layout**: Sidebar navigation with user avatar, active route highlighting, mobile drawer
 - **Dashboard**: Inner State Dashboard (`/inner`) with time-aware greeting, daily impulse, quick actions
