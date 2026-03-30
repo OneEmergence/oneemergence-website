@@ -8,6 +8,7 @@ import { Volume2, VolumeX } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAudio } from "@/components/layout/AudioProvider";
 import { MagneticButton } from "@/components/ui/MagneticButton";
+import { IntensityToggle } from "@/components/ui/IntensityToggle";
 
 const navLinks = [
   { href: "/manifesto", label: "Manifesto" },
@@ -88,8 +89,9 @@ export function Navbar() {
           })}
         </ul>
 
-        {/* Audio toggle + CTA (desktop) */}
+        {/* Intensity + Audio toggle + CTA (desktop) */}
         <div className="hidden items-center gap-3 md:flex">
+          <IntensityToggle />
           <motion.button
             onClick={toggle}
             aria-label={isPlaying ? "Ambient-Ton ausschalten" : "Ambient-Ton einschalten"}
@@ -180,10 +182,14 @@ export function Navbar() {
                   </Link>
                 );
               })}
+              <div className="mt-4 flex items-center justify-between">
+                <span className="text-xs text-oe-pure-light/50">Intensität</span>
+                <IntensityToggle />
+              </div>
               <Link
                 href="/community"
                 onClick={closeMenu}
-                className="mt-4 rounded-full bg-oe-aurora-violet px-5 py-3 text-sm font-medium text-white text-center transition-opacity duration-200 hover:opacity-85"
+                className="mt-3 rounded-full bg-oe-aurora-violet px-5 py-3 text-sm font-medium text-white text-center transition-opacity duration-200 hover:opacity-85"
               >
                 Mitmachen
               </Link>

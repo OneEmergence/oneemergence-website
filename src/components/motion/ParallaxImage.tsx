@@ -1,7 +1,9 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useMotionLevel } from "@/hooks/useMotionLevel";
+import { useIntensityMode } from "@/hooks/useIntensityMode";
 
 interface ParallaxImageProps {
   children: React.ReactNode;
@@ -20,13 +22,16 @@ interface ParallaxImageProps {
  */
 export function ParallaxImage({ children, offset = 20, className = "" }: ParallaxImageProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const prefersReduced = useReducedMotion();
+  const allowFlow = useMotionLevel('flow');
+  const { effectiveMode } = useIntensityMode();
 
   // Check for coarse pointer (touch device) at mount time — safe on client
   const isCoarsePointer =
     typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
 
-  const effectiveOffset = prefersReduced || isCoarsePointer ? 0 : offset;
+  // Still: no parallax; Balanced: subtle; Immersive: full depth
+  const depthScale = effectiveMode === 'immersive' ? 1 : 0.5;
+  const effectiveOffset = !allowFlow || isCoarsePointer ? 0 : offset * depthScale;
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -36,7 +41,7 @@ export function ParallaxImage({ children, offset = 20, className = "" }: Paralla
   const y = useTransform(scrollYProgress, [0, 1], [-effectiveOffset, effectiveOffset]);
 
   return (
-    <div ref={ref} className={`relative overflow-hidden ${className}`}>
+    <div ref={ref} className={`relative overflow-hidden ${className}`} data-motion-level="flow">
       <motion.div
         style={{
           y,

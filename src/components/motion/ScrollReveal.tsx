@@ -1,8 +1,10 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useInView, useReducedMotion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { useMotionLevel } from "@/hooks/useMotionLevel";
+import { useIntensityMode } from "@/hooks/useIntensityMode";
 
 type HeadingTag = "h1" | "h2" | "h3" | "h4" | "p" | "span";
 
@@ -33,11 +35,13 @@ export function ScrollReveal({
 }: ScrollRevealProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { once: true, margin: "-10% 0px" });
-  const prefersReduced = useReducedMotion();
+  const allowFlow = useMotionLevel('flow');
+  const { effectiveMode } = useIntensityMode();
 
   const words = text.split(" ");
 
-  if (prefersReduced) {
+  // Still mode: render immediately, no animation
+  if (!allowFlow) {
     return (
       <Tag className={cn(className)}>
         {text}
@@ -45,8 +49,11 @@ export function ScrollReveal({
     );
   }
 
+  // Balanced: subtle fade-in; Immersive: full slide-up reveal
+  const isImmersive = effectiveMode === 'immersive';
+
   return (
-    <div ref={containerRef}>
+    <div ref={containerRef} data-motion-level="flow">
       <Tag className={cn(className)} aria-label={text}>
         {words.map((word, i) => (
           <span
@@ -55,12 +62,12 @@ export function ScrollReveal({
           >
             <motion.span
               className="inline-block"
-              initial={{ y: "110%", opacity: 0 }}
-              animate={isInView ? { y: 0, opacity: 1 } : { y: "110%", opacity: 0 }}
+              initial={{ y: isImmersive ? "110%" : "40%", opacity: 0 }}
+              animate={isInView ? { y: 0, opacity: 1 } : { y: isImmersive ? "110%" : "40%", opacity: 0 }}
               transition={{
-                duration: 0.6,
+                duration: isImmersive ? 0.6 : 0.4,
                 ease: [0.22, 1, 0.36, 1],
-                delay: delay + i * stagger,
+                delay: delay + i * (isImmersive ? stagger : stagger * 0.5),
               }}
             >
               {word}

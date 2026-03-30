@@ -8,6 +8,7 @@ import { Footer } from "@/components/layout/Footer";
 import { AudioProvider } from "@/components/layout/AudioProvider";
 import { SmoothScroll } from "@/components/layout/SmoothScroll";
 import { CustomCursor } from "@/components/motion/CustomCursor";
+import { IntensityProvider } from "@/components/providers/IntensityProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -79,6 +80,7 @@ export default async function RootLayout({
     <html lang={locale} className={`${inter.variable} ${cormorant.variable}`}>
       <body className="font-sans bg-oe-deep-space cursor-none">
         <NextIntlClientProvider messages={messages}>
+          <IntensityProvider>
           <SmoothScroll>
             <AudioProvider>
               <CustomCursor />
@@ -89,6 +91,7 @@ export default async function RootLayout({
               <Footer />
             </AudioProvider>
           </SmoothScroll>
+          </IntensityProvider>
         </NextIntlClientProvider>
       </body>
     </html>
