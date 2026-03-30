@@ -4,7 +4,7 @@
 
 ---
 
-## Status: Phase 1 Complete (2026-03-29)
+## Status: Phase 2 In Progress (last updated 2026-03-30)
 
 ### Completed
 - [x] **Sentry SDK** installed and configured (`@sentry/nextjs` v10)
@@ -42,10 +42,16 @@
   - Concurrency grouping to cancel stale runs
 - [x] **npm scripts** added: `test`, `test:smoke`, `test:a11y`, `test:content`, `test:perf`
 
+### Phase 2 Completed (2026-03-30)
+- [x] **Expanded smoke coverage** — `/library` and `/experiences` (Agent 4 routes) added to `tests/smoke/routes.spec.ts` (now 14 routes)
+- [x] **Expanded a11y coverage** — `/library` and `/experiences` added to `tests/a11y/accessibility.spec.ts` (now 12 routes)
+- [x] **Portal redirect smoke tests** — `tests/smoke/portal-redirects.spec.ts` created; verifies unauthenticated `/inner/*` redirects to `/portal`; gracefully skipped in CI when `NEXT_PUBLIC_SUPABASE_URL` is absent (commit 7d825c2)
+
 ### Deferred / Blocked
 - [ ] **Custom Sentry breadcrumbs** (Task 1.6) — Deferred until intensity mode store (Agent 2) and content system (Agent 3) are stable. Breadcrumbs for route changes, intensity mode changes, and content type views should be added once those features are committed.
 - [ ] **Bundle size analysis** — Deferred. Requires stable build output (currently blocked by Agent 2's uncommitted TypeScript changes).
 - [ ] **Performance test thresholds tightening** — Current thresholds are relaxed (5s LCP in CI). Tighten to 2.5s once WebGL progressive enhancement and lazy-loading patterns are established by Agent 4.
+- [ ] **Portal redirect tests in CI** — `tests/smoke/portal-redirects.spec.ts` exists but skips in CI; will activate once Supabase credentials are added as CI secrets.
 - [ ] **Visual regression testing** — Out of scope per plan. Defer until design stabilizes.
 - [ ] **Responsive smoke tests** (Task 3.3) — Touch target sizing and overlap detection deferred; basic mobile viewport tested in navigation spec.
 
@@ -110,8 +116,8 @@ next.config.ts                       # Modified: Sentry plugin ✅
 
 ## Next Steps (for future runs)
 
-1. Add custom Sentry breadcrumbs once intensity mode and content system are stable
-2. Add bundle size analysis once build passes cleanly
-3. Tighten performance thresholds as optimization work progresses
-4. Add tests for new routes as other agents create them
-5. Add visual regression testing once design system is stable
+1. **CI Supabase secrets** — Add `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` as GitHub Actions secrets to activate portal redirect tests in CI
+2. **Tighten performance thresholds** — LCP < 2.5s / CLS < 0.1 once WebGL lazy-loading (Agent 4) is in place
+3. **Bundle size analysis** — Once Agent 2 design system is committed and build is clean
+4. **Custom Sentry breadcrumbs** — Once intensity mode store (Agent 2) is stable
+5. **Visual regression testing** — Once design system is stable
