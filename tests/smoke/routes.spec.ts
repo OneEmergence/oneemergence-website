@@ -6,6 +6,8 @@ const publicRoutes = [
   { path: "/manifesto", name: "Manifesto" },
   { path: "/about", name: "About" },
   { path: "/content", name: "Content" },
+  { path: "/library", name: "Library" },
+  { path: "/experiences", name: "Experiences" },
   { path: "/community", name: "Community" },
   { path: "/events", name: "Events" },
   { path: "/contact", name: "Contact" },
