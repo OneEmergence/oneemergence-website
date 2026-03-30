@@ -4,7 +4,7 @@
 
 ---
 
-## Status: Phase 2 In Progress (last updated 2026-03-30)
+## Status: Residual Pass Complete (last updated 2026-03-30)
 
 ### Completed
 - [x] **Sentry SDK** installed and configured (`@sentry/nextjs` v10)
@@ -47,13 +47,24 @@
 - [x] **Expanded a11y coverage** — `/library` and `/experiences` added to `tests/a11y/accessibility.spec.ts` (now 12 routes)
 - [x] **Portal redirect smoke tests** — `tests/smoke/portal-redirects.spec.ts` created; verifies unauthenticated `/inner/*` redirects to `/portal`; gracefully skipped in CI when `NEXT_PUBLIC_SUPABASE_URL` is absent (commit 7d825c2)
 
-### Deferred / Blocked
-- [ ] **Custom Sentry breadcrumbs** (Task 1.6) — Deferred until intensity mode store (Agent 2) and content system (Agent 3) are stable. Breadcrumbs for route changes, intensity mode changes, and content type views should be added once those features are committed.
-- [ ] **Bundle size analysis** — Deferred. Requires stable build output (currently blocked by Agent 2's uncommitted TypeScript changes).
+### Residual Pass Completed (2026-03-30)
+- [x] **Custom Sentry breadcrumbs** — `src/lib/analytics/sentry-breadcrumbs.ts` created with three exports:
+  - `useSentryIntensityBreadcrumbs()` — hook tracking intensity mode transitions in Sentry
+  - `useSentryNavigationBreadcrumbs()` — hook tracking client-side route changes in Sentry
+  - `addContentViewBreadcrumb(contentType, slug)` — utility for sacred content renderers to record content views
+  - Both hooks wired into `IntensityProvider` so they activate from the root layout
+- [x] **Bundle size visibility** — `@next/bundle-analyzer` installed and wired into `next.config.ts` behind `ANALYZE=true` env var; `build:analyze` npm script added
+- [x] **Responsive mobile smoke hardening** — `tests/smoke/responsive.spec.ts` created with:
+  - Horizontal overflow checks on 7 key public routes at 390×844 viewport (iPhone 14)
+  - Touch target size audit on homepage interactive elements (soft warning for transition period)
+  - Navbar link height assertion (`>= 44px`) on mobile
+  - `test:mobile` npm script added
+
+### Deferred / Still Open
 - [ ] **Performance test thresholds tightening** — Current thresholds are relaxed (5s LCP in CI). Tighten to 2.5s once WebGL progressive enhancement and lazy-loading patterns are established by Agent 4.
 - [ ] **Portal redirect tests in CI** — `tests/smoke/portal-redirects.spec.ts` exists but skips in CI; will activate once Supabase credentials are added as CI secrets.
 - [ ] **Visual regression testing** — Out of scope per plan. Defer until design stabilizes.
-- [ ] **Responsive smoke tests** (Task 3.3) — Touch target sizing and overlap detection deferred; basic mobile viewport tested in navigation spec.
+- [ ] **Touch target hard enforcement** — Responsive spec currently warns (not fails) on touch target violations; convert to hard assertion once design system finalizes minimum interactive element sizes.
 
 ### Decisions & Deviations
 1. **Sentry wrapping is conditional** — `withSentryConfig()` only applies when `NEXT_PUBLIC_SENTRY_DSN` is set. This prevents build interference in dev and avoids the Turbopack compatibility issue observed with unconditional wrapping.
@@ -106,18 +117,21 @@ playwright.config.ts                 # New: Playwright configuration ✅
 tests/utils.ts                       # New: Test utilities ✅
 tests/smoke/routes.spec.ts           # New: Route smoke tests ✅
 tests/smoke/navigation.spec.ts       # New: Navigation tests ✅
+tests/smoke/responsive.spec.ts       # New: Mobile responsive + touch target tests ✅
 tests/a11y/accessibility.spec.ts     # New: Accessibility tests ✅
 tests/content/content-validation.spec.ts # New: Content validation ✅
 tests/performance/web-vitals.spec.ts # New: LCP/CLS tests ✅
 .github/workflows/ci.yml            # New: CI pipeline ✅
+src/lib/analytics/sentry-breadcrumbs.ts # New: Sentry breadcrumb hooks ✅
 package.json                         # Modified: deps + scripts ✅
-next.config.ts                       # Modified: Sentry plugin ✅
+next.config.ts                       # Modified: Sentry plugin + bundle analyzer ✅
 ```
 
 ## Next Steps (for future runs)
 
 1. **CI Supabase secrets** — Add `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` as GitHub Actions secrets to activate portal redirect tests in CI
 2. **Tighten performance thresholds** — LCP < 2.5s / CLS < 0.1 once WebGL lazy-loading (Agent 4) is in place
-3. **Bundle size analysis** — Once Agent 2 design system is committed and build is clean
-4. **Custom Sentry breadcrumbs** — Once intensity mode store (Agent 2) is stable
+3. **Touch target hard enforcement** — Convert responsive spec's soft warning to `expect(...).toHaveLength(0)` once design system finalizes minimum interactive element sizing
+4. **Run bundle analysis** — `npm run build:analyze` after next major feature landing to get a baseline and detect regressions
 5. **Visual regression testing** — Once design system is stable
+6. **Wire `addContentViewBreadcrumb`** — Call from sacred content renderers (Teaching, Reflection, Practice, etc.) once Agent 3 content renderers are finalized
