@@ -23,11 +23,14 @@
 - **IntensityToggle** (`src/components/ui/IntensityToggle.tsx`) — three-state pill (Still/Balanced/Immersiv) with animated indicator, added to Navbar desktop + mobile menu
 - **Build + lint pass cleanly** — all 30 routes render without errors
 
+### ✅ Completed — Phase 3 (Residual Pass) — 2026-03-30
+- **Typography audit & fix** — Added `fontFamily` (sans→Inter, serif→Cormorant) to `tailwind.config.ts`; registered `--font-family-sans` / `--font-family-serif` tokens in `globals.css` `@theme` block; fixed body `font-family` from hardcoded Arial to `var(--font-inter)` stack
+- **CustomCursor intensity gating** (`src/components/motion/CustomCursor.tsx`) — Reads `useIntensityMode()`; still mode returns `null` (native cursor restored); immersive mode adds glow on hover (ring + dot box-shadow); CSS `cursor: none` rule now scoped to `html:not([data-intensity="still"])`
+- **BreathingOrb** (`src/components/motion/BreathingOrb.tsx`) — Standalone configurable single-orb: props for `color` (violet/cyan/gold), `size`, `breathRate`, `glowIntensity`; motion level sacred; still=static, balanced=breathing, immersive=breathing+movement
+- **ParallaxLayer** (`src/components/motion/ParallaxLayer.tsx`) — Generic scroll-driven parallax wrapper: props for `depth` (0–1), `direction` (up/down), `range`; motion level flow; intensity-scaled displacement
+
 ### ⏳ Remaining
-- **shadcn/ui initialization** — not yet started; can proceed independently
-- **New motion primitives** (BreathingOrb, ParallaxLayer) — unblocked, can be built in `components/motion/`
-- **Typography audit** — verify Cormorant/Inter loading, define typographic scale tokens
-- **CustomCursor intensity gating** — could gate cursor effects on intensity mode (currently always active)
+- **shadcn/ui initialization** — deferred; Tailwind v4 compatibility needs careful handling in a dedicated pass
 
 ---
 

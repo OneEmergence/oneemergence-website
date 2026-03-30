@@ -9,6 +9,9 @@
   --color-oe-solar-gold: #F6C453;
   --color-oe-spirit-cyan: #54E2E9;
   --color-oe-pure-light: #F7F8FB;
+
+  --font-family-sans: var(--font-inter), "Inter", system-ui, sans-serif;
+  --font-family-serif: var(--font-cormorant), "Cormorant", Georgia, serif;
 }
 
 :root {
@@ -26,7 +29,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), Inter, system-ui, sans-serif;
   @apply antialiased selection:bg-oe-aurora-violet selection:text-white;
 }
 
@@ -102,9 +105,9 @@ html[data-intensity="immersive"] .glow-interactive:hover {
   }
 }
 
-/* Custom cursor — hide default on desktop */
+/* Custom cursor — hide default on desktop (only in balanced/immersive) */
 @media (pointer: fine) {
-  * {
+  html:not([data-intensity="still"]) * {
     cursor: none !important;
   }
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
+import { useIntensityMode } from "@/hooks/useIntensityMode";
 
 const FINE_POINTER_QUERY = "(pointer: fine)";
 
@@ -27,6 +28,9 @@ export function CustomCursor() {
     getFinePointerSnapshot,
     getFinePointerServerSnapshot,
   );
+  const { effectiveMode } = useIntensityMode();
+  const isStill = effectiveMode === "still";
+  const isImmersive = effectiveMode === "immersive";
 
   const rawX = useMotionValue(-100);
   const rawY = useMotionValue(-100);
@@ -67,9 +71,12 @@ export function CustomCursor() {
 
   if (!isDesktop) return null;
 
+  // Still mode: no custom cursor at all — restore native cursor via CSS
+  if (isStill) return null;
+
   return (
     <>
-      {/* Trail ring */}
+      {/* Trail ring — hidden in still mode, enhanced in immersive */}
       <motion.div
         className="pointer-events-none fixed top-0 left-0 z-[9998] rounded-full"
         style={{
@@ -87,6 +94,9 @@ export function CustomCursor() {
             ? "rgba(255, 255, 255, 0.8)"
             : "rgba(255, 255, 255, 0.4)",
           scale: hovered ? 1.5 : 1,
+          boxShadow: isImmersive && hovered
+            ? "0 0 20px rgba(124, 92, 255, 0.4)"
+            : "none",
         }}
         transition={{ duration: 0.2, ease: "easeOut" }}
         initial={{
@@ -111,6 +121,9 @@ export function CustomCursor() {
           width: hovered ? 6 : 8,
           height: hovered ? 6 : 8,
           opacity: visible ? 1 : 0,
+          boxShadow: isImmersive
+            ? "0 0 12px rgba(168, 85, 247, 0.6)"
+            : "none",
         }}
         transition={{ duration: 0.15 }}
       />

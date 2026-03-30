@@ -8,6 +8,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["var(--font-inter)", "Inter", "system-ui", "sans-serif"],
+        serif: ["var(--font-cormorant)", "Cormorant", "Georgia", "serif"],
+      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
