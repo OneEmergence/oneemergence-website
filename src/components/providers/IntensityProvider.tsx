@@ -3,6 +3,10 @@
 import { useEffect } from 'react'
 import { useIntensityStore } from '@/stores/intensity'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
+import {
+  useSentryIntensityBreadcrumbs,
+  useSentryNavigationBreadcrumbs,
+} from '@/lib/analytics/sentry-breadcrumbs'
 
 /**
  * IntensityProvider — Client island that:
@@ -18,6 +22,10 @@ export function IntensityProvider({ children }: { children: React.ReactNode }) {
     (s: { setPrefersReducedMotion: (prefers: boolean) => void }) => s.setPrefersReducedMotion
   )
   const effectiveMode = useIntensityStore((s: { effectiveMode: string }) => s.effectiveMode)
+
+  // Sentry observability: breadcrumbs for intensity changes and route navigations
+  useSentryIntensityBreadcrumbs()
+  useSentryNavigationBreadcrumbs()
 
   // Sync reduced-motion preference into the store
   useEffect(() => {
