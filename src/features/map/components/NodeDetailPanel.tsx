@@ -1,7 +1,7 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Trash2, Link2, Calendar } from 'lucide-react'
+import { X, Trash2, Link2, Calendar, Pencil } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { NODE_TYPE_COLORS, NODE_TYPE_LABELS } from '@/lib/schemas/map'
 import type { MapNode } from '@/lib/schemas/map'
@@ -11,6 +11,7 @@ interface NodeDetailPanelProps {
   connectedNodes: MapNode[]
   onClose: () => void
   onDelete: (nodeId: string) => void
+  onEdit: (nodeId: string) => void
   onNavigateToSource: (sourceId: string, sourceType: string) => void
 }
 
@@ -19,6 +20,7 @@ export function NodeDetailPanel({
   connectedNodes,
   onClose,
   onDelete,
+  onEdit,
   onNavigateToSource,
 }: NodeDetailPanelProps) {
   if (!node) return null
@@ -47,13 +49,22 @@ export function NodeDetailPanel({
               {typeLabel}
             </span>
           </div>
-          <button
-            onClick={onClose}
-            className="rounded-full p-1 text-oe-pure-light/40 transition-colors hover:bg-oe-pure-light/5 hover:text-oe-pure-light/70"
-            aria-label="Panel schließen"
-          >
-            <X className="h-4 w-4" />
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => onEdit(node.id)}
+              className="rounded-full p-1 text-oe-pure-light/40 transition-colors hover:bg-oe-pure-light/5 hover:text-oe-pure-light/70"
+              aria-label="Knoten bearbeiten"
+            >
+              <Pencil className="h-4 w-4" />
+            </button>
+            <button
+              onClick={onClose}
+              className="rounded-full p-1 text-oe-pure-light/40 transition-colors hover:bg-oe-pure-light/5 hover:text-oe-pure-light/70"
+              aria-label="Panel schließen"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
         </div>
 
         {/* Content */}

@@ -6,11 +6,14 @@ import { ForceGraph } from './ForceGraph'
 import { NodeDetailPanel } from './NodeDetailPanel'
 import { MapToolbar } from './MapToolbar'
 import { CreateNodeDialog } from './CreateNodeDialog'
+import { EditNodeDialog } from './EditNodeDialog'
+import { CreateEdgeDialog } from './CreateEdgeDialog'
 import { toGraphNode, toGraphEdge } from '../types'
 import {
   createNode,
   createEdge,
   deleteNode,
+  updateNode,
   updateNodePosition,
 } from '../actions'
 import type { MapNode, MapEdge, MapData } from '@/lib/schemas/map'
@@ -34,6 +37,8 @@ export function ConsciousnessMap({ initialData }: ConsciousnessMapProps) {
   const [connectionMode, setConnectionMode] = useState(false)
   const [connectionSource, setConnectionSource] = useState<string | null>(null)
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
+  const [editNodeId, setEditNodeId] = useState<string | null>(null)
+  const [pendingEdge, setPendingEdge] = useState<{ sourceId: string; targetId: string } | null>(null)
   const [filterOpen, setFilterOpen] = useState(false)
   const [visibleTypes, setVisibleTypes] = useState<Set<MapNodeType>>(
     new Set(['theme', 'insight', 'journal-entry', 'practice', 'archetype'])
@@ -43,6 +48,11 @@ export function ConsciousnessMap({ initialData }: ConsciousnessMapProps) {
   const selectedNode = useMemo(
     () => nodes.find((n) => n.id === selectedNodeId) ?? null,
     [nodes, selectedNodeId]
+  )
+
+  const editNode = useMemo(
+    () => nodes.find((n) => n.id === editNodeId) ?? null,
+    [nodes, editNodeId]
   )
 
   const connectedNodes = useMemo(() => {
@@ -79,17 +89,8 @@ export function ConsciousnessMap({ initialData }: ConsciousnessMapProps) {
           return
         }
         if (connectionSource !== nodeId) {
-          startTransition(async () => {
-            const result = await createEdge({
-              sourceNodeId: connectionSource,
-              targetNodeId: nodeId,
-            })
-            if (result.success) {
-              setEdges((prev) => [result.data, ...prev])
-            }
-            setConnectionSource(null)
-            setConnectionMode(false)
-          })
+          setPendingEdge({ sourceId: connectionSource, targetId: nodeId })
+          setConnectionSource(null)
           return
         }
         setConnectionSource(null)
@@ -135,6 +136,53 @@ export function ConsciousnessMap({ initialData }: ConsciousnessMapProps) {
     },
     []
   )
+
+  const handleEditNode = useCallback((nodeId: string) => {
+    setEditNodeId(nodeId)
+  }, [])
+
+  const handleEditNodeSubmit = useCallback(
+    (data: { label: string; description?: string }) => {
+      if (!editNodeId) return
+      const id = editNodeId
+      startTransition(async () => {
+        const result = await updateNode(id, data)
+        if (result.success) {
+          setNodes((prev) =>
+            prev.map((n) => (n.id === id ? result.data : n))
+          )
+        }
+      })
+      setEditNodeId(null)
+    },
+    [editNodeId]
+  )
+
+  const handleEdgeDialogSubmit = useCallback(
+    (label?: string) => {
+      if (!pendingEdge) return
+      const { sourceId, targetId } = pendingEdge
+      startTransition(async () => {
+        const result = await createEdge({
+          sourceNodeId: sourceId,
+          targetNodeId: targetId,
+          label: label || undefined,
+        })
+        if (result.success) {
+          setEdges((prev) => [result.data, ...prev])
+        }
+      })
+      setPendingEdge(null)
+      setConnectionMode(false)
+    },
+    [pendingEdge]
+  )
+
+  const handleEdgeDialogClose = useCallback(() => {
+    setPendingEdge(null)
+    setConnectionMode(false)
+    setConnectionSource(null)
+  }, [])
 
   const handleToggleType = useCallback((type: MapNodeType) => {
     setVisibleTypes((prev) => {
@@ -212,6 +260,7 @@ export function ConsciousnessMap({ initialData }: ConsciousnessMapProps) {
         connectedNodes={connectedNodes}
         onClose={() => setSelectedNodeId(null)}
         onDelete={handleDeleteNode}
+        onEdit={handleEditNode}
         onNavigateToSource={handleNavigateToSource}
       />
 
@@ -220,6 +269,24 @@ export function ConsciousnessMap({ initialData }: ConsciousnessMapProps) {
         open={createDialogOpen}
         onClose={() => setCreateDialogOpen(false)}
         onSubmit={handleCreateNode}
+      />
+
+      {/* Edit node dialog */}
+      <EditNodeDialog
+        open={editNodeId !== null}
+        onClose={() => setEditNodeId(null)}
+        onSubmit={handleEditNodeSubmit}
+        initialLabel={editNode?.label ?? ''}
+        initialDescription={editNode?.description ?? ''}
+      />
+
+      {/* Create edge dialog */}
+      <CreateEdgeDialog
+        open={pendingEdge !== null}
+        onClose={handleEdgeDialogClose}
+        onSubmit={handleEdgeDialogSubmit}
+        sourceLabel={nodes.find((n) => n.id === pendingEdge?.sourceId)?.label ?? ''}
+        targetLabel={nodes.find((n) => n.id === pendingEdge?.targetId)?.label ?? ''}
       />
 
       {/* Empty state */}
