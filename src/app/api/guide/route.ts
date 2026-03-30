@@ -1,7 +1,7 @@
 import { generateObject } from 'ai'
 import { requireAnthropic } from '@/lib/ai/provider'
 import { requireDb } from '@/lib/db'
-import { auth } from '@/lib/auth'
+import { createClient } from '@/lib/supabase/server'
 import { guideConversations, guideMessages } from '@/lib/db/schema'
 import { eq, desc } from 'drizzle-orm'
 import { GuideMessageInput, GuideResponse } from '@/lib/schemas/guide'
@@ -11,13 +11,14 @@ import { buildSystemPrompt } from '@/features/guide/prompts'
 export async function POST(request: Request) {
   try {
     // Auth check
-    const session = await auth()
-    if (!session?.user?.id) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
       return Response.json({ error: 'Nicht authentifiziert.' }, { status: 401 })
     }
 
-    const userId = session.user.id
-    const userName = session.user.name ?? null
+    const userId = user.id
+    const userName = (user.user_metadata?.full_name as string) ?? (user.user_metadata?.name as string) ?? null
 
     // Parse and validate input
     const body = await request.json()

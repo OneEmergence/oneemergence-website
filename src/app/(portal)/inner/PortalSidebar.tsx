@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { signOut } from 'next-auth/react'
+import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import {
@@ -34,7 +34,14 @@ const navItems = [
 
 export function PortalSidebar({ userName, userImage }: PortalSidebarProps) {
   const pathname = usePathname()
+  const router = useRouter()
   const [mobileOpen, setMobileOpen] = useState(false)
+
+  async function handleSignOut() {
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    router.push('/')
+  }
 
   function renderNav(onNavigate?: () => void) {
     return (
@@ -94,7 +101,7 @@ export function PortalSidebar({ userName, userImage }: PortalSidebarProps) {
           </span>
         </div>
         <button
-          onClick={() => signOut({ callbackUrl: '/' })}
+          onClick={handleSignOut}
           className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-oe-pure-light/40 transition-colors hover:bg-oe-pure-light/5 hover:text-oe-pure-light/60"
         >
           <LogOut className="h-4 w-4" />

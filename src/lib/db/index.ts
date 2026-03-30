@@ -1,9 +1,9 @@
-import { neon } from '@neondatabase/serverless'
-import { drizzle } from 'drizzle-orm/neon-http'
+import { drizzle } from 'drizzle-orm/postgres-js'
+import postgres from 'postgres'
 import * as schema from './schema'
 
 /**
- * Database client for Neon Postgres.
+ * Database client for Supabase Postgres (via postgres-js).
  *
  * Returns null if DATABASE_URL is not configured, allowing the app to build
  * and run in development without a database connection. All code that uses
@@ -14,8 +14,8 @@ function createDb() {
   if (!url) {
     return null
   }
-  const sql = neon(url)
-  return drizzle(sql, { schema })
+  const client = postgres(url, { prepare: false }) // prepare: false for Supabase transaction pooler
+  return drizzle(client, { schema })
 }
 
 export const db = createDb()

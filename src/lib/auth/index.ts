@@ -1,9 +1,5 @@
-import NextAuth from 'next-auth'
-import { authConfig } from './config'
-
-export const {
-  handlers,
-  auth,
-  signIn,
-  signOut,
-} = NextAuth(authConfig)
+// Auth utilities — re-exported for convenience.
+// The canonical implementations live in session.ts (server) and
+// @/lib/supabase/client (browser).
+export { getCurrentUser, requireAuth } from './session'
+export type { AppUser } from './session'

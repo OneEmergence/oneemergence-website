@@ -1,4 +1,4 @@
-import { auth } from '@/lib/auth'
+import { getCurrentUser } from '@/lib/auth/session'
 import { redirect } from 'next/navigation'
 import type { Metadata } from 'next'
 import { PortalEntryClient } from './PortalEntryClient'
@@ -9,10 +9,10 @@ export const metadata: Metadata = {
 }
 
 export default async function PortalEntryPage() {
-  const session = await auth()
+  const user = await getCurrentUser()
 
   // Already authenticated — proceed to inner space
-  if (session?.user) {
+  if (user) {
     redirect('/inner')
   }
 

@@ -1,23 +1,32 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { signIn } from 'next-auth/react'
+import { createClient } from '@/lib/supabase/client'
 import { cn } from '@/lib/utils'
 
 const providers = [
   {
-    id: 'google',
+    id: 'google' as const,
     label: 'Mit Google eintreten',
     icon: GoogleIcon,
   },
   {
-    id: 'github',
+    id: 'github' as const,
     label: 'Mit GitHub eintreten',
     icon: GitHubIcon,
   },
 ] as const
 
 export function PortalEntryClient() {
+  const supabase = createClient()
+
+  function handleSignIn(provider: 'google' | 'github') {
+    supabase.auth.signInWithOAuth({
+      provider,
+      options: { redirectTo: `${location.origin}/auth/callback` },
+    })
+  }
+
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-oe-deep-space">
       {/* Ambient glow */}
@@ -79,7 +88,7 @@ export function PortalEntryClient() {
           {providers.map((provider) => (
             <button
               key={provider.id}
-              onClick={() => signIn(provider.id, { callbackUrl: '/inner' })}
+              onClick={() => handleSignIn(provider.id)}
               className={cn(
                 'group flex items-center justify-center gap-3 rounded-full',
                 'border border-oe-pure-light/10 px-6 py-3',
