@@ -4,26 +4,30 @@
 
 ---
 
-## Execution Status (2026-03-29)
+## Execution Status (2026-03-30)
 
-### ✅ Completed (Safe Subset)
+### ✅ Completed — Phase 1 (Stores, Hooks, Provider)
 - **Zustand intensity mode store** (`src/stores/intensity.ts`) — three-mode system with localStorage persistence, `prefers-reduced-motion` override, `effectiveMode` resolver
 - **useReducedMotion hook** (`src/hooks/useReducedMotion.ts`) — media query listener with cleanup
 - **useIntensityMode hook** (`src/hooks/useIntensityMode.ts`) — convenience wrapper for store access
 - **useMotionLevel hook** (`src/hooks/useMotionLevel.ts`) — motion hierarchy gate (micro/flow/sacred/event)
 - **IntensityProvider** (`src/components/providers/IntensityProvider.tsx`) — client island that syncs reduced-motion, sets `data-intensity` on `<html>`
-- **Design tokens** (`src/app/globals.css`) — added glow utilities, transition tokens, radius tokens, shadow tokens, intensity-mode CSS gates, reduced-motion global safety net, text-glow utilities
 - **Zustand installed** as project dependency (v5)
 
-### ⏸ Blocked
-- **shadcn/ui initialization** — blocked by Agent 1 (architecture migration in progress, potential conflicts with component restructuring)
-- **Motion component upgrades** (ScrollReveal, ParallaxImage, AmbientOrb) — blocked by Agent 1; files already moved to `components/motion/` but committed imports still point to `components/ui/`, causing build failures
-- **New motion primitives** (BreathingOrb, ParallaxLayer) — blocked by Agent 1; target `components/motion/` folder exists but import paths are broken
-- **IntensityToggle UI component** — blocked by stable layout; Agent 1 still restructuring Navbar
-- **IntensityProvider wiring into root layout** — blocked by Agent 1; layout.tsx has broken import for CustomCursor
+### ✅ Completed — Phase 2 (Wiring + Motion Upgrades) — commit bbc1621
+- **IntensityProvider wired into root layout** (`src/app/layout.tsx`) — wraps SmoothScroll+AudioProvider, activates `data-intensity` attribute on `<html>`
+- **Design tokens** (`src/app/globals.css`) — glow utilities (glow-violet/gold/cyan, text-glow-*), transition tokens, radius tokens, `[data-intensity]` CSS gating rules, `prefers-reduced-motion` global safety net
+- **ScrollReveal upgraded** — reads `useMotionLevel('flow')` + `useIntensityMode()`; still=immediate render, balanced=subtle fade, immersive=full slide-up reveal
+- **ParallaxImage upgraded** — reads intensity store; still=no parallax, balanced=50% depth, immersive=full depth
+- **AmbientOrb upgraded** — reads `useMotionLevel('sacred')`; still=static gradient, balanced=slow breathing, immersive=full breathing with movement + enhanced glow
+- **IntensityToggle** (`src/components/ui/IntensityToggle.tsx`) — three-state pill (Still/Balanced/Immersiv) with animated indicator, added to Navbar desktop + mobile menu
+- **Build + lint pass cleanly** — all 30 routes render without errors
 
-### ⚠ Pre-existing Build Failures (Not Caused by Agent 02)
-Agent 1 partially migrated: moved component files from `ui/` to `motion/` but left committed import paths pointing to `ui/`. The `(marketing)` route group pages also reference the old import paths. Build fails with 4 `Module not found` errors. Agent 02 changes type-check cleanly and do not contribute to these failures.
+### ⏳ Remaining
+- **shadcn/ui initialization** — not yet started; can proceed independently
+- **New motion primitives** (BreathingOrb, ParallaxLayer) — unblocked, can be built in `components/motion/`
+- **Typography audit** — verify Cormorant/Inter loading, define typographic scale tokens
+- **CustomCursor intensity gating** — could gate cursor effects on intensity mode (currently always active)
 
 ---
 
