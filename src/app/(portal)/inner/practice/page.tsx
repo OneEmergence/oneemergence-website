@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { History } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Praxis',
@@ -40,6 +41,17 @@ export default function PracticePage() {
       <p className="mt-3 text-sm text-oe-pure-light/50">
         Wähle eine Praxis. Kein Ziel, kein Leistungsdruck — nur Präsenz.
       </p>
+
+      {/* History link */}
+      <div className="mt-6">
+        <Link
+          href="/inner/practice/history"
+          className="inline-flex items-center gap-2 text-sm text-oe-pure-light/40 transition-colors hover:text-oe-pure-light/70"
+        >
+          <History className="h-4 w-4" />
+          Verlauf ansehen
+        </Link>
+      </div>
 
       <div className="mt-8 grid gap-4">
         {practices.map((practice) => {
