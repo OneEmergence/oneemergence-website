@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { requireAuth } from '@/lib/auth/session'
 import { getMapData } from '@/features/map/actions'
+import { getPreferences } from '@/lib/actions/preferences'
 import { DashboardClient } from './DashboardClient'
 import { MapPreview } from '@/features/map/components/MapPreview'
 import type { MapData } from '@/lib/schemas/map'
@@ -56,6 +57,10 @@ export default async function InnerDashboardPage() {
   const user = await requireAuth()
   const impulse = getDailyImpulse()
 
+  // Load preferences non-critically — null means no DB or new user → show onboarding
+  const prefs = await getPreferences()
+  const onboardingCompleted = prefs?.onboardingCompleted ?? false
+
   // Load map data for preview (non-critical — gracefully handle failure)
   let mapData: MapData | null = null
   try {
@@ -73,6 +78,7 @@ export default async function InnerDashboardPage() {
         userName={user.name}
         impulseText={impulse.text}
         impulseSource={impulse.source}
+        onboardingCompleted={onboardingCompleted}
       />
       {/* Map preview widget */}
       <div className="mx-auto max-w-3xl px-0 pb-8">

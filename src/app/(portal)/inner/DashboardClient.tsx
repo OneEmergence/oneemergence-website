@@ -1,14 +1,18 @@
 'use client'
 
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { BookOpen, Flame, Sparkles } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { OnboardingFlow } from './OnboardingFlow'
+import { usePreferencesStore } from '@/stores/preferences'
 
 interface DashboardClientProps {
   userName?: string | null
   impulseText: string
   impulseSource: string
+  onboardingCompleted: boolean
 }
 
 const quickActions = [
@@ -42,10 +46,21 @@ export function DashboardClient({
   userName,
   impulseText,
   impulseSource,
+  onboardingCompleted,
 }: DashboardClientProps) {
   const greeting = getGreeting()
+  // Also check Zustand store — if completed in a previous session (localStorage), don't show
+  const localCompleted = usePreferencesStore(
+    (s) => s.preferences.onboardingCompleted
+  )
+  const [dismissed, setDismissed] = useState(false)
+  const showOnboarding = !onboardingCompleted && !localCompleted && !dismissed
 
   return (
+    <>
+      {showOnboarding && (
+        <OnboardingFlow onComplete={() => setDismissed(true)} />
+      )}
     <div className="mx-auto max-w-3xl space-y-10 py-4">
       {/* Greeting */}
       <motion.div
@@ -137,6 +152,7 @@ export function DashboardClient({
         </div>
       </motion.div>
     </div>
+    </>
   )
 }
 
