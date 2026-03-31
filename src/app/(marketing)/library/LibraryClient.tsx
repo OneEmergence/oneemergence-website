@@ -5,9 +5,7 @@ import Link from 'next/link'
 import { motion, AnimatePresence, type Variants } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import { ScrollReveal } from '@/components/motion/ScrollReveal'
-import type { Post } from '@/lib/content'
-
-type PostPreview = Omit<Post, 'content'>
+import type { LibraryItem } from '@/lib/content'
 
 const contentTypes = [
   { id: 'all', label: 'Alle' },
@@ -16,16 +14,24 @@ const contentTypes = [
   { id: 'journal', label: 'Journal', color: 'oe-aurora-violet' },
 ] as const
 
-type ContentTypeId = (typeof contentTypes)[number]['id']
+type FilterId = (typeof contentTypes)[number]['id']
 
-function getContentType(tags: string[] | undefined): ContentTypeId {
-  if (!tags) return 'journal'
-  const lower = tags.map((t) => t.toLowerCase())
-  if (lower.some((t) => t.includes('lehre') || t.includes('teaching') || t.includes('philosophie')))
-    return 'teaching'
-  if (lower.some((t) => t.includes('reflexion') || t.includes('meditation') || t.includes('praxis')))
-    return 'reflection'
+function filterIdForItem(item: LibraryItem): FilterId {
+  if (item.libraryType === 'teaching') return 'teaching'
+  if (item.libraryType === 'reflection') return 'reflection'
   return 'journal'
+}
+
+function typeLabel(item: LibraryItem): string {
+  if (item.libraryType === 'teaching') return 'Lehre'
+  if (item.libraryType === 'reflection') return 'Reflexion'
+  return 'Journal'
+}
+
+function dotColor(item: LibraryItem): string {
+  if (item.libraryType === 'teaching') return 'bg-oe-solar-gold'
+  if (item.libraryType === 'reflection') return 'bg-oe-spirit-cyan'
+  return 'bg-oe-aurora-violet'
 }
 
 const cardVariants: Variants = {
@@ -34,18 +40,13 @@ const cardVariants: Variants = {
   exit: { opacity: 0, y: -10, transition: { duration: 0.2 } },
 }
 
-export function LibraryClient({ posts }: { posts: PostPreview[] }) {
-  const [activeFilter, setActiveFilter] = useState<ContentTypeId>('all')
-
-  const postsWithType = posts.map((p) => ({
-    ...p,
-    contentType: getContentType(p.tags),
-  }))
+export function LibraryClient({ items }: { items: LibraryItem[] }) {
+  const [activeFilter, setActiveFilter] = useState<FilterId>('all')
 
   const filtered =
     activeFilter === 'all'
-      ? postsWithType
-      : postsWithType.filter((p) => p.contentType === activeFilter)
+      ? items
+      : items.filter((item) => filterIdForItem(item) === activeFilter)
 
   return (
     <div className="min-h-screen bg-oe-deep-space pt-24 pb-16 md:pt-28 md:pb-20">
@@ -115,9 +116,9 @@ export function LibraryClient({ posts }: { posts: PostPreview[] }) {
               key={activeFilter}
               className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
             >
-              {filtered.map((post, i) => (
+              {filtered.map((item, i) => (
                 <motion.div
-                  key={post.slug}
+                  key={`${item.libraryType}-${item.slug}`}
                   variants={cardVariants}
                   initial="hidden"
                   animate="visible"
@@ -126,47 +127,37 @@ export function LibraryClient({ posts }: { posts: PostPreview[] }) {
                   layout
                 >
                   <Link
-                    href={`/journal/${post.slug}`}
+                    href={`/library/${item.libraryType}/${item.slug}`}
                     data-cursor-hover
                     className="group relative block overflow-hidden rounded-2xl border border-oe-pure-light/8 bg-oe-pure-light/[0.03] p-6 transition-all duration-300 hover:border-oe-aurora-violet/40 hover:bg-oe-aurora-violet/5"
                   >
                     {/* Content type indicator */}
                     <div className="mb-3 flex items-center gap-3">
                       <span
-                        className={`inline-block h-1.5 w-1.5 rounded-full ${
-                          post.contentType === 'teaching'
-                            ? 'bg-oe-solar-gold'
-                            : post.contentType === 'reflection'
-                              ? 'bg-oe-spirit-cyan'
-                              : 'bg-oe-aurora-violet'
-                        }`}
+                        className={`inline-block h-1.5 w-1.5 rounded-full ${dotColor(item)}`}
                       />
                       <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-oe-pure-light/30">
-                        {post.contentType === 'teaching'
-                          ? 'Lehre'
-                          : post.contentType === 'reflection'
-                            ? 'Reflexion'
-                            : 'Journal'}
+                        {typeLabel(item)}
                       </span>
                     </div>
 
-                    <time className="font-mono text-xs text-oe-pure-light/30 tracking-wider">
-                      {new Date(post.date).toLocaleDateString('de-DE', {
+                    <time className="font-mono text-xs tracking-wider text-oe-pure-light/30">
+                      {new Date(item.date).toLocaleDateString('de-DE', {
                         day: 'numeric',
                         month: 'long',
                         year: 'numeric',
                       })}
                     </time>
                     <h2 className="mt-3 font-serif text-xl leading-snug text-oe-pure-light transition-colors group-hover:text-oe-solar-gold">
-                      {post.title}
+                      {item.title}
                     </h2>
-                    <p className="mt-3 text-sm leading-relaxed text-oe-pure-light/50 line-clamp-3">
-                      {post.excerpt}
+                    <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-oe-pure-light/50">
+                      {item.excerpt}
                     </p>
 
-                    {post.tags && post.tags.length > 0 && (
+                    {item.tags.length > 0 && (
                       <div className="mt-4 flex flex-wrap gap-2">
-                        {post.tags.map((tag) => (
+                        {item.tags.map((tag) => (
                           <span
                             key={tag}
                             className="rounded-full bg-oe-aurora-violet/10 px-2.5 py-0.5 text-[11px] text-oe-aurora-violet/70"
@@ -178,7 +169,7 @@ export function LibraryClient({ posts }: { posts: PostPreview[] }) {
                     )}
 
                     <div className="mt-5 flex items-center gap-2 text-xs text-oe-aurora-violet/70">
-                      <span>{post.readingTime} Min. Lesezeit</span>
+                      <span>{item.readingTime} Min. Lesezeit</span>
                       <ArrowRight
                         size={12}
                         className="ml-auto transition-transform duration-200 group-hover:translate-x-1"

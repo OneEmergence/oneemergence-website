@@ -1,4 +1,4 @@
-import { getPosts } from '@/lib/content'
+import { getLibraryItems } from '@/lib/content'
 import { LibraryClient } from './LibraryClient'
 
 export const metadata = {
@@ -8,6 +8,6 @@ export const metadata = {
 }
 
 export default function LibraryPage() {
-  const posts = getPosts()
-  return <LibraryClient posts={posts} />
+  const items = getLibraryItems()
+  return <LibraryClient items={items} />
 }

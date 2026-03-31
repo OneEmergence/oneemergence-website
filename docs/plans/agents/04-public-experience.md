@@ -8,7 +8,7 @@
 
 Transform the public website from a set of static pages into the "Living Threshold" described in VISION.md. This means: Living Portal v2 with progressive enhancement, panel-based navigation, experiences section with visual essays, and a library that showcases sacred content types. The public layer should make visitors feel awe and want to return.
 
-## Status: Phase 1 Complete (2026-03-29)
+## Status: Phase 2 In Progress (2026-03-31)
 
 ### What Landed
 
@@ -79,12 +79,27 @@ Transform the public website from a set of static pages into the "Living Thresho
 
 4. **Library uses existing content system**: The library page works with the existing journal posts and tag-based type detection rather than a formal sacred content type system. This integrates naturally with what Agent 3 built.
 
+### Phase 2 Deliverables (2026-03-31)
+
+**Library Detail Routes (`/library/[type]/[slug]`):**
+- [x] Unified `getLibraryItems()` function combining journal posts and sacred content types into a single sortable list
+- [x] `getContentBySlug()` return type upgraded to `AnyContentMeta` (discriminated union) for proper type narrowing
+- [x] `/library/[type]/[slug]` dynamic route with `generateStaticParams` for SSG
+- [x] Handles all content types: journal, teaching, reflection (+ future: practice, transmission, visual-essay, sound-journey)
+- [x] Type-specific visual treatment: color-coded type indicators, German labels, difficulty badges
+- [x] Teaching-specific: reference list rendered after content
+- [x] Reflection-specific: prompts rendered before content, journal seed rendered after
+- [x] Cross-content prev/next navigation spanning all library items
+- [x] Library listing page updated to include sacred content (teachings, reflections) alongside journal posts
+- [x] Library cards now link to `/library/[type]/[slug]` instead of `/journal/[slug]`
+- [x] SEO metadata (title, description) generated per detail page
+- [x] Build passes with 5 statically generated library detail pages
+
 ### Remaining Work (Future Iterations)
 
 - [ ] **Task 1.1**: Install three.js/R3F for advanced WebGL scenes (LivingPortalScene with full particle nebula, SacredGeometry)
 - [ ] **Task 3.3**: Panel overlay for content preview (slide-over panels with deep-linking)
 - [ ] **Task 4.2-4.4**: Visual essay experience engine and 2-3 actual visual essay MDX content files
-- [ ] **Task 5.2**: Content detail routes at `/library/[type]/[slug]`
 - [ ] **Task 6.2**: Values visualization (animated sacred geometry per principle)
 - [ ] **Task 7.1-7.3**: Formal performance audit (Lighthouse, bundle analysis)
 - [ ] Return visit detection (localStorage) for portal mood shift
@@ -122,7 +137,8 @@ Transform the public website from a set of static pages into the "Living Thresho
 - [x] Living Portal renders with canvas animation (balanced/immersive mode)
 - [x] Page transitions are smooth via template.tsx
 - [x] All public routes accessible and SEO-friendly
-- [x] Library filtering works (by type)
+- [x] Library filtering works (by type) — now includes sacred content types
+- [x] Library detail routes render for all content types (`/library/[type]/[slug]`)
 - [ ] Visual essay scroll experience works on mobile and desktop (deferred — no essays yet)
 - [x] `next build` passes successfully
 - [x] OG tags and metadata correct on all pages

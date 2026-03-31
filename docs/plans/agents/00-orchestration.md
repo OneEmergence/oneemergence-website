@@ -18,7 +18,7 @@ The project has advanced well beyond the original phased plan. Most foundation a
 | 1 | **Architecture Migration** | Restructure repo to target folder layout | ✅ Complete | Route groups, component split, features/ scaffold |
 | 2 | **Design System & Motion** | UI primitives, intensity modes, motion infrastructure | ⏸ Blocked (unblock ready) | Agent 1 done — can resume. Intensity stores, motion components, shadcn/ui pending. |
 | 3 | **Content System** | MDX pipeline, Zod schemas, sacred content types, i18n | ✅ Complete | MDX pipeline, Zod schemas, content renderers, next-intl configured |
-| 4 | **Public Experience** | Living Portal v2, Experiences, panel nav | 🔄 Phase 1 done | Living Portal v2, Experiences section, Library page built. Panel nav + polish remaining. |
+| 4 | **Public Experience** | Living Portal v2, Experiences, panel nav | 🔄 Phase 2 in progress | Living Portal v2, Experiences, Library page + detail routes (`/library/[type]/[slug]`). Panel nav + visual essays remaining. |
 | 5 | **Portal & Auth** | Auth, DB, dashboard, journal, ritual room | ✅ Foundation complete | **Stack migrated to Supabase** (commit f3447e4). Auth, middleware, portal, dashboard, journal CRUD, practice room built. Deferred: DB provisioning, OAuth credentials, onboarding flow, reflection graph. See `STACK_DECISION.md`. |
 | 6 | **AI Guide** | Vercel AI SDK, roles, structured responses | ✅ Complete | Four-role consciousness companion, structured responses, chat UI |
 | 7 | **Consciousness Map** | Graph model, D3/SVG, node interactions | ✅ Core complete | Force graph, CRUD, theme extraction, node editing, edge labels. Remaining: intensity mode integration, mobile polish, canvas fallback, E2E tests. |

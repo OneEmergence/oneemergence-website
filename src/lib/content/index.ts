@@ -7,6 +7,7 @@ import {
   CONTENT_TYPE_DIRS,
   getSchemaForType,
   type ContentMeta,
+  type AnyContentMeta,
 } from '@/lib/schemas/content'
 import { compileMdx } from './mdx'
 
@@ -154,7 +155,7 @@ export function getAllContent(type?: ContentType): ContentMeta[] {
 export async function getContentBySlug(
   type: ContentType,
   slug: string,
-): Promise<{ meta: ContentMeta; content: React.ReactElement } | null> {
+): Promise<{ meta: AnyContentMeta; content: React.ReactElement } | null> {
   const dir = contentDir(type)
   const mdxPath = path.join(dir, `${slug}.mdx`)
   const mdPath = path.join(dir, `${slug}.md`)
@@ -175,6 +176,75 @@ export function getContentByTheme(theme: string): ContentMeta[] {
 
 export function getContentByTag(tag: string): ContentMeta[] {
   return getAllContent().filter((c) => c.tags.includes(tag))
+}
+
+// ─── Library (unified view across journal + sacred content) ────────────────
+
+export type LibraryItem = {
+  slug: string
+  title: string
+  date: string
+  excerpt: string
+  cover?: string
+  tags: string[]
+  readingTime: number
+  /** 'journal' for legacy journal posts, or a sacred ContentType */
+  libraryType: 'journal' | ContentType
+}
+
+/**
+ * Returns a unified, date-sorted list of all published content for the library.
+ * Combines journal posts and sacred content into a single shape.
+ */
+export function getLibraryItems(): LibraryItem[] {
+  const items: LibraryItem[] = []
+
+  // Journal posts
+  for (const post of getPosts()) {
+    items.push({
+      slug: post.slug,
+      title: post.title,
+      date: post.date,
+      excerpt: post.excerpt,
+      cover: post.cover,
+      tags: post.tags ?? [],
+      readingTime: post.readingTime,
+      libraryType: 'journal',
+    })
+  }
+
+  // Sacred content types
+  const sacredTypes = Object.keys(CONTENT_TYPE_DIRS) as ContentType[]
+  for (const type of sacredTypes) {
+    const dir = contentDir(type)
+    const files = listContentFiles(dir)
+    const schema = getSchemaForType(type)
+
+    for (const file of files) {
+      const slug = slugFromFilename(file)
+      const raw = fs.readFileSync(path.join(dir, file), 'utf-8')
+      const { data, content: rawContent } = matter(raw)
+
+      try {
+        const meta = schema.parse({ ...data, slug, type })
+        if (!meta.published) continue
+        items.push({
+          slug: meta.slug,
+          title: meta.title,
+          date: meta.date,
+          excerpt: meta.excerpt,
+          cover: meta.cover,
+          tags: meta.tags,
+          readingTime: meta.duration ?? calcReadingTime(rawContent),
+          libraryType: type,
+        })
+      } catch (err) {
+        console.error(`[library] Invalid frontmatter in ${type}/${file}:`, err)
+      }
+    }
+  }
+
+  return items.sort((a, b) => (a.date < b.date ? 1 : -1))
 }
 
 // ─── Pages (legal etc. — keep simple, no MDX needed) ───────────────────────
