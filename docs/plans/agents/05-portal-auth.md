@@ -8,7 +8,7 @@
 > See `STACK_DECISION.md` and `MIGRATION_PLAN.md` for the canonical architecture.
 > The code migration was applied in commit `feat(auth): migrate from Neon/Auth.js to Supabase backend platform`.
 
-## Status: ✅ Foundation Complete (2026-03-29) → 🔄 Migrated to Supabase (2026-03-30)
+## Status: ✅ Foundation Complete (2026-03-29) → 🔄 Migrated to Supabase (2026-03-30) → ✅ UX Extras Pass (2026-03-31)
 
 ### What was built (original, now migrated)
 - **Database**: Drizzle ORM + ~~Neon Postgres~~ → Supabase Postgres (postgres-js driver)
@@ -22,16 +22,18 @@
 - **Stores**: Zustand stores for audio state and user preferences, server actions for preferences + onboarding
 - **Env**: `.env.example` documenting all required variables
 
+### UX Extras Pass — Completed (2026-03-31)
+- **First-time onboarding flow**: `OnboardingFlow.tsx` — 3-step modal overlay (welcome → intensity mode → focus themes); calls `completeOnboarding` action; updates Zustand store; skippable; shown when `onboardingCompleted === false` from server preferences
+- **Journal auto-save**: Debounced autosave (2.5s) in `JournalEditor.tsx`; new entries auto-create then switch to update mode; existing entries update in place; status indicator (idle/saving/saved/error); manual submit uses autosaved ID to avoid duplicate creates
+- **Practice history page**: `/inner/practice/history` — server-rendered list of sessions grouped by date, total summary; linked from practice index; `getPracticeHistory` action added to rituals/actions.ts
+
 ### Deferred / Blocked
-- **Actual DB provisioning**: Neon project needs to be created, `DATABASE_URL` configured — code handles missing DB gracefully
+- **Actual DB provisioning**: Supabase project needs to be created — code handles missing DB gracefully
 - **OAuth credentials**: Google/GitHub OAuth apps need to be registered — providers auto-skip when secrets are missing
-- **Email/password auth**: Deferred (needs email provider like Resend)
+- **Email/password auth**: Deferred (Supabase Auth supports this natively; just needs OAuth configuration)
 - **Journal reflection graph**: Deferred to v2 (needs data accumulation first)
 - **Soundscape player**: Types + actions ready, player component deferred (needs audio files)
-- **First-time onboarding flow**: Server action ready (`completeOnboarding`), UI flow deferred
-- **Journal auto-save**: UI placeholder exists, debounced save not yet wired
 - **Journal encryption at rest**: Noted as requirement, implementation needs DB-level or app-level strategy decision
-- **Practice history page**: Route not yet built, action for logging exists
 
 ### Decisions Made
 - **Auth.js v5 over Better Auth**: Better ecosystem integration with Next.js App Router
@@ -336,15 +338,18 @@ src/app/(portal)/inner/practice/
 - [x] Unauthenticated users redirected from /inner/* to /portal — middleware configured
 - [x] Portal Entry renders as a threshold, not a login form — animated portal built
 - [x] Dashboard shows daily impulse and user data — daily impulse + greeting built
+- [x] First-time onboarding flow — 3-step modal, calls completeOnboarding action
 - [x] Journal CRUD works (create, read, update, delete) — server actions built
 - [x] Mood tags saved and filterable — MoodTagSelector + schema built
+- [x] Journal auto-save — debounced 2.5s, new-entry create + update mode
 - [ ] Reflection graph renders with real data — deferred to v2
 - [x] Meditation timer counts down correctly — SVG ring timer built
 - [x] Breathwork guide animation syncs with breath phases — animated circle built
+- [x] Practice history page — /inner/practice/history with date grouping and summary
 - [ ] Practice sessions logged to database — action built, needs DB
 - [ ] User preferences persist across sessions — action built, needs DB
 - [ ] Mobile layout is usable for all portal features
-- [ ] `next build` passes
+- [x] `next build` passes — verified 2026-03-31
 
 ## Risks / Pitfalls
 
