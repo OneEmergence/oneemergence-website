@@ -1,13 +1,13 @@
 # OneEmergence — Agent Orchestration Plan
 
 > Master coordination document for parallel agent workstreams.
-> Updated 2026-03-30 after Supabase migration.
+> Updated 2026-04-01 — truth-sync pass (Agent 2 complete, Agent 5 UX extras, Agent 8 residual pass).
 
 ---
 
 ## Current Status Summary
 
-The project has advanced well beyond the original phased plan. Most foundation and infrastructure agents are complete, the Supabase migration has consolidated the backend stack, and the remaining work is primarily in the Design System, Public Experience polish, Quality hardening, and portal feature completion.
+The project has advanced well beyond the original phased plan. All foundation and infrastructure agents are complete, the Supabase migration has consolidated the backend stack, and the remaining work is primarily in Public Experience polish (visual essays, panel nav, WebGL) and final portal features (soundscape player, reflection graph). Design System (Agent 2) and Quality Platform (Agent 8) residual passes are done. Portal UX extras (onboarding, autosave, practice history) landed 2026-03-31.
 
 ---
 
@@ -16,13 +16,13 @@ The project has advanced well beyond the original phased plan. Most foundation a
 | # | Agent | Mission | Status | Notes |
 |---|-------|---------|--------|-------|
 | 1 | **Architecture Migration** | Restructure repo to target folder layout | ✅ Complete | Route groups, component split, features/ scaffold |
-| 2 | **Design System & Motion** | UI primitives, intensity modes, motion infrastructure | ⏸ Blocked (unblock ready) | Agent 1 done — can resume. Intensity stores, motion components, shadcn/ui pending. |
+| 2 | **Design System & Motion** | UI primitives, intensity modes, motion infrastructure | ✅ Complete | Phases 1-3 done (intensity stores, motion upgrades, typography, cursor gating, BreathingOrb, ParallaxLayer). shadcn/ui deferred (Tailwind v4 compat). |
 | 3 | **Content System** | MDX pipeline, Zod schemas, sacred content types, i18n | ✅ Complete | MDX pipeline, Zod schemas, content renderers, next-intl configured |
-| 4 | **Public Experience** | Living Portal v2, Experiences, panel nav | 🔄 Phase 2 in progress | Living Portal v2, Experiences, Library page + detail routes (`/library/[type]/[slug]`). Panel nav + visual essays remaining. |
-| 5 | **Portal & Auth** | Auth, DB, dashboard, journal, ritual room | ✅ Foundation complete | **Stack migrated to Supabase** (commit f3447e4). Auth, middleware, portal, dashboard, journal CRUD, practice room built. Deferred: DB provisioning, OAuth credentials, onboarding flow, reflection graph. See `STACK_DECISION.md`. |
+| 4 | **Public Experience** | Living Portal v2, Experiences, panel nav | 🔄 Phase 2 done | Living Portal v2, Experiences, Library page + detail routes (`/library/[type]/[slug]`) all landed. Remaining: panel nav, visual essays, WebGL progressive enhancement, perf audit. |
+| 5 | **Portal & Auth** | Auth, DB, dashboard, journal, ritual room | ✅ UX extras complete | **Stack migrated to Supabase** (commit f3447e4). Auth, middleware, portal, dashboard, journal CRUD, practice room built. UX extras landed (2026-03-31): onboarding flow, journal autosave, practice history. Deferred: DB provisioning, OAuth credentials, reflection graph, soundscape player. See `STACK_DECISION.md`. |
 | 6 | **AI Guide** | Vercel AI SDK, roles, structured responses | ✅ Complete | Four-role consciousness companion, structured responses, chat UI |
 | 7 | **Consciousness Map** | Graph model, D3/SVG, node interactions | ✅ Core complete | Force graph, CRUD, theme extraction, node editing, edge labels. Remaining: intensity mode integration, mobile polish, canvas fallback, E2E tests. |
-| 8 | **Quality Platform** | Sentry, Playwright, CI pipeline, perf budgets | 🔄 Phase 1 done | Sentry, Playwright basics, CI pipeline configured. Perf budgets, coverage expansion remaining. |
+| 8 | **Quality Platform** | Sentry, Playwright, CI pipeline, perf budgets | ✅ Residual pass complete | Sentry, Playwright (14 routes), CI pipeline, a11y, perf budgets, bundle analyzer, custom breadcrumbs, mobile responsive tests. Deferred: tighten perf thresholds, visual regression, portal tests in CI. |
 
 ### Cross-cutting: Supabase Migration (2026-03-30)
 
@@ -42,20 +42,21 @@ Agent 05's plan (`05-portal-auth.md`) is marked superseded for its Neon/Auth.js 
 
 Agents 1, 8 started in parallel. Agent 1 complete. Agent 8 Phase 1 complete.
 
-### Phase 1 — Design + Content Foundation (partially complete)
+### Phase 1 — Design + Content Foundation ✅
 
 - **Agent 3 (Content System)** ✅ Complete
-- **Agent 2 (Design System)** ⏸ Blocked but ready to unblock — Agent 1 is done, folders exist
+- **Agent 2 (Design System)** ✅ Complete (Phases 1-3; shadcn/ui deferred)
 
-### Phase 2 — Public Experience (in progress)
+### Phase 2 — Public Experience (Phase 2 done, polish remaining)
 
-- **Agent 4** Phase 1 complete. Blocked on Agent 2 for motion components and intensity mode wiring before full completion.
+- **Agent 4** Phases 1-2 complete. Library detail routes landed. Agent 2 dependency resolved. Remaining: panel nav, visual essays, WebGL, perf audit.
 
 ### Phase 3 — Portal & Auth ✅ Foundation complete
 
 - **Agent 5** built with Neon/Auth.js, then **migrated to Supabase**.
 - Portal entry, dashboard, journal CRUD, practice room all functional.
-- Remaining: DB provisioning + OAuth credentials (human task), onboarding flow, reflection graph, soundscape player.
+- UX extras landed (2026-03-31): onboarding flow, journal autosave, practice history.
+- Remaining: DB provisioning + OAuth credentials (human task), reflection graph, soundscape player.
 
 ### Phase 4 — Intelligence ✅ Core complete
 
@@ -66,37 +67,36 @@ Agents 1, 8 started in parallel. Agent 1 complete. Agent 8 Phase 1 complete.
 
 ## What Remains — Next Parallelizable Tracks
 
-### Track A: Design System & Motion (Agent 2) — UNBLOCKED
+### Track A: Design System & Motion (Agent 2) — ✅ COMPLETE
 
-Agent 1 is complete; `components/motion/`, stores, and folder structure exist. Agent 2 can now fully execute:
-- Zustand intensity mode store (persisted)
-- Motion infrastructure: ScrollReveal, ParallaxLayer, BreathingOrb wired to intensity
-- `prefers-reduced-motion` integration
-- shadcn/ui initialization
-- Wire intensity mode into existing components (including Map's ForceGraph)
+All phases done (intensity stores, motion upgrades, typography, cursor gating, BreathingOrb, ParallaxLayer). Only shadcn/ui deferred (Tailwind v4 compat).
 
-### Track B: Quality Hardening (Agent 8 Phase 2) — UNBLOCKED
+### Track B: Quality Hardening (Agent 8) — ✅ RESIDUAL PASS COMPLETE
 
-- Expand Playwright coverage for portal routes (journal, map, practice, guide)
-- Performance budget enforcement (LCP < 2.5s, CLS < 0.1, INP < 200ms)
-- axe-core accessibility testing
-- CI pipeline: add type-check + lint + build gates
+Sentry, Playwright (14 routes), CI pipeline, a11y, perf budgets, bundle analyzer, custom breadcrumbs, mobile responsive tests all done. Remaining:
+- Tighten performance thresholds (LCP < 2.5s once WebGL lazy-loading lands)
+- Portal redirect tests in CI (needs Supabase secrets)
+- Touch target hard enforcement (after design system finalizes)
+- Visual regression testing (after design stabilizes)
 
-### Track C: Public Experience Polish (Agent 4 Phase 2) — BLOCKED on Agent 2
+### Track C: Public Experience Polish (Agent 4) — UNBLOCKED
 
-Needs motion components and intensity modes from Agent 2 before:
+Agent 2 dependency resolved. Library detail routes landed. Remaining:
 - Panel navigation (replace hard route transitions)
-- WebGL progressive enhancement
-- Visual essays
-- Performance optimization pass
+- WebGL progressive enhancement (three.js/R3F)
+- Visual essays (2-3 actual MDX content files)
+- Performance optimization pass (formal Lighthouse audit)
 
-### Track D: Portal Feature Completion — UNBLOCKED (human provisioning needed for E2E)
+### Track D: Portal Feature Completion — MOSTLY DONE
 
-Items deferred from Agent 5 that can be built without live credentials:
-- First-time onboarding flow UI
-- Journal auto-save (debounced)
-- Practice history page
-- Soundscape player component
+Completed (2026-03-31):
+- ~~First-time onboarding flow UI~~ ✅
+- ~~Journal auto-save (debounced)~~ ✅
+- ~~Practice history page~~ ✅
+
+Still remaining:
+- Soundscape player component (needs audio files)
+- Reflection graph (deferred to v2, needs data accumulation)
 
 Items requiring live Supabase project:
 - E2E auth flow testing
@@ -105,12 +105,13 @@ Items requiring live Supabase project:
 
 ### Track E: Map & Guide Remaining Items — UNBLOCKED
 
-- Map: intensity mode integration (depends on Track A for store)
+- Map: intensity mode integration (intensity store now exists from Track A)
 - Map: mobile interaction polish, canvas rendering fallback for 100+ nodes
-- Map: Playwright E2E tests (Track B)
+- Map: Playwright E2E tests
+- Map: edge label UI, node editing context menu
 - Guide: E2E testing with live Supabase auth
 
-**Recommended parallel execution:** Tracks A + B + D can run simultaneously. Track C follows Track A. Track E items are distributed across A, B, and D.
+**Recommended parallel execution:** Tracks C + E can run now. Track D has minimal remaining scope (soundscape player).
 
 ---
 
@@ -120,12 +121,13 @@ Items requiring live Supabase project:
 COMPLETED                               REMAINING
 ─────────                               ─────────
 
-[1: Architecture]  ✅                   [2: Design System]  ← READY NOW (Track A)
-[3: Content]       ✅                       |
-[8: Quality Ph1]   ✅                   [4: Public Experience Ph2]  (Track C, after A)
-[5: Portal Auth]   ✅ (Supabase)        [8: Quality Ph2]    ← READY NOW (Track B)
-[6: AI Guide]      ✅                   [5: Portal extras]  ← READY NOW (Track D)
-[7: Map core]      ✅                   [7: Map polish]     ← partial dep on Track A
+[1: Architecture]  ✅                   [4: Public Experience polish]  ← panel nav, WebGL, visual essays (Track C)
+[2: Design System] ✅                   [5: Portal extras]  ← soundscape player, reflection graph (Track D)
+[3: Content]       ✅                   [7: Map polish]     ← intensity integration, mobile, edge UI (Track E)
+[5: Portal Auth]   ✅ (+ UX extras)    [8: Quality deferred] ← tighten perf thresholds, visual regression
+[6: AI Guide]      ✅
+[7: Map core]      ✅
+[8: Quality]       ✅ (residual pass)
 ```
 
 ---
@@ -139,20 +141,20 @@ COMPLETED                               REMAINING
 - [x] `next build` passes
 - [x] All existing pages render correctly
 
-### Gate 1→2: Design + Content Foundation (partially met)
-- [ ] Intensity mode store functional, persisted to localStorage
-- [ ] Motion components read intensity mode
-- [ ] `prefers-reduced-motion` wired through
+### Gate 1→2: Design + Content Foundation ✅ (shadcn/ui deferred)
+- [x] Intensity mode store functional, persisted to localStorage
+- [x] Motion components read intensity mode
+- [x] `prefers-reduced-motion` wired through
 - [x] MDX pipeline renders all sacred content types
 - [x] Zod schemas validate all content frontmatter
 - [x] next-intl configured with DE default
-- [ ] shadcn/ui initialized, Button/Dialog/Input adopted
+- [ ] shadcn/ui initialized, Button/Dialog/Input adopted (deferred — Tailwind v4 compat)
 
 ### Gate 2→3: Public Experience Complete
 - [ ] Living Portal v2 with WebGL progressive enhancement
 - [ ] At least 2 experiences (visual essays) published
 - [ ] Panel navigation replaces hard route transitions
-- [ ] Library page shows content by sacred type
+- [x] Library page shows content by sacred type (+ detail routes `/library/[type]/[slug]`)
 - [ ] Performance budget met (LCP < 2.5s, CLS < 0.1)
 - [ ] Playwright smoke tests pass for all public routes
 
@@ -204,13 +206,13 @@ COMPLETED                               REMAINING
 | File | Agent | Status |
 |---|---|---|
 | [`01-architecture-migration.md`](./01-architecture-migration.md) | Architecture Migration | ✅ Complete |
-| [`02-design-system-motion.md`](./02-design-system-motion.md) | Design System & Motion | ⏸ Ready to resume |
+| [`02-design-system-motion.md`](./02-design-system-motion.md) | Design System & Motion | ✅ Complete (shadcn/ui deferred) |
 | [`03-content-system.md`](./03-content-system.md) | Content System | ✅ Complete |
-| [`04-public-experience.md`](./04-public-experience.md) | Public Experience | 🔄 Phase 1 done |
-| [`05-portal-auth.md`](./05-portal-auth.md) | Portal & Auth | ✅ Foundation done (⚠️ Supabase supersedes Neon/Auth.js specifics) |
+| [`04-public-experience.md`](./04-public-experience.md) | Public Experience | 🔄 Phase 2 done, polish remaining |
+| [`05-portal-auth.md`](./05-portal-auth.md) | Portal & Auth | ✅ UX extras complete (⚠️ Supabase supersedes Neon/Auth.js specifics) |
 | [`06-ai-guide.md`](./06-ai-guide.md) | AI Guide | ✅ Complete |
 | [`07-consciousness-map.md`](./07-consciousness-map.md) | Consciousness Map | ✅ Core complete |
-| [`08-quality-platform.md`](./08-quality-platform.md) | Quality Platform | 🔄 Phase 1 done |
+| [`08-quality-platform.md`](./08-quality-platform.md) | Quality Platform | ✅ Residual pass complete |
 
 ### Canonical Backend References
 
@@ -226,8 +228,8 @@ COMPLETED                               REMAINING
 
 | Track | Complexity | Key Deliverables | Risk Level |
 |---|---|---|---|
-| A: Design System (Agent 2) | High | Intensity stores, motion infra, shadcn/ui | Low |
-| B: Quality Ph2 (Agent 8) | Medium | Expanded Playwright, perf budgets, a11y | Low |
-| C: Public Experience Ph2 (Agent 4) | High | Panel nav, WebGL, visual essays | High (perf) |
-| D: Portal extras | Medium | Onboarding, auto-save, practice history, soundscapes | Low |
-| E: Map/Guide polish | Low | Intensity integration, mobile polish, E2E tests | Low |
+| A: Design System (Agent 2) | ✅ Done | — | — |
+| B: Quality (Agent 8) | ✅ Done | Deferred: tighten perf thresholds, visual regression | Low |
+| C: Public Experience polish (Agent 4) | High | Panel nav, WebGL, visual essays, perf audit | High (perf) |
+| D: Portal extras | Low | Soundscape player, reflection graph (v2) | Low |
+| E: Map/Guide polish | Low | Intensity integration, mobile polish, edge UI, E2E tests | Low |
