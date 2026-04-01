@@ -16,6 +16,8 @@ const publicRoutes = [
   { path: "/journal/the-field-beneath-thought", name: "Journal: Field Beneath Thought" },
   { path: "/journal/the-illusion-of-separation", name: "Journal: Illusion of Separation" },
   { path: "/journal/the-practice-of-presence", name: "Journal: Practice of Presence" },
+  { path: "/library/journal/the-field-beneath-thought", name: "Library Detail: Journal" },
+  { path: "/library/teaching/the-science-of-emergence", name: "Library Detail: Teaching" },
 ];
 
 for (const route of publicRoutes) {

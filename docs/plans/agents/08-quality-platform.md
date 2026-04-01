@@ -43,7 +43,7 @@
 - [x] **npm scripts** added: `test`, `test:smoke`, `test:a11y`, `test:content`, `test:perf`
 
 ### Phase 2 Completed (2026-03-30)
-- [x] **Expanded smoke coverage** — `/library` and `/experiences` (Agent 4 routes) added to `tests/smoke/routes.spec.ts` (now 14 routes)
+- [x] **Expanded smoke coverage** — `/library` and `/experiences` (Agent 4 routes) added to `tests/smoke/routes.spec.ts` (now 14 routes); `/library/journal/[slug]` and `/library/teaching/[slug]` detail routes added (now 16 routes)
 - [x] **Expanded a11y coverage** — `/library` and `/experiences` added to `tests/a11y/accessibility.spec.ts` (now 12 routes)
 - [x] **Portal redirect smoke tests** — `tests/smoke/portal-redirects.spec.ts` created; verifies unauthenticated `/inner/*` redirects to `/portal`; gracefully skipped in CI when `NEXT_PUBLIC_SUPABASE_URL` is absent (commit 7d825c2)
 
