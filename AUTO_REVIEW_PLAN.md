@@ -1,23 +1,23 @@
 # AUTO_REVIEW_PLAN
 
-Stand: 2026-04-02 06:04 UTC
-Branch: `main` (`origin/main` voraus um 24 Commits)
+Stand: 2026-04-02 07:05 UTC
+Branch: `main` (`origin/main` voraus um 25 Commits)
 Repo-Status: Worktree sauber; laufende Morgenkoordination in dieser Datei
 Morning-Run: Cron `c3a8ff45-9145-4786-b60b-2885c5ef3b0c`
 
 ## Repo-Snapshot
 
 ### Git / Verlauf
-- `git status --short --branch`: `## main...origin/main [ahead 24]`
+- `git status --short --branch`: `## main...origin/main [ahead 25]`
 - letzte Commits:
+  - `dac79fd` — `docs(review): refresh morning auto review plan for 2026-04-02 06:04 UTC`
   - `7bb56be` — `docs(review): refresh morning auto review kickoff`
   - `926bd7e` — `docs(review): refresh morning auto review plan for 2026-04-02`
   - `2837d4e` — `docs(review): update morning auto review plan`
   - `d95611d` — `docs(orchestration): truth-sync 00-orchestration.md to repo state as of 2026-04-01`
-  - `f6e5d8d` — `test(quality): add library detail route smoke tests for /library/[type]/[slug]`
 
 ### Planquellen
-- `NEXT_STEPS_MASTERPLAN.md` **fehlt im Repo-Root**
+- `NEXT_STEPS_MASTERPLAN.md` **fehlt im Repo** (auch kein alternativer Treffer via `find . -maxdepth 2`)
 - kanonische Master-Quelle bleibt aktuell: `docs/plans/agents/00-orchestration.md`
 - wichtigste Detailpläne für diese Schicht:
   - `docs/plans/agents/04-public-experience.md`
@@ -70,13 +70,17 @@ Offen laut `07-consciousness-map.md` / `00-orchestration.md`:
 - Modell: **Opus 4.6**
 - Worktree: `/tmp/oe-morning-review/public`
 - Branch: `review/public-experience-20260402`
+- Session: `nimble-gulf`
 - Ziel: einen kleinen konfliktarmen Public-Experience-/Perf-/Docs-Fix finden, umsetzen, verifizieren (`npm run build`; optional gezielte Tests), `AUTO_REVIEW_PLAN.md` im Worktree knapp ergänzen und committen.
+- Status: **läuft asynchron**
 
 ### Agent B — Consciousness Map Review
 - Modell: **Sonnet 4.6**
 - Worktree: `/tmp/oe-morning-review/map`
 - Branch: `review/map-polish-20260402`
+- Session: `rapid-forest`
 - Ziel: einen kleinen konfliktarmen Map-/Interaction-/Test-/Docs-Fix finden, umsetzen, verifizieren (`npm run build`; optional gezielte Tests), `AUTO_REVIEW_PLAN.md` im Worktree knapp ergänzen und committen.
+- Status: **läuft asynchron**
 
 ## Lösch-/Commit-Prüfung
 - `NEXT_STEPS_MASTERPLAN.md`: nicht vorhanden → kein `git rm`
