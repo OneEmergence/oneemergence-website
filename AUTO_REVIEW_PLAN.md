@@ -1,89 +1,102 @@
 # AUTO_REVIEW_PLAN
 
-Stand: 2026-04-03 04:00 UTC
-Branch: `main` (`origin/main` voraus um 26 Commits)
-Repo-Status: Worktree sauber; laufende Morgenkoordination in dieser Datei
+Stand: 2026-04-03 05:02 UTC
+Branch: `main` (`origin/main` voraus um 27 Commits)
+Repo-Status: Worktree sauber; Morning-Run aktiv
 Morning-Run: Cron `c3a8ff45-9145-4786-b60b-2885c5ef3b0c`
 
 ## Repo-Snapshot
 
 ### Git / Verlauf
-- `git status --short --branch`: `## main...origin/main [ahead 26]`
+- `git status --short --branch`: `## main...origin/main [ahead 27]`
+- Worktree: sauber vor dieser Aktualisierung
 - letzte Commits:
+  - `c6d297f` — `docs(review): refresh morning auto review plan for 2026-04-03 04:00 UTC`
   - `6875d6d` — `docs(review): refresh morning auto review plan for 2026-04-02 07:05 UTC`
   - `dac79fd` — `docs(review): refresh morning auto review plan for 2026-04-02 06:04 UTC`
   - `7bb56be` — `docs(review): refresh morning auto review kickoff`
   - `926bd7e` — `docs(review): refresh morning auto review plan for 2026-04-02`
-  - `2837d4e` — `docs(review): update morning auto review plan`
 
 ### Planquellen
-- `NEXT_STEPS_MASTERPLAN.md` **fehlt im Repo**
+- `NEXT_STEPS_MASTERPLAN.md` **fehlt weiterhin im Repo**
 - kanonische Master-Quelle bleibt: `docs/plans/agents/00-orchestration.md`
-- wichtigste Detailpläne für diese Schicht:
+- wichtigste Review-Quellen in dieser Schicht:
   - `docs/plans/agents/04-public-experience.md`
   - `docs/plans/agents/07-consciousness-map.md`
 
 ## Morning Findings
 
-### P0 — Masterplan / Quellenklarheit
-- Es gibt weiterhin **keine** Root-Datei `NEXT_STEPS_MASTERPLAN.md`; entsprechend gibt es heute keinen Kandidaten zum Aktualisieren oder per `git rm` zu löschen.
-- `docs/plans/agents/00-orchestration.md` ist weiterhin die belastbare Masterquelle und beschreibt den Restscope stimmig: Public-Experience-Polish, Map-Polish, wenige Portal-Restpunkte.
-- `AUTO_REVIEW_PLAN.md` bleibt als operative Morning-Datei sinnvoll und ist klar **nicht** 100% abgeschlossen.
+### P0 — Quellenlage bleibt stabil
+- Es gibt weiterhin **keine** Root-Datei `NEXT_STEPS_MASTERPLAN.md`; heute daher weder Update- noch Löschkandidat.
+- `docs/plans/agents/00-orchestration.md` bestätigt den aktuellen Restscope klar:
+  - **Public Experience Polish**: Panel-Navigation, Visual Essays, WebGL progressive enhancement, formaler Performance-Pass
+  - **Portal Restpunkte**: vor allem provisioning-/asset-lastig (`soundscape player`, `reflection graph`, OAuth/DB live setup)
+  - **Consciousness Map Polish**: intensity integration, mobile polish, edge/node editing polish, E2E
 
-### P0 — Public Experience ist weiter der größte offene Nutzerhebel
-Offen laut `04-public-experience.md` / `00-orchestration.md`:
-- Panel-Navigation statt harter Routenwechsel
-- Visual-Essay-Engine + echte Essay-Inhalte
-- WebGL progressive enhancement
-- formaler Performance-/Lighthouse-Pass
+### P0 — Public Experience bleibt der stärkste offene Public-Facing Hebel
+Laut `04-public-experience.md` ist schon viel gelandet (Living Portal v2, Experiences-Landingpage, Bibliothek + Detailrouten), aber offen bleiben die sichtbarsten UX-/Experience-Lücken:
+- Panel-Navigation statt normaler Seitenwechsel
+- Visual-Essay-Engine plus echte Essay-Inhalte
+- WebGL/R3F progressive enhancement
+- Performance-/Lighthouse-Audit
 - Return-Visit-/Ambient-Audio-Polish
 
-**Schichtentscheidung:** kein großer Main-Tree-Umbau; stattdessen ein kleiner, konfliktarmer Review-/Perf-/UX-Pass im eigenen Worktree.
+**Schichtentscheidung:** kleiner konfliktarmer Review-/Polish-Track in separatem Worktree statt großer Main-Tree-Umbauten.
 
-### P1 — Consciousness Map bleibt der beste zweite Parallel-Track
-Offen laut `07-consciousness-map.md` / `00-orchestration.md`:
-- Intensity-Mode-Integration
+### P1 — Consciousness Map ist der beste zweite Parallel-Track
+Laut `07-consciousness-map.md` ist der Kern geliefert, aber folgende Restpunkte sind gut parallelisierbar:
+- Intensity-Mode-Integration (still = statisch)
 - Edge-Dialog / Edge-Label-Editing
 - Node-Editing-Polish
-- Mobile Interaction Polish
-- Playwright E2E
+- Mobile-Interaction-Polish
+- Playwright-E2E
 
-**Schichtentscheidung:** parallelisierbar als isolierter UX-/Test-/Docs-/Mini-Fix-Track mit geringer Konfliktwahrscheinlichkeit.
+**Schichtentscheidung:** isolierter kleiner UX-/Test-/Docs-/Mini-Fix-Track mit geringer Konfliktwahrscheinlichkeit.
 
-### P1 — Portal/Auth bleibt eher provisioning- als code-getrieben
-- echtes Supabase-Provisioning
+### P1 — Portal/Auth ist aktuell kein guter autonomer Morning-Track
+- echter Supabase-Live-Setup
 - OAuth-Credentials
 - RLS-/Auth-E2E mit Live-Secrets
-- später: Soundscape Player, Reflection Graph
+- Audio-/Graph-Features mit externen Inputs
 
-**Schichtentscheidung:** nicht ideal für autonome Morning-Fixes ohne Live-Zugänge.
+**Schichtentscheidung:** heute nicht als autonomer Parallel-Run geeignet.
 
 ## Nächste Aufgaben
-1. Public Experience: genau **einen** kleinen sicheren Fix oder Review-Commit liefern lassen.
-2. Consciousness Map: genau **einen** kleinen sicheren Fix oder Review-Commit liefern lassen.
+1. Public Experience: **einen** kleinen sicheren, review-fähigen Fix oder Quality-Pass liefern lassen.
+2. Consciousness Map: **einen** kleinen sicheren, review-fähigen Fix oder Test-/UX-Pass liefern lassen.
 3. Nach Agent-Abschluss: Commits prüfen, cherry-picken/mergen und bei Bedarf `00-orchestration.md` truth-synchronisieren.
-4. Später separat entscheiden, ob überhaupt wieder ein `NEXT_STEPS_MASTERPLAN.md` im Root eingeführt werden soll.
+4. Später separat entscheiden, ob wieder ein Root-`NEXT_STEPS_MASTERPLAN.md` eingeführt werden soll.
 
 ## Asynchron gestartete Aufgaben
 
 ### Agent A — Public Experience Review
-- Modell: **Opus 4.1 / highest available complex Claude model**
+- Modell: **claude-opus-4-6**
 - Worktree: `/tmp/oe-morning-review/public`
 - Branch: `review/public-experience-20260403`
-- Ziel: einen kleinen konfliktarmen Public-Experience-/Perf-/Docs-Fix finden, umsetzen, verifizieren (`npm run build`; optional gezielte Tests), in eigenem Branch committen und kurz im Worktree dokumentieren.
-- Status: **startet in dieser Schicht**
+- Ziel:
+  - kleinen konfliktarmen Public-Experience-/Perf-/Docs-Fix identifizieren
+  - umsetzen
+  - verifizieren (`npm run build`, optional gezielte Tests)
+  - committen
+  - Kurznotiz im Worktree hinterlassen
+- Status: **wird in dieser Schicht asynchron gestartet**
 
 ### Agent B — Consciousness Map Review
-- Modell: **Sonnet / fast Claude model**
+- Modell: **claude-sonnet-4-6**
 - Worktree: `/tmp/oe-morning-review/map`
 - Branch: `review/map-polish-20260403`
-- Ziel: einen kleinen konfliktarmen Map-/Interaction-/Test-/Docs-Fix finden, umsetzen, verifizieren (`npm run build`; optional gezielte Tests), in eigenem Branch committen und kurz im Worktree dokumentieren.
-- Status: **startet in dieser Schicht**
+- Ziel:
+  - kleinen konfliktarmen Map-/Interaction-/Test-/Docs-Fix identifizieren
+  - umsetzen
+  - verifizieren (`npm run build`, optional gezielte Tests)
+  - committen
+  - Kurznotiz im Worktree hinterlassen
+- Status: **wird in dieser Schicht asynchron gestartet**
 
 ## Lösch-/Commit-Prüfung
 - `NEXT_STEPS_MASTERPLAN.md`: nicht vorhanden → kein `git rm`
-- `AUTO_REVIEW_PLAN.md`: aktiv in Benutzung, nicht fertig → kein `git rm`
-- In dieser Morning-Schicht daher **kein** `git rm`-Kandidat.
+- `AUTO_REVIEW_PLAN.md`: operative Datei, klar **nicht** 100% fertig → kein `git rm`
+- Ergebnis: in dieser Morning-Schicht **kein** `git rm`-Kandidat
 
 ## Telegram-Hinweis
 Externe Nachricht hier nicht selbst senden.
