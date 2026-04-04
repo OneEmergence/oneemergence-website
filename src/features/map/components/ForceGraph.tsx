@@ -335,17 +335,39 @@ export function ForceGraph({
           {/* ---- Edges ---- */}
           {simEdges.map((edge) => {
             const connected = isConnected(edge, selectedNodeId)
+            const mx = ((edge.source.x ?? 0) + (edge.target.x ?? 0)) / 2
+            const my = ((edge.source.y ?? 0) + (edge.target.y ?? 0)) / 2
             return (
-              <line
-                key={edge.id}
-                x1={edge.source.x ?? 0}
-                y1={edge.source.y ?? 0}
-                x2={edge.target.x ?? 0}
-                y2={edge.target.y ?? 0}
-                stroke={connected ? '#ffffff' : '#ffffff'}
-                strokeOpacity={connected ? 0.6 : 0.12}
-                strokeWidth={connected ? 1.5 : 0.5}
-              />
+              <g key={edge.id}>
+                <line
+                  x1={edge.source.x ?? 0}
+                  y1={edge.source.y ?? 0}
+                  x2={edge.target.x ?? 0}
+                  y2={edge.target.y ?? 0}
+                  stroke="#ffffff"
+                  strokeOpacity={connected ? 0.6 : 0.12}
+                  strokeWidth={connected ? 1.5 : 0.5}
+                />
+                {edge.label && (
+                  <text
+                    x={mx}
+                    y={my}
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    fill="#ffffff"
+                    fillOpacity={connected ? 0.7 : 0.2}
+                    fontSize={9}
+                    fontFamily="Inter, sans-serif"
+                    stroke="#0a0a0f"
+                    strokeWidth={2}
+                    strokeLinejoin="round"
+                    pointerEvents="none"
+                    style={{ userSelect: 'none', paintOrder: 'stroke fill' } as React.CSSProperties}
+                  >
+                    {edge.label}
+                  </text>
+                )}
+              </g>
             )
           })}
 
