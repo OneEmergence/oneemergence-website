@@ -1,21 +1,21 @@
 # AUTO_REVIEW_PLAN
 
-Stand: 2026-04-04 07:05 UTC
+Stand: 2026-04-05 04:00 UTC
 Branch: `main`
-Repo-Status: `main` ahead of `origin/main` by 34; lokal modifiziert: `AUTO_REVIEW_PLAN.md`, `MORNING_AGENT_HANDOFF.md`
+Repo-Status: `main` ahead of `origin/main` by 35; lokal modifiziert: `AUTO_REVIEW_PLAN.md`, `MORNING_AGENT_HANDOFF.md`
 Morning-Run: Cron `c3a8ff45-9145-4786-b60b-2885c5ef3b0c`
 
 ## Repo-Snapshot
 
 ### Git / Verlauf
-- `git status --short --branch`: `## main...origin/main [ahead 34]`
+- `git status --short --branch`: `## main...origin/main [ahead 35]`
 - lokale Änderungen: `M AUTO_REVIEW_PLAN.md`, `M MORNING_AGENT_HANDOFF.md`
 - letzte relevante Commits:
+  - `480409a` — `docs(review): refresh morning auto review plan for 2026-04-04 07:05 UTC`
   - `eb979e5` — `docs(review): refresh morning auto review plan for 2026-04-04 05:01 UTC`
   - `5eb12e3` — `fix(a11y): add skip-to-content link in root layout`
   - `189fa1d` — `feat(map): render edge labels at line midpoints in ForceGraph`
   - `52f9875` — `docs(review): refresh morning auto review plan for 2026-04-04 04:00 UTC`
-  - `4d57360` — `docs(review): refresh morning auto review plan for 2026-04-03 07:06 UTC`
 
 ### Planquellen
 - `NEXT_STEPS_MASTERPLAN.md` fehlt weiterhin im Repo.
@@ -31,28 +31,28 @@ Morning-Run: Cron `c3a8ff45-9145-4786-b60b-2885c5ef3b0c`
 - Entsprechend gibt es keinen Update- oder Löschpfad für diese Datei in dieser Schicht.
 - Die operative Truth-Source für offene Website-Arbeit bleibt `docs/plans/agents/00-orchestration.md`.
 
-### P0 — Restscope ist klar: Public Experience + Map Polish
-Aus `00-orchestration.md` ergibt sich als relevanter verbleibender Scope:
-- **Public Experience Polish**: Panel-Navigation, Visual Essays, WebGL progressive enhancement, Performance-Audit
-- **Portal Restpunkte**: Soundscape Player, Reflection Graph, Live-Provisioning-/OAuth-Themen
+### P0 — Verbleibender Scope ist weiterhin klar und gut parallelisierbar
+Aus `00-orchestration.md` ergeben sich als relevante Resttracks:
+- **Public Experience Polish**: Panel-Navigation, Visual Essays, WebGL progressive enhancement, formaler Performance-Audit
+- **Portal Restpunkte**: Soundscape Player, Reflection Graph sowie menschliche Live-Provisioning-/OAuth-Themen
 - **Consciousness Map Polish**: Intensity-Mode-Integration, Mobile-Polish, Canvas-Fallback, E2E
 
-### P0 — Die kleinen Main-Änderungen der Frühschicht passen weiter gut zum Restscope
+### P0 — Die jüngsten Main-Commits schließen kleine sinnvolle Gaps, nicht den gesamten Restplan
 - `5eb12e3` ergänzt einen **Skip-to-content-Link** in `src/app/layout.tsx`.
 - `189fa1d` ergänzt **sichtbare Edge-Labels** in `src/features/map/components/ForceGraph.tsx`.
-- Beide Commits sind sauber kleine, konfliktarme Schritte in Richtung der offenen Planpunkte.
+- Diese Schritte sind gute inkrementelle Verbesserungen, aber die großen offenen Tracks aus Public Experience und Map-Polish bleiben bestehen.
 
-### P1 — `MORNING_AGENT_HANDOFF.md` bleibt bewusst als offener Review-/Handoff-Puffer zu behandeln
-- Die Datei ist lokal modifiziert und offenbar bereits kumulativ genutzt.
-- Vor späterem Push/Merge sollte bewusst entschieden werden, ob sie als fortlaufendes Log bestehen bleibt oder wieder kuratiert/schlanker wird.
-- Für diese Schicht kein autonomer Bereinigungsversuch auf `main`.
+### P1 — `MORNING_AGENT_HANDOFF.md` bleibt offener Handoff-/Log-Puffer
+- Die Datei ist lokal modifiziert und offenbar bewusst kumulativ genutzt.
+- In dieser Schicht daher **kein** autonomer Bereinigungs- oder Rewrite-Versuch auf `main`.
+- Vor einem späteren Push/Merge sollte bewusst entschieden werden, ob sie als fortlaufendes Log bestehen bleibt oder kuratiert wird.
 
 ### P1 — Beste nächste Morning-Spuren für Parallelisierung
 Für diese Schicht bleiben zwei kleine, voneinander weitgehend unabhängige Tracks sinnvoll:
 1. **Public Nav / Layout A11y-Semantik**  
    Ein einzelner kleiner, konfliktarmer Fix rund um Landmarken, Mobile-Menü-Semantik, Fokusführung oder Heading-Polish.
-2. **Map Polish**  
-   Ein einzelner kleiner, konfliktarmer Fix rund um Edge-Label-Lesbarkeit, Touch-/Mobile-Verhalten, Rendering-Resilienz oder Intensity-Mode-Verhalten.
+2. **Map Polish / Intensity- oder Mobile-Verhalten**  
+   Ein einzelner kleiner, konfliktarmer Fix rund um Touch-/Mobile-Verhalten, Rendering-Resilienz, Intensity-Mode-Verhalten oder Edge-Label-Lesbarkeit.
 
 ### P1 — Themen, die bewusst nicht autonom auf `main` gezogen werden
 - Live-Supabase-/OAuth-/Secrets-Themen
@@ -72,27 +72,23 @@ Für diese Schicht bleiben zwei kleine, voneinander weitgehend unabhängige Trac
 
 ### Agent A — Public Nav / Layout A11y Follow-up
 - Modell: **Claude Opus 4.6**
-- Worktree: `/tmp/oe-morning-review/public-20260404-d`
-- Branch: `review/public-a11y-followup-20260404-d`
 - Ziel:
   - genau **einen** kleinen konfliktarmen Accessibility-/Semantik-Fix im Public-Layout/Nav identifizieren
   - umsetzen
   - gezielt verifizieren
   - committen
-  - `MORNING_AGENT_HANDOFF.md` im Worktree überschreiben
-- Status: **wird in dieser Schicht asynchron gestartet**
+  - `MORNING_AGENT_HANDOFF.md` im Worktree mit einer kompakten Übergabe aktualisieren
+- Status: **in dieser Schicht asynchron gestartet**
 
 ### Agent B — Map Polish Follow-up
 - Modell: **Claude Sonnet 4.6**
-- Worktree: `/tmp/oe-morning-review/map-20260404-d`
-- Branch: `review/map-polish-20260404-d`
 - Ziel:
   - genau **einen** kleinen konfliktarmen Map-Polish-Fix identifizieren
   - umsetzen
   - gezielt verifizieren
   - committen
-  - `MORNING_AGENT_HANDOFF.md` im Worktree überschreiben
-- Status: **wird in dieser Schicht asynchron gestartet**
+  - `MORNING_AGENT_HANDOFF.md` im Worktree mit einer kompakten Übergabe aktualisieren
+- Status: **in dieser Schicht asynchron gestartet**
 
 ## Lösch-/Commit-Prüfung
 - `NEXT_STEPS_MASTERPLAN.md`: nicht vorhanden → kein `git rm`
