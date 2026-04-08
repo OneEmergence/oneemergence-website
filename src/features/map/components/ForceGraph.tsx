@@ -64,6 +64,8 @@ interface ForceGraphProps {
 // ---------------------------------------------------------------------------
 
 const MAX_TICKS = 300
+/** Minimum pointer movement (in screen pixels) to count as a drag vs. a tap. */
+const DRAG_THRESHOLD_PX = 4
 const CHARGE_STRENGTH = -80
 const LINK_DISTANCE = 100
 const NODE_SIZE_MULTIPLIER = 3
@@ -117,8 +119,15 @@ export function ForceGraph({
   // ---- drag state (ref to avoid re-renders during drag) ----------------
   const dragRef = useRef<{
     nodeId: string
+    /** Updated each pointermove tick — used to compute per-tick deltas. */
     startX: number
     startY: number
+    /** Original pointerdown position — never updated; used for tap/drag detection. */
+    origClientX: number
+    origClientY: number
+    /** Original fx/fy so we can restore them if the gesture turns out to be a tap. */
+    origFx: number | null | undefined
+    origFy: number | null | undefined
     active: boolean
   } | null>(null)
 
@@ -234,6 +243,10 @@ export function ForceGraph({
         nodeId,
         startX: event.clientX,
         startY: event.clientY,
+        origClientX: event.clientX,
+        origClientY: event.clientY,
+        origFx: node.fx,
+        origFy: node.fy,
         active: true,
       }
 
@@ -284,8 +297,19 @@ export function ForceGraph({
         simulationRef.current.alphaTarget(0)
       }
 
-      // Keep the node pinned where the user left it
-      onNodeDragEnd(node.id, node.fx ?? node.x ?? 0, node.fy ?? node.y ?? 0)
+      // Only persist the position if the pointer actually moved — a plain tap
+      // should never pin the node or fire a server write.
+      const didMove =
+        Math.abs(event.clientX - drag.origClientX) > DRAG_THRESHOLD_PX ||
+        Math.abs(event.clientY - drag.origClientY) > DRAG_THRESHOLD_PX
+
+      if (didMove) {
+        onNodeDragEnd(node.id, node.fx ?? node.x ?? 0, node.fy ?? node.y ?? 0)
+      } else {
+        // Restore original pinning state so the simulation can keep moving this node.
+        node.fx = drag.origFx
+        node.fy = drag.origFy
+      }
     },
     [simNodes, onNodeDragEnd],
   )

@@ -1,3 +1,54 @@
+# Morning Agent Handoff — Consciousness Map Review (2026-04-08)
+**Agent:** Map Review (Claude Sonnet 4.6)
+**Branch:** main
+
+---
+
+## What Changed
+
+**File:** `src/features/map/components/ForceGraph.tsx`
+
+Fixed a tap-vs-drag detection bug in the force graph pointer event handling.
+
+**Problem:** Every `pointerdown` on a node immediately set `fx/fy` (pinning it in the simulation) and every `pointerup` unconditionally called `onNodeDragEnd`, firing `updateNodePosition` via server action — even for a plain tap. On mobile, where taps are the primary interaction, this caused two compounding bugs:
+1. Every node tap fired an unnecessary server write.
+2. Every tapped node gained permanent `fx/fy`, progressively locking all nodes out of the force simulation until page reload.
+
+**Fix:** Added `origClientX / origClientY` to `dragRef` (set at `pointerdown`, never updated). In `handlePointerUp`, compare against the original to detect real drag vs. tap. Only call `onNodeDragEnd` / keep `fx/fy` if movement exceeded `DRAG_THRESHOLD_PX = 4`. On tap, restore original `origFx / origFy` so simulation control is not lost.
+
+**Diff size:** ~15 lines changed in one file. No new imports, no API changes, no schema changes.
+
+---
+
+## Why This Was Chosen
+
+- Falls squarely in "Mobile interaction polish" — a remaining work item explicitly listed in `07-consciousness-map.md`.
+- Single-file, zero backend impact, fully reversible.
+- Fixes a real data-correctness bug (accidental node pinning on tap) and a performance bug (unnecessary server writes) simultaneously.
+
+---
+
+## Verification
+
+```
+npx tsc --noEmit    → exit 0, no output
+npx eslint src/features/map/components/ForceGraph.tsx → exit 0, no output
+```
+
+---
+
+## Risk / Follow-up
+
+**Risk:** Very low. The threshold (4 px) is well under typical intentional drag distance and well above pointer jitter. Easily adjustable via `DRAG_THRESHOLD_PX`.
+
+**Follow-up suggestions:**
+1. **`pointercancel` handling:** System interruptions (e.g. incoming call on mobile) fire `pointercancel` instead of `pointerup`. Should restore `origFx/fy` the same way the tap branch does.
+2. **Intensity mode (still):** Highest-value remaining item. In `still` mode, force simulation ticks should be suppressed and `handlePointerDown` should skip `alphaTarget(0.3).restart()`. Requires reading intensity store.
+3. **Touch pinch-zoom:** `d3-zoom` handles pinch natively, but `touchAction: 'none'` on the SVG may prevent browser-native pinch on iOS Safari — worth in-device verification.
+
+---
+---
+
 # Morning Agent Handoff — Public Experience (2026-04-08)
 **Agent:** Public Experience Review (Claude Opus 4.6)
 **Branch:** main
