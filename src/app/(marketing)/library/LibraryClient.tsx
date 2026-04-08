@@ -82,12 +82,15 @@ export function LibraryClient({ items }: { items: LibraryItem[] }) {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.4 }}
+          role="group"
+          aria-label="Inhalte filtern"
           className="mb-10 flex flex-wrap justify-center gap-2"
         >
           {contentTypes.map((type) => (
             <button
               key={type.id}
               onClick={() => setActiveFilter(type.id)}
+              aria-current={activeFilter === type.id ? 'true' : undefined}
               className={`rounded-full border px-4 py-2 text-xs font-medium uppercase tracking-wider transition-all duration-200 ${
                 activeFilter === type.id
                   ? 'border-oe-aurora-violet bg-oe-aurora-violet/20 text-oe-pure-light'

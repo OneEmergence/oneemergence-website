@@ -1,3 +1,50 @@
+# Morning Agent Handoff — Public Experience (2026-04-08)
+**Agent:** Public Experience Review (Claude Opus 4.6)
+**Branch:** main
+
+---
+
+## What Changed
+
+**File:** `src/app/(marketing)/library/LibraryClient.tsx`
+
+Added accessibility attributes to the library content filter buttons:
+
+- Filter button group now has `role="group"` and `aria-label="Inhalte filtern"` so screen readers announce the control group with context.
+- Active filter button now carries `aria-current="true"` so assistive technology can identify the selected filter. Inactive buttons omit the attribute entirely (not `"false"`), following the WAI-ARIA best practice.
+
+**Diff size:** 2 attributes added to the container `<motion.div>`, 1 attribute added to each `<button>`.
+
+---
+
+## Why This Was Chosen
+
+- **WCAG alignment**: `aria-current` on toggle-style filter controls is a Level A best practice (WCAG 4.1.2 — Name, Role, Value). Without it, screen reader users cannot tell which filter is active without reading visual styling cues.
+- **Minimal risk**: Single file, purely additive attribute changes, no layout or logic changes.
+- **Contained**: No component API changes, no new dependencies.
+
+---
+
+## Verification
+
+| Check | Result |
+|-------|--------|
+| `tsc --noEmit` | Pass (exit 0, no output) |
+| `eslint LibraryClient.tsx` | Pass (exit 0, no output) |
+
+---
+
+## Risk / Follow-up
+
+**Risk:** None. Additive HTML attributes only — no visual or behavioral change for sighted users.
+
+**Follow-up suggestions:**
+1. **Footer nav landmarks**: Footer link columns are plain `<div>`s — wrapping in `<nav aria-label="...">` would improve landmark navigation.
+2. **Low-contrast text**: `text-oe-pure-light/30` and `/40` on filter labels and metadata fail WCAG AA contrast — needs broader design decision.
+
+---
+---
+
 # Morning Agent Handoff — Consciousness Map Review
 **Date:** 2026-04-04
 **Agent:** Map Review (Claude Sonnet 4.6)
@@ -54,3 +101,52 @@ TypeScript strict mode passes; ESLint passes. No runtime execution needed — ch
 1. **Label truncation:** For labels > ~20 chars, consider truncating with an ellipsis (requires measuring text width or a fixed `textLength` attribute).
 2. **Label click target:** A future iteration could make the label clickable to open an "edit edge" dialog (the plan mentions this as remaining work).
 3. **Intensity mode:** The plan defers intensity-mode integration. When implemented, edge labels could be hidden in `still` mode to reduce visual density.
+
+---
+---
+
+# Morning Agent Handoff — Public Experience (2026-04-04)
+**Agent:** Public Experience Review (Claude Opus 4.6)
+**Branch:** main
+
+---
+
+## What Changed
+
+**File:** `src/app/layout.tsx`
+
+Added skip-to-content link for keyboard/screen reader accessibility.
+
+- A visually hidden `<a href="#main-content">Zum Inhalt springen</a>` link is rendered before the Navbar.
+- On keyboard focus (Tab), it becomes visible as a fixed overlay (z-100, brand-violet background, gold ring).
+- The `<main>` element now carries `id="main-content"` as the jump target.
+- Total diff: 7 lines added, 1 line changed.
+
+---
+
+## Why This Was Chosen
+
+- **Critical WCAG requirement**: Skip navigation is a Level A success criterion (WCAG 2.4.1). Without it, keyboard and screen reader users must tab through 6+ navbar items on every page load.
+- **Lowest risk**: Pure additive change to a single file. No component API changes, no new dependencies, no visual change for mouse/touch users.
+- **High impact-to-size ratio**: One of the most impactful accessibility fixes possible in a single small commit.
+
+---
+
+## Verification
+
+| Check | Result |
+|-------|--------|
+| `tsc --noEmit` | Pass (no errors) |
+| `next build` | Pass (all routes generated) |
+
+---
+
+## Risk / Follow-up
+
+**Risk:** Minimal. Only `layout.tsx` was touched, and the change is additive. The link is invisible to sighted mouse users.
+
+**Follow-up suggestions:**
+1. **Scroll margin**: Consider adding `scroll-margin-top` to `#main-content` if the navbar is sticky/fixed, so the focus target doesn't land behind the header.
+2. **Mobile nav a11y**: Mobile nav menu is missing `role="navigation"` and `aria-label` — good candidate for next session.
+3. **Low-contrast text**: `text-oe-pure-light/30` and `/40` on multiple pages fail WCAG AA — needs broader design decision.
+4. **Manifesto heading**: Principles section heading uses `<p>` instead of `<h2>` — small semantic fix.
