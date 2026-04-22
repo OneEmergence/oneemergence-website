@@ -314,6 +314,33 @@ export function ForceGraph({
     [simNodes, onNodeDragEnd],
   )
 
+  // Fired by the browser when it cancels a pointer mid-gesture (e.g. the OS
+  // intercepts a touch for scroll, palm rejection, incoming call overlay, etc.).
+  // Always discard the drag and restore the node's original pinning state so
+  // neither the simulation nor the server-write path is left in a broken state.
+  const handlePointerCancel = useCallback((event: React.PointerEvent) => {
+    const drag = dragRef.current
+    if (!drag?.active) return
+
+    event.stopPropagation()
+    dragRef.current = null
+
+    const node = simNodes.find((n) => n.id === drag.nodeId)
+    if (node) {
+      node.fx = drag.origFx
+      node.fy = drag.origFy
+      // Force a re-render to show the restored position immediately — the
+      // simulation may be stopped (after MAX_TICKS) and won't tick on its own.
+      setSimNodes((prev) => [...prev])
+    }
+
+    if (simulationRef.current) {
+      // Reset alphaTarget and give the simulation a small nudge so it can
+      // reposition the freed node — the sim may already be stopped after MAX_TICKS.
+      simulationRef.current.alphaTarget(0).alpha(0.1).restart()
+    }
+  }, [simNodes])
+
   // ---- click on background to deselect ---------------------------------
   const handleBackgroundClick = useCallback(() => {
     if (!dragRef.current) {
@@ -334,6 +361,7 @@ export function ForceGraph({
         onClick={handleBackgroundClick}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerCancel}
       >
         {/* ---- Filters ---- */}
         <defs>
