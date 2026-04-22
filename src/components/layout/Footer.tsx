@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { cn } from "@/lib/utils";
 
 const footerLinks = {
   Erkunden: [
@@ -26,9 +25,10 @@ interface FooterColumnProps {
 }
 
 function FooterColumn({ title, links }: FooterColumnProps) {
+  const headingId = `footer-nav-${title.toLowerCase().replace(/\s+/g, "-")}`;
   return (
-    <div className="flex flex-col gap-3">
-      <h3 className="text-xs font-semibold uppercase tracking-widest text-oe-pure-light/40">
+    <nav aria-labelledby={headingId} className="flex flex-col gap-3">
+      <h3 id={headingId} className="text-xs font-semibold uppercase tracking-widest text-oe-pure-light/40">
         {title}
       </h3>
       <ul className="flex flex-col gap-2">
@@ -43,7 +43,7 @@ function FooterColumn({ title, links }: FooterColumnProps) {
           </li>
         ))}
       </ul>
-    </div>
+    </nav>
   );
 }
 
@@ -66,11 +66,7 @@ export function Footer() {
           </div>
 
           {/* Link columns */}
-          <div
-            className={cn(
-              "grid grid-cols-2 gap-6 sm:gap-8 md:col-span-3 md:grid-cols-3"
-            )}
-          >
+          <div className="grid grid-cols-2 gap-6 sm:gap-8 md:col-span-3 md:grid-cols-3">
             {Object.entries(footerLinks).map(([title, links]) => (
               <FooterColumn key={title} title={title} links={links} />
             ))}
