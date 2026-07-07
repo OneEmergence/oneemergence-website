@@ -60,8 +60,8 @@ export default function PracticePage() {
               key={practice.title}
               className={`rounded-xl border p-6 transition-colors ${
                 practice.disabled
-                  ? 'cursor-not-allowed border-oe-pure-light/5 bg-oe-pure-light/[0.02] opacity-50'
-                  : 'border-oe-pure-light/10 bg-oe-pure-light/[0.03] hover:border-oe-pure-light/20'
+                  ? 'cursor-not-allowed border-oe-warm-sand/5 bg-oe-warm-sand/[0.02] opacity-50'
+                  : 'border-oe-warm-sand/10 bg-oe-warm-sand/[0.03] hover:border-oe-warm-sand/20'
               }`}
             >
               <h2 className="font-serif text-xl font-semibold text-oe-pure-light">

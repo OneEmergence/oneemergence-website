@@ -52,6 +52,8 @@ export function PortalSidebar({ userName, userImage }: PortalSidebarProps) {
               ? pathname === '/inner'
               : pathname.startsWith(item.href)
 
+          const isGuide = item.href === '/inner/guide'
+
           return (
             <Link
               key={item.href}
@@ -59,14 +61,20 @@ export function PortalSidebar({ userName, userImage }: PortalSidebarProps) {
               onClick={onNavigate}
               className={cn(
                 'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-warm-sand/50 focus-visible:ring-offset-2 focus-visible:ring-offset-oe-depth-warm',
                 isActive
-                  ? 'bg-oe-aurora-violet/10 text-oe-pure-light'
-                  : 'text-oe-pure-light/50 hover:bg-oe-pure-light/5 hover:text-oe-pure-light/80',
+                  ? 'bg-oe-warm-sand/10 text-oe-warm-sand'
+                  : 'text-oe-pure-light/50 hover:bg-oe-warm-sand/5 hover:text-oe-warm-sand/80',
                 item.disabled && 'pointer-events-none opacity-30'
               )}
               aria-disabled={item.disabled}
             >
-              <item.icon className="h-4 w-4" />
+              <item.icon
+                className={cn(
+                  'h-4 w-4',
+                  isGuide && (isActive ? 'text-oe-aurora-violet' : 'text-oe-aurora-violet/50')
+                )}
+              />
               {item.label}
               {item.disabled && (
                 <span className="ml-auto text-[10px] uppercase tracking-wider text-oe-pure-light/20">
@@ -82,7 +90,7 @@ export function PortalSidebar({ userName, userImage }: PortalSidebarProps) {
 
   function renderUserSection() {
     return (
-      <div className="border-t border-oe-pure-light/5 px-3 py-4">
+      <div className="border-t border-oe-warm-sand/10 px-3 py-4">
         <div className="flex items-center gap-3 px-3 pb-3">
           {userImage ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -92,7 +100,7 @@ export function PortalSidebar({ userName, userImage }: PortalSidebarProps) {
               className="h-8 w-8 rounded-full"
             />
           ) : (
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-oe-aurora-violet/20 text-xs text-oe-pure-light">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-oe-warm-sand/20 text-xs text-oe-warm-sand">
               {userName?.[0]?.toUpperCase() ?? '?'}
             </div>
           )}
@@ -102,7 +110,7 @@ export function PortalSidebar({ userName, userImage }: PortalSidebarProps) {
         </div>
         <button
           onClick={handleSignOut}
-          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-oe-pure-light/40 transition-colors hover:bg-oe-pure-light/5 hover:text-oe-pure-light/60"
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-oe-pure-light/40 transition-colors hover:bg-oe-warm-sand/5 hover:text-oe-warm-sand/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-warm-sand/50 focus-visible:ring-offset-2 focus-visible:ring-offset-oe-depth-warm"
         >
           <LogOut className="h-4 w-4" />
           Abmelden
@@ -116,10 +124,10 @@ export function PortalSidebar({ userName, userImage }: PortalSidebarProps) {
       {/* Mobile toggle */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="fixed left-4 top-4 z-50 rounded-full border border-oe-pure-light/10 bg-oe-deep-space/80 p-2 backdrop-blur-sm md:hidden"
+        className="fixed left-4 top-4 z-50 rounded-full border border-oe-warm-sand/10 bg-oe-depth-warm/80 p-2 backdrop-blur-sm md:hidden"
         aria-label="Menü öffnen"
       >
-        <Menu className="h-5 w-5 text-oe-pure-light/70" />
+        <Menu className="h-5 w-5 text-oe-warm-sand/70" />
       </button>
 
       {/* Mobile overlay */}
@@ -139,13 +147,13 @@ export function PortalSidebar({ userName, userImage }: PortalSidebarProps) {
       <AnimatePresence>
         {mobileOpen && (
           <motion.aside
-            className="fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-oe-pure-light/5 bg-oe-deep-space md:hidden"
+            className="fixed inset-y-0 left-0 z-50 flex w-64 flex-col border-r border-oe-warm-sand/10 bg-oe-depth-warm md:hidden"
             initial={{ x: -256 }}
             animate={{ x: 0 }}
             exit={{ x: -256 }}
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="flex items-center justify-between border-b border-oe-pure-light/5 px-6 py-5">
+            <div className="flex items-center justify-between border-b border-oe-warm-sand/10 px-6 py-5">
               <Link href="/inner" className="font-serif text-lg text-oe-pure-light">
                 OneEmergence
               </Link>
@@ -153,7 +161,7 @@ export function PortalSidebar({ userName, userImage }: PortalSidebarProps) {
                 onClick={() => setMobileOpen(false)}
                 aria-label="Menü schließen"
               >
-                <X className="h-5 w-5 text-oe-pure-light/50" />
+                <X className="h-5 w-5 text-oe-warm-sand/50" />
               </button>
             </div>
             {renderNav(() => setMobileOpen(false))}
@@ -163,8 +171,8 @@ export function PortalSidebar({ userName, userImage }: PortalSidebarProps) {
       </AnimatePresence>
 
       {/* Desktop sidebar (always visible) */}
-      <aside className="hidden w-64 flex-col border-r border-oe-pure-light/5 bg-oe-deep-space md:flex">
-        <div className="border-b border-oe-pure-light/5 px-6 py-5">
+      <aside className="hidden w-64 flex-col border-r border-oe-warm-sand/10 bg-oe-depth-warm md:flex">
+        <div className="border-b border-oe-warm-sand/10 px-6 py-5">
           <Link href="/inner" className="font-serif text-lg text-oe-pure-light">
             OneEmergence
           </Link>

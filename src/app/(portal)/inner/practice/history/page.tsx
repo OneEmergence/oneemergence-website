@@ -79,13 +79,13 @@ export default async function PracticeHistoryPage() {
             Verlauf konnte nicht geladen werden.
           </p>
         ) : result.data.length === 0 ? (
-          <div className="rounded-xl border border-oe-pure-light/5 p-6 text-center">
+          <div className="rounded-xl border border-oe-warm-sand/10 p-6 text-center">
             <p className="text-sm text-oe-pure-light/40">
               Noch keine Praxis-Sitzungen. Starte deine erste Meditation.
             </p>
             <Link
               href="/inner/practice/meditation"
-              className="mt-4 inline-block rounded-lg bg-oe-aurora-violet px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-oe-aurora-violet/80"
+              className="mt-4 inline-block rounded-lg bg-oe-solar-gold px-5 py-2 text-sm font-medium text-oe-depth-warm transition-colors hover:bg-oe-solar-gold/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-solar-gold focus-visible:ring-offset-2 focus-visible:ring-offset-oe-depth-warm"
             >
               Jetzt starten
             </Link>
@@ -101,7 +101,7 @@ export default async function PracticeHistoryPage() {
                   {sessions.map((session) => (
                     <div
                       key={session.id}
-                      className="flex items-center justify-between rounded-xl border border-oe-pure-light/5 bg-oe-pure-light/[0.02] px-5 py-4"
+                      className="flex items-center justify-between rounded-xl border border-oe-warm-sand/10 bg-oe-warm-sand/[0.02] px-5 py-4"
                     >
                       <div>
                         <p className="text-sm font-medium text-oe-pure-light/80">
@@ -123,7 +123,7 @@ export default async function PracticeHistoryPage() {
             ))}
 
             {/* Summary */}
-            <div className="rounded-xl border border-oe-pure-light/5 bg-oe-pure-light/[0.02] px-5 py-4">
+            <div className="rounded-xl border border-oe-warm-sand/10 bg-oe-warm-sand/[0.02] px-5 py-4">
               <p className="text-xs uppercase tracking-widest text-oe-pure-light/30">
                 Gesamt
               </p>

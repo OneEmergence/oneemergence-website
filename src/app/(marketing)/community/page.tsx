@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { LayerAtmosphere } from "@/components/motion/LayerAtmosphere";
 
 const steps = [
   {
@@ -23,7 +24,7 @@ const steps = [
       "In unserem Telegram-Channel und den wöchentlichen Check-In-Runden lernst du Menschen kennen, die ähnliche Fragen tragen wie du — ohne Smalltalk-Zwang.",
     cta: "Telegram öffnen",
     href: "#",
-    accent: "oe-aurora-violet",
+    accent: "oe-living-green",
   },
   {
     number: "03",
@@ -66,13 +67,13 @@ const values = [
 
 const accentMap: Record<string, string> = {
   "oe-spirit-cyan": "border-oe-spirit-cyan/30 bg-oe-spirit-cyan/5 group-hover:border-oe-spirit-cyan/60",
-  "oe-aurora-violet": "border-oe-aurora-violet/30 bg-oe-aurora-violet/5 group-hover:border-oe-aurora-violet/60",
+  "oe-living-green": "border-oe-living-green/30 bg-oe-living-green/5 group-hover:border-oe-living-green/60",
   "oe-solar-gold": "border-oe-solar-gold/30 bg-oe-solar-gold/5 group-hover:border-oe-solar-gold/60",
 };
 
 const numberColorMap: Record<string, string> = {
   "oe-spirit-cyan": "text-oe-spirit-cyan",
-  "oe-aurora-violet": "text-oe-aurora-violet",
+  "oe-living-green": "text-oe-living-green",
   "oe-solar-gold": "text-oe-solar-gold",
 };
 
@@ -80,14 +81,15 @@ export default function CommunityPage() {
   const router = useRouter();
 
   return (
-    <div className="bg-oe-deep-space text-oe-pure-light">
+    <div className="relative isolate overflow-hidden bg-oe-deep-space text-oe-pure-light">
+      <LayerAtmosphere variant="solarpunk" />
       {/* Hero */}
       <section className="flex flex-col items-center justify-center min-h-[50vh] sm:min-h-[55vh] md:min-h-[65vh] px-4 sm:px-6 pt-20 sm:pt-24 pb-16 text-center">
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
-          className="mb-4 text-xs font-semibold uppercase tracking-widest text-oe-aurora-violet"
+          className="mb-4 text-xs font-semibold uppercase tracking-widest text-oe-living-green"
         >
           Community
         </motion.p>
@@ -122,7 +124,7 @@ export default function CommunityPage() {
             transition={{ duration: 0.6 }}
             className="mb-16 text-center"
           >
-            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-oe-aurora-violet">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-oe-living-green">
               Onboarding
             </p>
             <h2 className="font-serif text-4xl text-oe-solar-gold md:text-5xl">
@@ -142,7 +144,7 @@ export default function CommunityPage() {
               >
                 {/* Connector line (desktop) */}
                 {i < steps.length - 1 && (
-                  <div className="hidden md:block absolute top-10 left-full w-8 h-px bg-oe-aurora-violet/20 z-10" />
+                  <div className="hidden md:block absolute top-10 left-full w-8 h-px bg-gradient-to-r from-oe-living-green/30 to-transparent z-10" />
                 )}
 
                 <div
@@ -164,7 +166,7 @@ export default function CommunityPage() {
                   </p>
                   <a
                     href={step.href}
-                    className="inline-block px-5 py-2.5 rounded-xl border border-oe-aurora-violet/30 text-sm text-oe-pure-light/80 hover:border-oe-aurora-violet/60 hover:text-oe-pure-light transition-colors duration-200"
+                    className="inline-block px-5 py-2.5 rounded-xl border border-oe-living-green/30 text-sm text-oe-pure-light/80 hover:border-oe-living-green/60 hover:text-oe-pure-light transition-colors duration-200"
                   >
                     {step.cta}
                   </a>
@@ -176,7 +178,7 @@ export default function CommunityPage() {
       </section>
 
       {/* Values Grid */}
-      <section className="px-6 py-24 bg-oe-aurora-violet/5">
+      <section className="px-6 py-24 bg-oe-depth-solarpunk/50">
         <div className="mx-auto max-w-5xl">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -185,7 +187,7 @@ export default function CommunityPage() {
             transition={{ duration: 0.6 }}
             className="mb-14 text-center"
           >
-            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-oe-aurora-violet">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-oe-living-green">
               Worum es geht
             </p>
             <h2 className="font-serif text-3xl text-oe-solar-gold md:text-4xl">
@@ -201,9 +203,9 @@ export default function CommunityPage() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="flex gap-5 rounded-xl border border-oe-aurora-violet/15 bg-oe-deep-space p-6 hover:border-oe-aurora-violet/30 transition-colors duration-300"
+                className="flex gap-5 rounded-xl border border-oe-living-green/15 bg-oe-deep-space/60 p-6 hover:border-oe-living-green/35 transition-colors duration-300"
               >
-                <span className="text-2xl text-oe-solar-gold/60 flex-shrink-0 mt-0.5">
+                <span className="text-2xl text-oe-living-green/70 flex-shrink-0 mt-0.5">
                   {val.icon}
                 </span>
                 <div>

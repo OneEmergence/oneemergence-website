@@ -21,7 +21,7 @@ const quickActions = [
     label: 'Journal schreiben',
     description: 'Halte deine Gedanken und Reflexionen fest',
     icon: BookOpen,
-    color: 'oe-spirit-cyan',
+    accentClass: 'text-oe-warm-sand',
     disabled: false,
   },
   {
@@ -29,7 +29,7 @@ const quickActions = [
     label: 'Praxis beginnen',
     description: 'Meditation, Atemarbeit oder Klangräume',
     icon: Flame,
-    color: 'oe-solar-gold',
+    accentClass: 'text-oe-solar-gold',
     disabled: false,
   },
   {
@@ -37,7 +37,7 @@ const quickActions = [
     label: 'Guide fragen',
     description: 'Dein KI-Begleiter für innere Arbeit',
     icon: Sparkles,
-    color: 'oe-aurora-violet',
+    accentClass: 'text-oe-aurora-violet',
     disabled: false,
   },
 ] as const
@@ -82,13 +82,13 @@ export function DashboardClient({
 
       {/* Daily Impulse */}
       <motion.div
-        className="relative overflow-hidden rounded-2xl border border-oe-pure-light/5 bg-oe-pure-light/[0.02] p-6 md:p-8"
+        className="relative overflow-hidden rounded-2xl border border-oe-warm-sand/10 bg-oe-warm-sand/[0.03] p-6 md:p-8"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.15, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       >
-        <div className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-oe-aurora-violet/5 blur-[60px]" />
-        <p className="text-xs uppercase tracking-widest text-oe-aurora-violet/60">
+        <div className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-oe-solar-gold/5 blur-[60px]" />
+        <p className="text-xs uppercase tracking-widest text-oe-solar-gold/70">
           Tagesimpuls
         </p>
         <blockquote className="mt-4 font-serif text-lg leading-relaxed text-oe-pure-light/80 md:text-xl">
@@ -109,12 +109,13 @@ export function DashboardClient({
             key={action.href}
             href={action.disabled ? '#' : action.href}
             className={cn(
-              'group flex flex-col gap-3 rounded-xl border border-oe-pure-light/5 p-5 transition-all duration-300',
-              'hover:border-oe-pure-light/10 hover:bg-oe-pure-light/[0.02]',
+              'group flex flex-col gap-3 rounded-xl border border-oe-warm-sand/10 p-5 transition-all duration-300',
+              'hover:border-oe-warm-sand/20 hover:bg-oe-warm-sand/[0.03]',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-warm-sand/50 focus-visible:ring-offset-2 focus-visible:ring-offset-oe-depth-warm',
               action.disabled && 'pointer-events-none opacity-40'
             )}
           >
-            <action.icon className={cn('h-5 w-5', `text-${action.color}`)} />
+            <action.icon className={cn('h-5 w-5', action.accentClass)} />
             <div>
               <p className="text-sm font-medium text-oe-pure-light/80">
                 {action.label}
@@ -134,7 +135,7 @@ export function DashboardClient({
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.45, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       >
-        <div className="rounded-xl border border-oe-pure-light/5 p-5">
+        <div className="rounded-xl border border-oe-warm-sand/10 p-5">
           <p className="text-xs uppercase tracking-widest text-oe-pure-light/30">
             Journal
           </p>
@@ -142,7 +143,7 @@ export function DashboardClient({
             Beginne dein erstes Journal — jede Reflexion ist ein Samen.
           </p>
         </div>
-        <div className="rounded-xl border border-oe-pure-light/5 p-5">
+        <div className="rounded-xl border border-oe-warm-sand/10 p-5">
           <p className="text-xs uppercase tracking-widest text-oe-pure-light/30">
             Praxis
           </p>

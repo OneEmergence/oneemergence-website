@@ -32,7 +32,7 @@ export default async function JournalPage() {
         <h1 className="font-serif text-3xl text-oe-pure-light">Journal</h1>
         <Link
           href="/inner/journal/new"
-          className="rounded-lg bg-oe-aurora-violet px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-oe-aurora-violet/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-aurora-violet focus-visible:ring-offset-2 focus-visible:ring-offset-oe-deep-space"
+          className="rounded-lg bg-oe-solar-gold px-4 py-2 text-sm font-medium text-oe-depth-warm transition-colors hover:bg-oe-solar-gold/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-solar-gold focus-visible:ring-offset-2 focus-visible:ring-offset-oe-depth-warm"
         >
           Neuer Eintrag
         </Link>

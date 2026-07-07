@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useMotionLevel } from "@/hooks/useMotionLevel";
 import { useIntensityMode } from "@/hooks/useIntensityMode";
 
-type OrbColor = "violet" | "cyan" | "gold";
+type OrbColor = "violet" | "cyan" | "gold" | "green" | "sand";
 
 const ORB_COLORS: Record<OrbColor, { center: string; edge: string }> = {
   violet: {
@@ -18,6 +18,14 @@ const ORB_COLORS: Record<OrbColor, { center: string; edge: string }> = {
   gold: {
     center: "rgba(246, 196, 83, 0.3)",
     edge: "rgba(246, 196, 83, 0.06)",
+  },
+  green: {
+    center: "rgba(110, 219, 143, 0.28)",
+    edge: "rgba(110, 219, 143, 0.05)",
+  },
+  sand: {
+    center: "rgba(232, 201, 168, 0.24)",
+    edge: "rgba(232, 201, 168, 0.05)",
   },
 };
 

@@ -5,6 +5,7 @@ import { motion, useScroll, useTransform, type Variants } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import { StarField } from '@/components/scene/StarField'
 import { AmbientOrb } from '@/components/motion/ambient-orb'
+import { EmblemMark } from '@/components/motion/EmblemMark'
 import { ScrollReveal } from '@/components/motion/ScrollReveal'
 import { ScrollIndicator } from '@/components/motion/ScrollIndicator'
 import { MagneticButton } from '@/components/ui/MagneticButton'
@@ -45,6 +46,15 @@ export function LivingPortalClient({ posts }: { posts: PostPreview[] }) {
           style={{ opacity: heroOpacity, scale: heroScale }}
           className="relative z-10 flex flex-col items-center px-4 text-center"
         >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.85 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1.4, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            className="mb-8"
+          >
+            <EmblemMark size={116} glow="gold" priority />
+          </motion.div>
+
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -62,6 +72,14 @@ export function LivingPortalClient({ posts }: { posts: PostPreview[] }) {
           >
             OneEmergence
           </motion.h1>
+
+          <motion.div
+            aria-hidden="true"
+            initial={{ opacity: 0, scaleX: 0 }}
+            animate={{ opacity: 1, scaleX: 1 }}
+            transition={{ duration: 1.1, delay: 0.65, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-7 h-px w-28 bg-gradient-to-r from-transparent via-oe-solar-gold/60 to-transparent"
+          />
 
           <motion.p
             initial={{ opacity: 0, y: 16 }}

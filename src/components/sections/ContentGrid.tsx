@@ -41,7 +41,7 @@ export function ContentGrid({ posts }: { posts: PostPreview[] }) {
           <Link
             href={`/journal/${post.slug}`}
             data-cursor-hover
-            className="group relative block overflow-hidden rounded-2xl border border-oe-pure-light/8 bg-oe-pure-light/[0.03] transition-all duration-300 hover:border-oe-aurora-violet/40 hover:bg-oe-aurora-violet/5"
+            className="group relative block overflow-hidden rounded-2xl border border-oe-pure-light/8 bg-oe-depth-solarpunk/40 transition-all duration-300 hover:border-oe-living-green/40 hover:bg-oe-living-green/5"
           >
             {/* Cover image with parallax */}
             {post.cover && (
@@ -61,7 +61,7 @@ export function ContentGrid({ posts }: { posts: PostPreview[] }) {
 
             {/* Hover glow */}
             <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-              <div className="absolute -top-8 -right-8 h-32 w-32 rounded-full bg-oe-aurora-violet/10 blur-2xl" />
+              <div className="absolute -top-8 -right-8 h-32 w-32 rounded-full bg-oe-living-green/10 blur-2xl" />
             </div>
 
             <div className="relative p-5 sm:p-7">
@@ -90,7 +90,7 @@ export function ContentGrid({ posts }: { posts: PostPreview[] }) {
                   {post.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="rounded-full bg-oe-aurora-violet/10 px-2.5 py-0.5 text-[11px] text-oe-aurora-violet/70"
+                      className="rounded-full bg-oe-living-green/10 px-2.5 py-0.5 text-[11px] text-oe-living-green/80"
                     >
                       {tag}
                     </span>
@@ -98,7 +98,7 @@ export function ContentGrid({ posts }: { posts: PostPreview[] }) {
                 </div>
               )}
 
-              <div className="mt-5 flex items-center gap-2 text-xs text-oe-aurora-violet/70">
+              <div className="mt-5 flex items-center gap-2 text-xs text-oe-living-green/80">
                 <span>{post.readingTime} Min. Lesezeit</span>
                 <span className="ml-auto transition-transform duration-200 group-hover:translate-x-1">
                   →

@@ -11,8 +11,7 @@ import {
   type SimulationNodeDatum,
   type SimulationLinkDatum,
 } from 'd3-force'
-import { zoom as d3Zoom, type ZoomBehavior } from 'd3-zoom'
-import { select } from 'd3-selection'
+import { zoom as d3Zoom, select, type ZoomBehavior } from 'd3'
 import { cn } from '@/lib/utils'
 import { NODE_TYPE_COLORS } from '@/lib/schemas/map'
 import type { MapNodeType } from '@/lib/schemas/map'

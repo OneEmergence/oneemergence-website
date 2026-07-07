@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { LayerAtmosphere } from "@/components/motion/LayerAtmosphere";
 
 type EventType = "online" | "live" | "retreat";
 
@@ -99,7 +100,7 @@ const events: Event[] = [
 const typeConfig: Record<EventType, { label: string; color: string }> = {
   online: { label: "Online", color: "text-oe-spirit-cyan border-oe-spirit-cyan/40 bg-oe-spirit-cyan/10" },
   live: { label: "Live", color: "text-oe-solar-gold border-oe-solar-gold/40 bg-oe-solar-gold/10" },
-  retreat: { label: "Retreat", color: "text-oe-aurora-violet border-oe-aurora-violet/40 bg-oe-aurora-violet/10" },
+  retreat: { label: "Retreat", color: "text-oe-living-green border-oe-living-green/40 bg-oe-living-green/10" },
 };
 
 function EventCard({ event, index }: { event: Event; index: number }) {
@@ -113,8 +114,8 @@ function EventCard({ event, index }: { event: Event; index: number }) {
       transition={{ duration: 0.55, delay: index * 0.08 }}
       className={`relative rounded-2xl border p-4 sm:p-6 md:p-8 transition-all duration-300 group hover:-translate-y-1 ${
         event.featured
-          ? "border-oe-solar-gold/30 bg-gradient-to-br from-oe-solar-gold/5 to-oe-aurora-violet/5"
-          : "border-oe-aurora-violet/20 bg-oe-aurora-violet/5 hover:border-oe-aurora-violet/40"
+          ? "border-oe-solar-gold/30 bg-gradient-to-br from-oe-solar-gold/8 to-oe-living-green/5"
+          : "border-oe-living-green/15 bg-oe-depth-solarpunk/50 hover:border-oe-living-green/40"
       }`}
     >
       {event.featured && (
@@ -133,7 +134,7 @@ function EventCard({ event, index }: { event: Event; index: number }) {
           <h3 className="font-serif text-2xl text-oe-solar-gold leading-tight">
             {event.title}
           </h3>
-          <p className="mt-1 text-sm text-oe-spirit-cyan">{event.subtitle}</p>
+          <p className="mt-1 text-sm text-oe-living-green">{event.subtitle}</p>
         </div>
         {event.spots !== null && (
           <div className="text-right flex-shrink-0">
@@ -154,10 +155,10 @@ function EventCard({ event, index }: { event: Event; index: number }) {
           <p className="text-xs text-oe-pure-light/40">{event.location}</p>
         </div>
         <div className="flex gap-3">
-          <button className="flex-1 sm:flex-none px-4 py-2.5 rounded-lg border border-oe-aurora-violet/30 text-xs text-oe-pure-light/70 hover:border-oe-aurora-violet/60 hover:text-oe-pure-light transition-colors duration-200">
+          <button className="flex-1 sm:flex-none px-4 py-2.5 rounded-lg border border-oe-living-green/25 text-xs text-oe-pure-light/70 hover:border-oe-living-green/55 hover:text-oe-pure-light transition-colors duration-200">
             Kalender
           </button>
-          <button className="flex-1 sm:flex-none px-4 py-2.5 rounded-lg bg-oe-aurora-violet/20 border border-oe-aurora-violet/40 text-xs text-oe-pure-light hover:bg-oe-aurora-violet/35 transition-colors duration-200">
+          <button className="flex-1 sm:flex-none px-4 py-2.5 rounded-lg bg-oe-living-green/15 border border-oe-living-green/40 text-xs text-oe-pure-light hover:bg-oe-living-green/25 transition-colors duration-200">
             Anmelden
           </button>
         </div>
@@ -170,14 +171,15 @@ export default function EventsPage() {
   const router = useRouter();
 
   return (
-    <div className="bg-oe-deep-space text-oe-pure-light">
+    <div className="relative isolate overflow-hidden bg-oe-deep-space text-oe-pure-light">
+      <LayerAtmosphere variant="solarpunk" />
       {/* Hero */}
       <section className="flex flex-col items-center justify-center min-h-[50vh] sm:min-h-[60vh] px-6 pt-24 pb-16 text-center">
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
-          className="mb-4 text-xs font-semibold uppercase tracking-widest text-oe-aurora-violet"
+          className="mb-4 text-xs font-semibold uppercase tracking-widest text-oe-living-green"
         >
           Gatherings & Events
         </motion.p>

@@ -28,11 +28,11 @@ export function PortalEntryClient() {
   }
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-oe-deep-space">
-      {/* Ambient glow */}
+    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-oe-deep-space to-oe-depth-warm">
+      {/* Ambient glow — cosmic aura outside, warmth emerging at the core */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute left-1/2 top-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-oe-aurora-violet/10 blur-[120px]" />
-        <div className="absolute left-1/2 top-1/2 h-[300px] w-[300px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-oe-spirit-cyan/8 blur-[80px]" />
+        <div className="absolute left-1/2 top-1/2 h-[300px] w-[300px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-oe-warm-sand/10 blur-[80px]" />
       </div>
 
       {/* Portal content */}
@@ -42,19 +42,19 @@ export function PortalEntryClient() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
       >
-        {/* Threshold glyph */}
+        {/* Threshold glyph — outer ring cosmic, core carries the seed of warmth to come */}
         <motion.div
           className="flex h-24 w-24 items-center justify-center rounded-full border border-oe-aurora-violet/30"
           animate={{
             boxShadow: [
-              '0 0 20px rgba(139, 92, 246, 0.1)',
-              '0 0 40px rgba(139, 92, 246, 0.2)',
-              '0 0 20px rgba(139, 92, 246, 0.1)',
+              '0 0 20px rgba(124, 92, 255, 0.15)',
+              '0 0 40px rgba(246, 196, 83, 0.25)',
+              '0 0 20px rgba(124, 92, 255, 0.15)',
             ],
           }}
           transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
         >
-          <div className="h-3 w-3 rounded-full bg-oe-aurora-violet" />
+          <div className="h-3 w-3 rounded-full bg-gradient-to-br from-oe-aurora-violet to-oe-solar-gold" />
         </motion.div>
 
         {/* Invitation text */}
@@ -91,11 +91,11 @@ export function PortalEntryClient() {
               onClick={() => handleSignIn(provider.id)}
               className={cn(
                 'group flex items-center justify-center gap-3 rounded-full',
-                'border border-oe-pure-light/10 px-6 py-3',
+                'border border-oe-warm-sand/15 px-6 py-3',
                 'text-sm text-oe-pure-light/70 transition-all duration-300',
-                'hover:border-oe-aurora-violet/40 hover:text-oe-pure-light',
-                'hover:shadow-[0_0_20px_rgba(139,92,246,0.1)]',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-aurora-violet'
+                'hover:border-oe-solar-gold/50 hover:text-oe-pure-light',
+                'hover:shadow-[0_0_20px_rgba(246,196,83,0.15)]',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-solar-gold'
               )}
             >
               <provider.icon className="h-4 w-4 opacity-60 transition-opacity group-hover:opacity-100" />

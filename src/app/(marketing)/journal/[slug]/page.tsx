@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { getPostBySlug, getPosts, getAdjacentPosts } from "@/lib/content";
+import { LayerAtmosphere } from "@/components/motion/LayerAtmosphere";
 
 export async function generateStaticParams() {
   return getPosts().map((p) => ({ slug: p.slug }));
@@ -33,7 +34,8 @@ export default async function JournalPost({
   const { prev, next } = getAdjacentPosts(slug);
 
   return (
-    <div className="min-h-screen bg-oe-deep-space">
+    <div className="relative isolate min-h-screen overflow-hidden bg-oe-deep-space">
+      <LayerAtmosphere variant="transitional" />
       {/* Hero Cover */}
       {post.meta.cover && (
         <div className="relative h-[220px] sm:h-[300px] md:h-[400px] w-full">

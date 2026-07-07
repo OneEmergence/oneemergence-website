@@ -6,6 +6,7 @@ const footerLinks = {
     { href: "/about", label: "Über uns" },
     { href: "/library", label: "Bibliothek" },
     { href: "/experiences", label: "Erfahrungen" },
+    { href: "/brand", label: "Brand" },
   ],
   Mitmachen: [
     { href: "/community", label: "Community" },

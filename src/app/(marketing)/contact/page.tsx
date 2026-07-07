@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { LayerAtmosphere } from "@/components/motion/LayerAtmosphere";
 
 type FormState = "idle" | "submitting" | "success";
 
@@ -190,7 +191,8 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="bg-oe-deep-space text-oe-pure-light">
+    <div className="relative isolate overflow-hidden bg-oe-deep-space text-oe-pure-light">
+      <LayerAtmosphere variant="transitional" />
       {/* Hero */}
       <section className="flex flex-col items-center justify-center min-h-[40vh] sm:min-h-[50vh] px-6 pt-20 sm:pt-24 pb-10 sm:pb-12 text-center">
         <motion.p
@@ -347,7 +349,7 @@ export default function ContactPage() {
               { label: "Sprachen", value: "Deutsch · English" },
             ].map((item) => (
               <div key={item.label}>
-                <p className="text-xs font-semibold uppercase tracking-widest text-oe-aurora-violet mb-1">
+                <p className="text-xs font-semibold uppercase tracking-widest text-oe-warm-sand/80 mb-1">
                   {item.label}
                 </p>
                 <p className="text-sm text-oe-pure-light/60">{item.value}</p>

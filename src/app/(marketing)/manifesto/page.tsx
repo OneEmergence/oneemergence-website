@@ -6,6 +6,7 @@ import { useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { ScrollReveal } from '@/components/motion/ScrollReveal'
 import { StarField } from '@/components/scene/StarField'
+import { EmblemMark } from '@/components/motion/EmblemMark'
 import { NewsletterSignup } from '@/components/sections/NewsletterSignup'
 
 type PrincipleAccent = 'oe-spirit-cyan' | 'oe-aurora-violet' | 'oe-solar-gold'
@@ -235,6 +236,15 @@ export default function ManifestoPage() {
       {/* Closing CTA */}
       <section className="px-4 py-16 sm:px-6 md:py-24">
         <div className="mx-auto max-w-2xl text-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            className="mb-10 flex justify-center"
+          >
+            <EmblemMark size={92} glow="violet" />
+          </motion.div>
           <ScrollReveal
             text="Bereit, Teil davon zu sein?"
             as="h2"

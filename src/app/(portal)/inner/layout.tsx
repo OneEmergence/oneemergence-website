@@ -13,7 +13,7 @@ export default async function InnerLayout({
   const user = await requireAuth()
 
   return (
-    <div className="flex min-h-screen bg-oe-deep-space">
+    <div className="flex min-h-screen bg-oe-depth-warm">
       <PortalSidebar userName={user.name} userImage={user.image} />
       <main className="flex-1 px-4 py-8 md:px-8 lg:px-12">
         {children}

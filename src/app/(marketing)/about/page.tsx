@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { LayerAtmosphere } from "@/components/motion/LayerAtmosphere";
 
 const story = [
   {
@@ -50,7 +51,8 @@ export default function AboutPage() {
   const router = useRouter();
 
   return (
-    <div className="bg-oe-deep-space text-oe-pure-light">
+    <div className="relative isolate overflow-hidden bg-oe-deep-space text-oe-pure-light">
+      <LayerAtmosphere variant="transitional" />
       {/* Hero */}
       <section className="flex flex-col items-center justify-center min-h-[50vh] sm:min-h-[60vh] md:min-h-[70vh] lg:min-h-screen px-4 sm:px-6 pt-16 sm:pt-20 pb-16 text-center">
         <motion.p
@@ -110,11 +112,11 @@ export default function AboutPage() {
                 <span className="font-serif text-4xl text-oe-solar-gold/30">
                   {block.year}
                 </span>
-                <div className="h-24 w-px bg-oe-aurora-violet/20" />
+                <div className="h-24 w-px bg-gradient-to-b from-oe-aurora-violet/25 to-oe-warm-sand/20" />
               </div>
 
               {/* Content card */}
-              <div className="flex-1 rounded-2xl border border-oe-aurora-violet/20 bg-oe-aurora-violet/5 p-6 sm:p-8 hover:border-oe-aurora-violet/40 transition-colors duration-300">
+              <div className="flex-1 rounded-2xl border border-oe-aurora-violet/20 bg-oe-aurora-violet/5 p-6 sm:p-8 hover:border-oe-warm-sand/40 transition-colors duration-300">
                 <h2 className="font-serif text-3xl text-oe-solar-gold mb-4">
                   {block.heading}
                 </h2>
@@ -128,7 +130,7 @@ export default function AboutPage() {
       </section>
 
       {/* Team */}
-      <section className="px-6 py-24 bg-oe-aurora-violet/5">
+      <section className="px-6 py-24 bg-oe-depth-warm/40">
         <div className="mx-auto max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -153,10 +155,10 @@ export default function AboutPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.12 }}
-                className="rounded-2xl border border-oe-aurora-violet/20 bg-oe-deep-space p-6 sm:p-8 hover:border-oe-spirit-cyan/30 transition-colors duration-300"
+                className="rounded-2xl border border-oe-aurora-violet/20 bg-oe-deep-space/60 p-6 sm:p-8 hover:border-oe-warm-sand/35 transition-colors duration-300"
               >
                 {/* Avatar placeholder */}
-                <div className="mb-6 h-16 w-16 rounded-full bg-gradient-to-br from-oe-aurora-violet/40 to-oe-spirit-cyan/20 flex items-center justify-center">
+                <div className="mb-6 h-16 w-16 rounded-full bg-gradient-to-br from-oe-aurora-violet/40 to-oe-warm-sand/30 flex items-center justify-center">
                   <span className="font-serif text-xl text-oe-solar-gold">
                     {member.name.charAt(0)}
                   </span>

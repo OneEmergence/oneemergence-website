@@ -88,9 +88,9 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-oe-deep-space/95 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-oe-depth-warm/95 p-4 backdrop-blur-sm">
       <motion.div
-        className="relative w-full max-w-lg rounded-2xl border border-oe-pure-light/10 bg-oe-deep-space p-8 shadow-2xl"
+        className="relative w-full max-w-lg rounded-2xl border border-oe-warm-sand/15 bg-oe-depth-warm p-8 shadow-2xl"
         initial={{ opacity: 0, scale: 0.96, y: 8 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
@@ -102,7 +102,7 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
               key={i}
               className={cn(
                 'h-0.5 flex-1 rounded-full transition-colors duration-500',
-                i <= step ? 'bg-oe-aurora-violet' : 'bg-oe-pure-light/10'
+                i <= step ? 'bg-oe-solar-gold' : 'bg-oe-warm-sand/10'
               )}
             />
           ))}
@@ -156,8 +156,8 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
                     className={cn(
                       'w-full rounded-xl border px-4 py-3 text-left transition-all duration-200',
                       intensityMode === opt.value
-                        ? 'border-oe-aurora-violet bg-oe-aurora-violet/10'
-                        : 'border-oe-pure-light/10 hover:border-oe-pure-light/20 hover:bg-oe-pure-light/[0.03]'
+                        ? 'border-oe-solar-gold bg-oe-solar-gold/10'
+                        : 'border-oe-warm-sand/10 hover:border-oe-warm-sand/20 hover:bg-oe-warm-sand/[0.03]'
                     )}
                   >
                     <p className="text-sm font-medium text-oe-pure-light">
@@ -196,8 +196,8 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
                     className={cn(
                       'rounded-full border px-3 py-1.5 text-xs transition-all duration-200',
                       focusThemes.includes(theme)
-                        ? 'border-oe-spirit-cyan bg-oe-spirit-cyan/10 text-oe-spirit-cyan'
-                        : 'border-oe-pure-light/10 text-oe-pure-light/50 hover:border-oe-pure-light/20 hover:text-oe-pure-light/70'
+                        ? 'border-oe-warm-sand bg-oe-warm-sand/10 text-oe-warm-sand'
+                        : 'border-oe-warm-sand/10 text-oe-pure-light/50 hover:border-oe-warm-sand/20 hover:text-oe-pure-light/70'
                     )}
                   >
                     {theme}
@@ -232,7 +232,7 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
               <button
                 type="button"
                 onClick={() => setStep((s) => s + 1)}
-                className="rounded-lg bg-oe-aurora-violet px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-oe-aurora-violet/80"
+                className="rounded-lg bg-oe-solar-gold px-5 py-2 text-sm font-medium text-oe-depth-warm transition-colors hover:bg-oe-solar-gold/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-solar-gold focus-visible:ring-offset-2 focus-visible:ring-offset-oe-depth-warm"
               >
                 Weiter
               </button>
@@ -242,7 +242,8 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
                 onClick={handleComplete}
                 disabled={isPending}
                 className={cn(
-                  'rounded-lg bg-oe-aurora-violet px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-oe-aurora-violet/80',
+                  'rounded-lg bg-oe-solar-gold px-5 py-2 text-sm font-medium text-oe-depth-warm transition-colors hover:bg-oe-solar-gold/80',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-solar-gold focus-visible:ring-offset-2 focus-visible:ring-offset-oe-depth-warm',
                   'disabled:cursor-not-allowed disabled:opacity-50'
                 )}
               >

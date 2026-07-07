@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { motion, AnimatePresence, type Variants } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import { ScrollReveal } from '@/components/motion/ScrollReveal'
+import { LayerAtmosphere } from '@/components/motion/LayerAtmosphere'
 import type { LibraryItem } from '@/lib/content'
 
 const contentTypes = [
@@ -31,7 +32,7 @@ function typeLabel(item: LibraryItem): string {
 function dotColor(item: LibraryItem): string {
   if (item.libraryType === 'teaching') return 'bg-oe-solar-gold'
   if (item.libraryType === 'reflection') return 'bg-oe-spirit-cyan'
-  return 'bg-oe-aurora-violet'
+  return 'bg-oe-living-green'
 }
 
 const cardVariants: Variants = {
@@ -49,7 +50,8 @@ export function LibraryClient({ items }: { items: LibraryItem[] }) {
       : items.filter((item) => filterIdForItem(item) === activeFilter)
 
   return (
-    <div className="min-h-screen bg-oe-deep-space pt-24 pb-16 md:pt-28 md:pb-20">
+    <div className="relative isolate min-h-screen overflow-hidden bg-oe-deep-space pt-24 pb-16 md:pt-28 md:pb-20">
+      <LayerAtmosphere variant="solarpunk" />
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         {/* Header */}
         <div className="mb-12 text-center md:mb-16">
@@ -57,7 +59,7 @@ export function LibraryClient({ items }: { items: LibraryItem[] }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-oe-aurora-violet/70"
+            className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-oe-living-green/80"
           >
             Bibliothek
           </motion.p>
@@ -93,7 +95,7 @@ export function LibraryClient({ items }: { items: LibraryItem[] }) {
               aria-current={activeFilter === type.id ? 'true' : undefined}
               className={`rounded-full border px-4 py-2 text-xs font-medium uppercase tracking-wider transition-all duration-200 ${
                 activeFilter === type.id
-                  ? 'border-oe-aurora-violet bg-oe-aurora-violet/20 text-oe-pure-light'
+                  ? 'border-oe-living-green/70 bg-oe-living-green/15 text-oe-pure-light'
                   : 'border-oe-pure-light/10 text-oe-pure-light/40 hover:border-oe-pure-light/30 hover:text-oe-pure-light/70'
               }`}
             >
@@ -132,7 +134,7 @@ export function LibraryClient({ items }: { items: LibraryItem[] }) {
                   <Link
                     href={`/library/${item.libraryType}/${item.slug}`}
                     data-cursor-hover
-                    className="group relative block overflow-hidden rounded-2xl border border-oe-pure-light/8 bg-oe-pure-light/[0.03] p-6 transition-all duration-300 hover:border-oe-aurora-violet/40 hover:bg-oe-aurora-violet/5"
+                    className="group relative block overflow-hidden rounded-2xl border border-oe-pure-light/8 bg-oe-depth-solarpunk/40 p-6 transition-all duration-300 hover:border-oe-living-green/40 hover:bg-oe-living-green/5"
                   >
                     {/* Content type indicator */}
                     <div className="mb-3 flex items-center gap-3">
@@ -163,7 +165,7 @@ export function LibraryClient({ items }: { items: LibraryItem[] }) {
                         {item.tags.map((tag) => (
                           <span
                             key={tag}
-                            className="rounded-full bg-oe-aurora-violet/10 px-2.5 py-0.5 text-[11px] text-oe-aurora-violet/70"
+                            className="rounded-full bg-oe-living-green/10 px-2.5 py-0.5 text-[11px] text-oe-living-green/80"
                           >
                             {tag}
                           </span>
@@ -171,7 +173,7 @@ export function LibraryClient({ items }: { items: LibraryItem[] }) {
                       </div>
                     )}
 
-                    <div className="mt-5 flex items-center gap-2 text-xs text-oe-aurora-violet/70">
+                    <div className="mt-5 flex items-center gap-2 text-xs text-oe-living-green/80">
                       <span>{item.readingTime} Min. Lesezeit</span>
                       <ArrowRight
                         size={12}

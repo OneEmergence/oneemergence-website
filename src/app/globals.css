@@ -9,6 +9,11 @@
   --color-oe-solar-gold: #F6C453;
   --color-oe-spirit-cyan: #54E2E9;
   --color-oe-pure-light: #F7F8FB;
+  --color-oe-living-green: #6EDB8F;
+  --color-oe-warm-sand: #E8C9A8;
+  --color-oe-depth-cosmic: #0A0F1F;
+  --color-oe-depth-solarpunk: #101B2E;
+  --color-oe-depth-warm: #1A1610;
 
   --font-family-sans: var(--font-inter), "Inter", system-ui, sans-serif;
   --font-family-serif: var(--font-cormorant), "Cormorant", Georgia, serif;
@@ -69,6 +74,18 @@ body {
 }
 .text-glow-cyan {
   text-shadow: 0 0 12px rgba(84, 226, 233, 0.5), 0 0 40px rgba(84, 226, 233, 0.2);
+}
+.glow-green {
+  box-shadow: 0 0 20px rgba(110, 219, 143, 0.3), 0 0 60px rgba(110, 219, 143, 0.1);
+}
+.glow-sand {
+  box-shadow: 0 0 20px rgba(232, 201, 168, 0.3), 0 0 60px rgba(232, 201, 168, 0.1);
+}
+.text-glow-green {
+  text-shadow: 0 0 12px rgba(110, 219, 143, 0.5), 0 0 40px rgba(110, 219, 143, 0.2);
+}
+.text-glow-sand {
+  text-shadow: 0 0 12px rgba(232, 201, 168, 0.5), 0 0 40px rgba(232, 201, 168, 0.2);
 }
 
 /* ─── Intensity mode CSS gates ─── */

@@ -5,10 +5,15 @@ import { motion, type Variants } from 'framer-motion'
 import { Clock, Eye, Compass, Sparkles } from 'lucide-react'
 import { ScrollReveal } from '@/components/motion/ScrollReveal'
 import { StarField } from '@/components/scene/StarField'
+import { LayerAtmosphere } from '@/components/motion/LayerAtmosphere'
 import { NewsletterSignup } from '@/components/sections/NewsletterSignup'
 import { Button } from '@/components/ui/button'
 
-type AccentColor = 'oe-spirit-cyan' | 'oe-aurora-violet' | 'oe-solar-gold'
+type AccentColor =
+  | 'oe-spirit-cyan'
+  | 'oe-aurora-violet'
+  | 'oe-living-green'
+  | 'oe-solar-gold'
 
 interface Experience {
   slug: string
@@ -32,6 +37,11 @@ const ACCENT_ICON_CLASSES: Record<AccentColor, { container: string; icon: string
     container: 'border-oe-aurora-violet/20 bg-oe-aurora-violet/5',
     icon: 'text-oe-aurora-violet/70',
     label: 'text-oe-aurora-violet/70',
+  },
+  'oe-living-green': {
+    container: 'border-oe-living-green/20 bg-oe-living-green/5',
+    icon: 'text-oe-living-green/70',
+    label: 'text-oe-living-green/70',
   },
   'oe-solar-gold': {
     container: 'border-oe-solar-gold/20 bg-oe-solar-gold/5',
@@ -61,7 +71,7 @@ const experiences: Experience[] = [
     description:
       'Eine geführte Erfahrung in die Lücke zwischen den Gedanken. Atemübungen, Stille-Intervalle und minimalistische Visuals begleiten dich in eine Erfahrung von Gegenwärtigkeit.',
     duration: '5 Min.',
-    accentColor: 'oe-aurora-violet',
+    accentColor: 'oe-living-green',
     icon: Compass,
     available: false,
   },
@@ -90,7 +100,8 @@ const fadeUp: Variants = {
 
 export function ExperiencesClient() {
   return (
-    <div className="min-h-screen bg-oe-deep-space text-oe-pure-light">
+    <div className="relative isolate min-h-screen overflow-hidden bg-oe-deep-space text-oe-pure-light">
+      <LayerAtmosphere variant="solarpunk" />
       {/* Hero */}
       <section className="relative flex min-h-[70vh] flex-col items-center justify-center overflow-hidden px-4 pt-20 text-center">
         <StarField />
@@ -150,9 +161,9 @@ export function ExperiencesClient() {
                   variants={fadeUp}
                 >
                   <div
-                    className={`group relative overflow-hidden rounded-2xl border border-oe-pure-light/8 bg-oe-pure-light/[0.02] p-8 transition-all duration-300 ${
+                    className={`group relative overflow-hidden rounded-2xl border border-oe-pure-light/8 bg-oe-depth-solarpunk/40 p-8 transition-all duration-300 ${
                       exp.available
-                        ? 'hover:border-oe-aurora-violet/40 hover:bg-oe-aurora-violet/5'
+                        ? 'hover:border-oe-living-green/40 hover:bg-oe-living-green/5'
                         : ''
                     } md:flex md:items-center md:gap-8`}
                   >
@@ -213,7 +224,7 @@ export function ExperiencesClient() {
           className="pointer-events-none absolute inset-0"
           style={{
             background:
-              'radial-gradient(ellipse at 50% 50%, rgba(124,92,255,0.05) 0%, transparent 50%)',
+              'radial-gradient(ellipse at 50% 50%, rgba(110,219,143,0.06) 0%, transparent 55%)',
           }}
         />
         <div className="relative mx-auto max-w-2xl text-center">
