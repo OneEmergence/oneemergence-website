@@ -46,3 +46,7 @@ next-env.d.ts
 .claude/skills/
 .claude/*.md
 !.claude/CLAUDE.md
+
+# Test artifacts
+playwright-report/
+test-results/
