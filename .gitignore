@@ -40,3 +40,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local Claude session files
+.claude/settings.local.json
+.claude/skills/
+.claude/*.md
+!.claude/CLAUDE.md
