@@ -14,7 +14,7 @@ import type {
   GuideMessage,
   SavedCard,
   PromptCard,
-} from '@/lib/schemas/guide'
+} from './schemas'
 
 type ActionResult<T> =
   | { success: true; data: T }

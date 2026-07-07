@@ -7,3 +7,13 @@ export { extractThemes, THEME_VOCABULARY, MAX_THEMES_PER_ENTRY } from './extract
 export { generateNodesFromJournal } from './generate-nodes'
 export { toGraphNode, toGraphEdge } from './types'
 export type { GraphNode, GraphEdge } from './types'
+
+// Schemas (feature public contract)
+export type { MapNode, MapEdge, MapData, CreateNodeInput, CreateEdgeInput } from './schemas'
+export {
+  MapNodeType,
+  NODE_TYPE_COLORS,
+  NODE_TYPE_LABELS,
+  CreateNodeInputSchema,
+  CreateEdgeInputSchema,
+} from './schemas'

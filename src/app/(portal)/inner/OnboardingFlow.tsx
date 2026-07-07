@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { cn } from '@/lib/utils'
-import { completeOnboarding } from '@/lib/actions/onboarding'
+import { completeOnboarding } from '@/features/auth'
 import { usePreferencesStore } from '@/stores/preferences'
 
 // ---------------------------------------------------------------------------

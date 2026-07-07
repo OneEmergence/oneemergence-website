@@ -13,8 +13,8 @@ import {
 } from 'd3-force'
 import { zoom as d3Zoom, select, type ZoomBehavior } from 'd3'
 import { cn } from '@/lib/utils'
-import { NODE_TYPE_COLORS } from '@/lib/schemas/map'
-import type { MapNodeType } from '@/lib/schemas/map'
+import { NODE_TYPE_COLORS } from '../schemas'
+import type { MapNodeType } from '../schemas'
 
 // ---------------------------------------------------------------------------
 // Types

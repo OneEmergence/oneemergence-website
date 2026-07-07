@@ -1,0 +1,30 @@
+# Local / single-host runtime for the OneEmergence web app.
+#
+# Supabase (Postgres + Auth + Storage) runs in the cloud for now — this
+# compose file intentionally has no `db`/`supabase` service. Self-hosting
+# Supabase alongside this container is a conscious LATER decision (see
+# docs/ROADMAP.md §IV Phase 4): the Supabase CLI supports `supabase start`
+# with a full self-hosted stack, and a `self-hosted` compose profile can be
+# added here when data-sovereignty requirements actually demand it — not
+# by default.
+#
+# Usage:
+#   docker compose build \
+#     --build-arg NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co \
+#     --build-arg NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
+#   docker compose up -d
+#
+# `.env` supplies runtime secrets (DATABASE_URL, ANTHROPIC_API_KEY, the
+# NEXT_PUBLIC_* values again for consistency, etc.) — see .env.example.
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: oneemergence-website:local
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    restart: unless-stopped

@@ -2,6 +2,7 @@
 
 import { z } from 'zod'
 import { eq } from 'drizzle-orm'
+import { revalidatePath } from 'next/cache'
 
 import { requireDb } from '@/lib/db'
 import { requireAuth } from '@/lib/auth/session'
@@ -12,9 +13,7 @@ import { userPreferences } from '@/lib/db/schema'
 // ---------------------------------------------------------------------------
 
 const preferencesSchema = z.object({
-  intensityMode: z
-    .enum(['still', 'balanced', 'immersive'])
-    .optional(),
+  intensityMode: z.enum(['still', 'balanced', 'immersive']).optional(),
   audioEnabled: z
     .enum(['true', 'false'])
     .transform((v) => v === 'true')
@@ -35,13 +34,19 @@ const preferencesSchema = z.object({
     .optional(),
 })
 
+const onboardingSchema = z.object({
+  intensityMode: z.enum(['still', 'balanced', 'immersive']),
+  focusThemes: z.string().transform((v) => {
+    return z.array(z.string()).parse(JSON.parse(v))
+  }),
+  audioEnabled: z.enum(['true', 'false']).transform((v) => v === 'true'),
+})
+
 // ---------------------------------------------------------------------------
 // Result types
 // ---------------------------------------------------------------------------
 
-type UpdateResult =
-  | { success: true }
-  | { success: false; error: string }
+type UpdateResult = { success: true } | { success: false; error: string }
 
 export interface PreferencesRow {
   intensityMode: 'still' | 'balanced' | 'immersive'
@@ -74,8 +79,7 @@ export async function updatePreferences(
       updates.intensityMode = parsed.intensityMode
     if (parsed.audioEnabled !== undefined)
       updates.audioEnabled = parsed.audioEnabled
-    if (parsed.focusThemes !== undefined)
-      updates.focusThemes = parsed.focusThemes
+    if (parsed.focusThemes !== undefined) updates.focusThemes = parsed.focusThemes
     if (parsed.onboardingCompleted !== undefined)
       updates.onboardingCompleted = parsed.onboardingCompleted
 
@@ -97,10 +101,14 @@ export async function updatePreferences(
       })
     }
 
+    revalidatePath('/inner/settings')
+
     return { success: true }
   } catch (error) {
     const message =
-      error instanceof Error ? error.message : 'Einstellungen konnten nicht gespeichert werden.'
+      error instanceof Error
+        ? error.message
+        : 'Einstellungen konnten nicht gespeichert werden.'
     return { success: false, error: message }
   }
 }
@@ -136,5 +144,57 @@ export async function getPreferences(): Promise<PreferencesRow | null> {
     }
   } catch {
     return null
+  }
+}
+
+/**
+ * Onboarding abschließen und Nutzer-Einstellungen speichern.
+ * Erstellt einen neuen Eintrag oder aktualisiert den bestehenden (Upsert).
+ */
+export async function completeOnboarding(
+  formData: FormData
+): Promise<UpdateResult> {
+  try {
+    const db = requireDb()
+    const user = await requireAuth()
+
+    const raw = Object.fromEntries(formData.entries())
+    const parsed = onboardingSchema.parse(raw)
+
+    const values = {
+      intensityMode: parsed.intensityMode,
+      audioEnabled: parsed.audioEnabled,
+      focusThemes: parsed.focusThemes,
+      onboardingCompleted: true,
+      updatedAt: new Date(),
+    }
+
+    const existing = await db
+      .select({ id: userPreferences.id })
+      .from(userPreferences)
+      .where(eq(userPreferences.userId, user.id!))
+      .limit(1)
+
+    if (existing.length > 0) {
+      await db
+        .update(userPreferences)
+        .set(values)
+        .where(eq(userPreferences.userId, user.id!))
+    } else {
+      await db.insert(userPreferences).values({
+        userId: user.id!,
+        ...values,
+      })
+    }
+
+    revalidatePath('/inner')
+
+    return { success: true }
+  } catch (error) {
+    const message =
+      error instanceof Error
+        ? error.message
+        : 'Onboarding konnte nicht abgeschlossen werden.'
+    return { success: false, error: message }
   }
 }

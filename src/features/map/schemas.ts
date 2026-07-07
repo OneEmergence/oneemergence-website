@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 // =============================================================================
-// Consciousness Map — Zod Schemas
+// Consciousness Map — Zod Schemas (feature-owned)
 // =============================================================================
 
 export const MapNodeType = z.enum([

@@ -4,8 +4,8 @@ import { useMemo } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Map } from 'lucide-react'
-import { NODE_TYPE_COLORS } from '@/lib/schemas/map'
-import type { MapNode, MapEdge } from '@/lib/schemas/map'
+import { NODE_TYPE_COLORS } from '../schemas'
+import type { MapNode, MapEdge } from '../schemas'
 
 interface MapPreviewProps {
   nodes: MapNode[]

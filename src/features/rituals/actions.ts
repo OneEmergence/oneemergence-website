@@ -5,6 +5,7 @@ import { practices } from '@/lib/db/schema'
 import { requireAuth } from '@/lib/auth/session'
 import { revalidatePath } from 'next/cache'
 import { eq, desc } from 'drizzle-orm'
+import { LogPracticeInputSchema } from './schemas'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -61,31 +62,23 @@ export async function logPractice(formData: FormData): Promise<ActionResult> {
     const user = await requireAuth()
     const db = requireDb()
 
-    const type = formData.get('type') as string
-    const durationRaw = formData.get('duration') as string
-    const notes = (formData.get('notes') as string) || null
+    const parsed = LogPracticeInputSchema.safeParse({
+      type: formData.get('type'),
+      duration: formData.get('duration'),
+      notes: formData.get('notes') ?? undefined,
+    })
 
-    if (!type || !durationRaw) {
-      return { success: false, error: 'Typ und Dauer sind erforderlich.' }
-    }
-
-    const duration = parseInt(durationRaw, 10)
-    if (isNaN(duration) || duration <= 0) {
-      return { success: false, error: 'Ungültige Dauer.' }
-    }
-
-    const validTypes = ['meditation', 'breathwork', 'soundscape']
-    if (!validTypes.includes(type)) {
-      return { success: false, error: 'Ungültiger Praxistyp.' }
+    if (!parsed.success) {
+      return { success: false, error: parsed.error.issues[0].message }
     }
 
     const [inserted] = await db
       .insert(practices)
       .values({
         userId: user.id as string,
-        type,
-        duration,
-        notes,
+        type: parsed.data.type,
+        duration: parsed.data.duration,
+        notes: parsed.data.notes,
       })
       .returning({ id: practices.id })
 

@@ -3,8 +3,8 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Trash2, Link2, Calendar, Pencil } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { NODE_TYPE_COLORS, NODE_TYPE_LABELS } from '@/lib/schemas/map'
-import type { MapNode } from '@/lib/schemas/map'
+import { NODE_TYPE_COLORS, NODE_TYPE_LABELS } from '../schemas'
+import type { MapNode } from '../schemas'
 
 interface NodeDetailPanelProps {
   node: MapNode | null

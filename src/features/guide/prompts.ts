@@ -1,4 +1,4 @@
-import type { GuideRole } from '@/lib/schemas/guide'
+import type { GuideRole } from './schemas'
 
 // =============================================================================
 // User Context (injected into system prompts)

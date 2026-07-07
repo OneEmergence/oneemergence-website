@@ -4,7 +4,7 @@ import { eq, and } from 'drizzle-orm'
 import { requireDb } from '@/lib/db'
 import { mapNodes, mapEdges } from '@/lib/db/schema'
 import { extractThemes } from './extract-themes'
-import { NODE_TYPE_COLORS } from '@/lib/schemas/map'
+import { NODE_TYPE_COLORS } from './schemas'
 
 /**
  * Generate map nodes from a journal entry.

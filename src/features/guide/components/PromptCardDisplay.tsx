@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Bookmark, BookmarkCheck } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { savePromptCard } from '@/lib/actions/guide'
+import { savePromptCard } from '@/features/guide/actions'
 import type { PromptCard } from '../types'
 
 interface PromptCardDisplayProps {

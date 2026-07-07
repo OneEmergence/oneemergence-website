@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { motion, AnimatePresence, useMotionTemplate, useScroll, useTransform } from "framer-motion";
 import { Volume2, VolumeX } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -11,15 +12,16 @@ import { MagneticButton } from "@/components/ui/MagneticButton";
 import { IntensityToggle } from "@/components/ui/IntensityToggle";
 
 const navLinks = [
-  { href: "/manifesto", label: "Manifesto" },
-  { href: "/experiences", label: "Erfahrungen" },
-  { href: "/library", label: "Bibliothek" },
-  { href: "/events", label: "Events" },
-  { href: "/community", label: "Community" },
-  { href: "/about", label: "Über uns" },
-];
+  { href: "/manifesto", key: "manifesto" },
+  { href: "/experiences", key: "experiences" },
+  { href: "/library", key: "library" },
+  { href: "/events", key: "events" },
+  { href: "/community", key: "community" },
+  { href: "/about", key: "about" },
+] as const;
 
 export function Navbar() {
+  const t = useTranslations("nav");
   const pathname = usePathname();
   const { scrollY } = useScroll();
   const { isPlaying, toggle } = useAudio();
@@ -60,7 +62,7 @@ export function Navbar() {
 
         {/* Desktop Nav */}
         <ul className="hidden items-center gap-6 md:flex">
-          {navLinks.map(({ href, label }) => {
+          {navLinks.map(({ href, key }) => {
             const isActive = pathname === href;
             return (
               <li key={href}>
@@ -74,7 +76,7 @@ export function Navbar() {
                         : "text-oe-pure-light/70 hover:text-oe-pure-light"
                     )}
                   >
-                    {label}
+                    {t(key)}
                     {isActive && (
                       <motion.span
                         layoutId="nav-indicator"
@@ -94,7 +96,7 @@ export function Navbar() {
           <IntensityToggle />
           <motion.button
             onClick={toggle}
-            aria-label={isPlaying ? "Ambient-Ton ausschalten" : "Ambient-Ton einschalten"}
+            aria-label={isPlaying ? t("audioMuteAria") : t("audioUnmuteAria")}
             className={cn(
               "relative flex h-8 w-8 items-center justify-center rounded-full border transition-colors duration-500",
               isPlaying
@@ -118,7 +120,7 @@ export function Navbar() {
               href="/community"
               className="rounded-full bg-oe-aurora-violet px-5 py-2 text-sm font-medium text-white transition-opacity duration-200 hover:opacity-85"
             >
-              Mitmachen
+              {t("joinCta")}
             </Link>
           </MagneticButton>
         </div>
@@ -126,7 +128,7 @@ export function Navbar() {
         {/* Mobile hamburger */}
         <button
           onClick={() => setMenuOpen((o) => !o)}
-          aria-label={menuOpen ? "Menü schließen" : "Menü öffnen"}
+          aria-label={menuOpen ? t("menuCloseAria") : t("menuOpenAria")}
           aria-expanded={menuOpen}
           className="flex flex-col gap-1.5 p-2.5 -m-1 min-h-[44px] min-w-[44px] items-center justify-center md:hidden"
         >
@@ -164,7 +166,7 @@ export function Navbar() {
             style={{ backgroundColor: "rgba(10, 15, 31, 0.97)", backdropFilter: "blur(12px)" }}
           >
             <div className="flex flex-col px-6 py-5 gap-1 max-h-[calc(100dvh-64px)] overflow-y-auto">
-              {navLinks.map(({ href, label }) => {
+              {navLinks.map(({ href, key }) => {
                 const isActive = pathname === href;
                 return (
                   <Link
@@ -178,12 +180,12 @@ export function Navbar() {
                         : "text-oe-pure-light/70 hover:text-oe-pure-light"
                     )}
                   >
-                    {label}
+                    {t(key)}
                   </Link>
                 );
               })}
               <div className="mt-4 flex items-center justify-between">
-                <span className="text-xs text-oe-pure-light/50">Intensität</span>
+                <span className="text-xs text-oe-pure-light/50">{t("intensityLabel")}</span>
                 <IntensityToggle />
               </div>
               <Link
@@ -191,7 +193,7 @@ export function Navbar() {
                 onClick={closeMenu}
                 className="mt-3 rounded-full bg-oe-aurora-violet px-5 py-3 text-sm font-medium text-white text-center transition-opacity duration-200 hover:opacity-85"
               >
-                Mitmachen
+                {t("joinCta")}
               </Link>
             </div>
           </motion.div>

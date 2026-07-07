@@ -46,6 +46,9 @@ export function JournalEditor({ initialData }: JournalEditorProps) {
   const savedIdRef = useRef<string | null>(initialData?.id ?? null)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [autoSaveStatus, setAutoSaveStatus] = useState<AutoSaveStatus>('idle')
+  // Whether autosave has persisted a draft for a brand-new entry. Tracked as
+  // state (not read from savedIdRef) so it is safe to use during render.
+  const [hasSavedDraft, setHasSavedDraft] = useState(false)
 
   // Keep mood tags ref in sync
   useEffect(() => {
@@ -79,6 +82,7 @@ export function JournalEditor({ initialData }: JournalEditorProps) {
     if (result.success) {
       if (!savedIdRef.current) {
         savedIdRef.current = result.data.id
+        setHasSavedDraft(true)
       }
       setAutoSaveStatus('saved')
       setTimeout(() => setAutoSaveStatus('idle'), 2000)
@@ -141,7 +145,7 @@ export function JournalEditor({ initialData }: JournalEditorProps) {
     if (autoSaveStatus === 'saving') return 'Speichert...'
     if (autoSaveStatus === 'saved') return 'Automatisch gespeichert'
     if (autoSaveStatus === 'error') return 'Nicht gespeichert'
-    return savedIdRef.current && !initialData ? 'Entwurf gespeichert' : 'Entwurf'
+    return hasSavedDraft && !initialData ? 'Entwurf gespeichert' : 'Entwurf'
   }
 
   // ---------------------------------------------------------------------------

@@ -1,0 +1,56 @@
+# Dependencies & build output — reinstalled/rebuilt inside the image
+node_modules
+.next
+out
+build
+
+# VCS & CI
+.git
+.github
+
+# Docs & planning (not needed to build or run the app)
+docs
+*.md
+AGENTS.md
+ARCHITECTURE.md
+VISION.md
+README.md
+
+# Tests & test artifacts
+tests
+playwright-report
+test-results
+playwright.config.ts
+
+# Env files — never bake secrets into an image layer; pass via
+# --build-arg (NEXT_PUBLIC_*) or --env-file / env_file at runtime.
+.env
+.env*.local
+.env.production
+.env.development
+.env.test
+!.env.example
+
+# Editor / agent tooling
+.claude
+.vscode
+.idea
+.ruff_cache
+
+# Supabase local dev state
+supabase/.temp
+supabase/.branches
+
+# Misc scratch / OS / logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.DS_Store
+*.tsbuildinfo
+coverage
+
+Dockerfile
+.dockerignore
+docker-compose.yml

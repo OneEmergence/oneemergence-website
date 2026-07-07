@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { getConversation } from '@/lib/actions/guide'
+import { getConversation } from '@/features/guide/actions'
 import { GuideChatView } from '@/features/guide'
 import { redirect } from 'next/navigation'
 import type { GuideRole, GuideResponse } from '@/lib/schemas/guide'

@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Trash2, BookOpen } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { deleteSavedCard } from '@/lib/actions/guide'
+import { deleteSavedCard } from '@/features/guide/actions'
 import type { SavedCard } from '@/lib/schemas/guide'
 import Link from 'next/link'
 

@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 import { Plus, Link2, Maximize, Filter, Eye, EyeOff } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { NODE_TYPE_COLORS, NODE_TYPE_LABELS, type MapNodeType } from '@/lib/schemas/map'
+import { NODE_TYPE_COLORS, NODE_TYPE_LABELS, type MapNodeType } from '../schemas'
 
 interface MapToolbarProps {
   connectionMode: boolean

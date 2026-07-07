@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
 import { requireAuth } from '@/lib/auth/session'
 import { getMapData } from '@/features/map/actions'
-import { getPreferences } from '@/lib/actions/preferences'
+import { getPreferences } from '@/features/auth'
 import { DashboardClient } from './DashboardClient'
 import { MapPreview } from '@/features/map/components/MapPreview'
-import type { MapData } from '@/lib/schemas/map'
+import type { MapData } from '@/features/map'
 
 export const metadata: Metadata = {
   title: 'Innerer Raum — Dashboard',

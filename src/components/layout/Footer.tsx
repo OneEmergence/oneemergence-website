@@ -1,24 +1,37 @@
-import Link from "next/link";
+"use client";
 
-const footerLinks = {
-  Erkunden: [
-    { href: "/manifesto", label: "Manifesto" },
-    { href: "/about", label: "Über uns" },
-    { href: "/library", label: "Bibliothek" },
-    { href: "/experiences", label: "Erfahrungen" },
-    { href: "/brand", label: "Brand" },
-  ],
-  Mitmachen: [
-    { href: "/community", label: "Community" },
-    { href: "/events", label: "Events" },
-    { href: "/contact", label: "Kontakt" },
-  ],
-  Rechtliches: [
-    { href: "/legal/imprint", label: "Impressum" },
-    { href: "/legal/privacy", label: "Datenschutz" },
-    { href: "/legal/terms", label: "Nutzungsbedingungen" },
-  ],
-};
+import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
+
+const footerColumns = [
+  {
+    titleKey: "footer.columns.explore",
+    links: [
+      { href: "/manifesto", labelKey: "nav.manifesto" },
+      { href: "/about", labelKey: "nav.about" },
+      { href: "/library", labelKey: "nav.library" },
+      { href: "/experiences", labelKey: "nav.experiences" },
+      { href: "/brand", labelKey: "nav.brand" },
+    ],
+  },
+  {
+    titleKey: "footer.columns.join",
+    links: [
+      { href: "/community", labelKey: "nav.community" },
+      { href: "/events", labelKey: "nav.events" },
+      { href: "/contact", labelKey: "nav.contact" },
+    ],
+  },
+  {
+    titleKey: "footer.columns.legal",
+    links: [
+      { href: "/legal/imprint", labelKey: "footer.imprint" },
+      { href: "/legal/privacy", labelKey: "footer.privacy" },
+      { href: "/legal/terms", labelKey: "footer.terms" },
+    ],
+  },
+] as const;
 
 interface FooterColumnProps {
   title: string;
@@ -49,6 +62,7 @@ function FooterColumn({ title, links }: FooterColumnProps) {
 }
 
 export function Footer() {
+  const t = useTranslations();
   const currentYear = new Date().getFullYear();
 
   return (
@@ -57,27 +71,33 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-6 md:gap-12 md:grid-cols-4">
           {/* Brand */}
           <div className="flex flex-col gap-4 md:col-span-1">
-            <Link href="/" className="font-serif text-xl sm:text-2xl text-oe-solar-gold">
-              OneEmergence
-            </Link>
+            <div className="flex items-center gap-4">
+              <Link href="/" className="font-serif text-xl sm:text-2xl text-oe-solar-gold">
+                OneEmergence
+              </Link>
+              <LocaleSwitcher />
+            </div>
             <p className="max-w-xs text-sm leading-relaxed text-oe-pure-light/50">
-              Eine digitale Heimat für Einheit, Freiheit und Liebe — ohne Dogma,
-              mit Klarheit und Integrität.
+              {t("footer.description")}
             </p>
           </div>
 
           {/* Link columns */}
           <div className="grid grid-cols-2 gap-6 sm:gap-8 md:col-span-3 md:grid-cols-3">
-            {Object.entries(footerLinks).map(([title, links]) => (
-              <FooterColumn key={title} title={title} links={links} />
+            {footerColumns.map(({ titleKey, links }) => (
+              <FooterColumn
+                key={titleKey}
+                title={t(titleKey)}
+                links={links.map((link) => ({ href: link.href, label: t(link.labelKey) }))}
+              />
             ))}
           </div>
         </div>
 
         {/* Bottom bar */}
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-oe-aurora-violet/10 pt-8 text-xs text-oe-pure-light/30 sm:flex-row">
-          <span>© {currentYear} OneEmergence. Alle Rechte vorbehalten.</span>
-          <span>Mit Liebe gebaut.</span>
+          <span>{t("footer.copyright", { year: currentYear })}</span>
+          <span>{t("footer.builtWithLove")}</span>
         </div>
       </div>
     </footer>

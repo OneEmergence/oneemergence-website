@@ -4,8 +4,8 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { NODE_TYPE_COLORS, NODE_TYPE_LABELS, type MapNodeType } from '@/lib/schemas/map'
-import type { CreateNodeInput } from '@/lib/schemas/map'
+import { NODE_TYPE_COLORS, NODE_TYPE_LABELS, type MapNodeType } from '../schemas'
+import type { CreateNodeInput } from '../schemas'
 
 interface CreateNodeDialogProps {
   open: boolean

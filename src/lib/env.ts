@@ -13,6 +13,12 @@ const schema = z.object({
   NEXT_PUBLIC_SUPABASE_URL: z.string().min(1).optional(),
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1).optional(),
 
+  // Service-role key — privileged, server-only. Required exclusively for admin
+  // operations (GDPR account deletion via supabase.auth.admin). Optional: the
+  // app runs fully without it; only account deletion degrades to a clear error.
+  // MUST never be imported into a 'use client' module or exposed to the browser.
+  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1).optional(),
+
   DATABASE_URL: z.string().min(1).optional(),
   ANTHROPIC_API_KEY: z.string().min(1).optional(),
   AI_MODEL: z.string().min(1).default('claude-sonnet-5'),

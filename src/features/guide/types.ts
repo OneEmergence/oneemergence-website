@@ -1,4 +1,4 @@
-export type { GuideRole, GuideResponse, GuideMessage, GuideConversation, SavedCard, PromptCard, Exercise } from '@/lib/schemas/guide'
+export type { GuideRole, GuideResponse, GuideMessage, GuideConversation, SavedCard, PromptCard, Exercise } from './schemas'
 
 /** Role metadata for the UI */
 export interface RoleMeta {

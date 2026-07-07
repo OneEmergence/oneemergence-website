@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { getSavedCards } from '@/lib/actions/guide'
+import { getSavedCards } from '@/features/guide/actions'
 import { SavedCardsView } from './SavedCardsView'
 
 export const metadata: Metadata = {

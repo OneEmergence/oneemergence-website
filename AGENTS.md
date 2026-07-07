@@ -1,24 +1,26 @@
-# Claude Agent Instructions
+# Agent Instructions
 
-## Projekt: OneEmergence Website
+## Projekt: OneEmergence
 
-Dieses Dokument dient als Einstiegspunkt für Claude (und andere Agents), um an der OneEmergence-Website zu arbeiten.
+Dieses Dokument ist der Einstiegspunkt für Claude (und andere Agents), um an OneEmergence zu arbeiten. `.claude/CLAUDE.md` verweist hierher — dieses Dokument ist die Single Source of Truth für Agent-Instruktionen.
 
 ### Stack
-- Next.js 15+ (App Router, Server Components first)
+- Next.js 16 (App Router, Server Components first)
 - React 19
 - TypeScript (strict, no `any`)
 - Tailwind CSS v4 + CSS custom properties
 - Motion (Framer Motion), clsx, tailwind-merge, lucide-react
-- Zustand (client state islands), Zod (validation), React Hook Form
-- MDX for content, next-intl for i18n
+- Zustand (client state islands), Zod (validation)
+- MDX for content, next-intl for i18n (activating incrementally, see below)
+- Supabase (Postgres, Auth, Storage) + Drizzle ORM, Vercel AI SDK
 - Sentry (monitoring), Playwright (E2E tests)
-- Optional: React Three Fiber, Three.js, GSAP, Lenis, Tone.js
+- Planned, not installed: React Three Fiber / Three.js, GSAP, Tone.js (see ARCHITECTURE.md "Artistic Stack" — opt-in per component when needed)
 
 ### Planning Documents
+- **`docs/ROADMAP.md`** — current phase, findings, decisions log. Read this first for "what's next."
 - **`VISION.md`** — Product vision, UX philosophy, content system, AI Guide, product staging
 - **`ARCHITECTURE.md`** — Technical stack, coding paradigms, folder structure, migration path
-- Always read both before starting significant feature work.
+- Always read `docs/ROADMAP.md` + the relevant planning doc before starting significant feature work.
 
 ### Design System & Theme
 - Farben sind in `tailwind.config.ts` und `src/app/globals.css` als Design-Tokens konfiguriert.
@@ -30,28 +32,27 @@ Dieses Dokument dient als Einstiegspunkt für Claude (und andere Agents), um an 
   - Headers: Cormorant (serif)
   - Body: Inter (sans-serif)
 - Darkness is space, not merely a dark theme. Light emerges intentionally from void.
+- Style guide live at `/brand` — the "three depths" (cosmic → solarpunk → warm) design language applies across the site.
 
-### Dateistruktur (Current → Target)
-Current:
-- `src/app/`: Next.js App Router Pages
-- `src/components/ui/`: UI-Komponenten
-- `src/components/sections/`: Page-Sektionen
-- `src/components/layout/`: Header, Footer, Wrapper
-- `src/lib/`: Utils (cn, content)
-- `src/content/`: Statische Inhalte (Markdown)
+### Dateistruktur (current)
+- `src/app/(marketing)/`: public routes (home, manifesto, about, experiences, library, events, community, contact, journal)
+- `src/app/(portal)/`: authenticated routes (portal entry, inner/journal, inner/map, inner/guide, inner/practice)
+- `src/app/api/`: API routes (guide streaming endpoint; webhooks/auth callbacks land here too)
+- `src/app/auth/`: auth callback routes
+- `src/components/`: `ui/`, `motion/`, `scene/`, `content/`, `layout/`, `sections/`, `providers/`
+- `src/features/`: feature modules — `journal/`, `guide/`, `rituals/`, `map/` (each with `components/`, actions co-located)
+- `src/lib/`: `env.ts` (Zod-validated env), `utils.ts`, `db/` (Drizzle schema), `supabase/`, `ai/`, `content/`, `schemas/`, `analytics/`, `auth/`, `actions/` (being dissolved into features)
+- `src/stores/`: Zustand — `intensity.ts`, `audio.ts`, `preferences.ts`
+- `src/i18n/`: next-intl config, `request.ts`, `messages/{de,en}.json`
+- `src/content/`: MDX by sacred content type (`teachings/`, `reflections/`, `practices/`, `transmissions/`, `essays/`, `journeys/`, `journal/`, `pages/`)
+- `supabase/migrations/`: the single migration channel (extensions, `handle_new_user` trigger, RLS)
+- `docs/archive/`: superseded planning docs (kept for traceability, not current guidance)
 
-Target (see `ARCHITECTURE.md` for full structure):
-- `src/components/motion/`: Motion components (ScrollReveal, ParallaxLayer, BreathingOrb)
-- `src/components/scene/`: WebGL scenes
-- `src/components/content/`: Sacred content type renderers
-- `src/features/`: Feature modules (journal, guide, rituals, map, paths)
-- `src/lib/actions/`, `schemas/`, `content/`, `analytics/`, `auth/`
-- `src/stores/`: Zustand stores (intensity mode, audio, preferences)
-- `src/i18n/`: next-intl messages
+See `ARCHITECTURE.md` §III for the full target structure.
 
 ### Coding Paradigms
 1. **Server-first**: Default to Server Components. Client Components are islands with `'use client'`.
-2. **Server actions for mutations**: No API routes except for webhooks.
+2. **Server actions for mutations**; API routes are allowed for webhooks, auth callbacks, and streaming/AG-UI endpoints (per `docs/ROADMAP.md` §II) — everything else stays a server action.
 3. **Content as system**: Sacred content types (Teaching, Reflection, Practice, Transmission, Visual Essay, Sound Journey) are first-class entities with Zod schemas and dedicated renderers.
 4. **Motion hierarchy**: Every animation declares its level (Micro / Flow / Sacred / Event). Sacred and Event only render in Balanced/Immersive intensity modes.
 5. **Performance budget**: LCP < 2.5s, CLS < 0.1, INP < 200ms. WebGL is lazy-loaded.
@@ -63,17 +64,12 @@ Target (see `ARCHITECTURE.md` for full structure):
 3. **Styling**: Strikt Tailwind und die definierten Brand-Farben. Darkness as space.
 4. **Motion**: Verwende Motion (Framer Motion) und deklariere die Motion-Ebene (Micro/Flow/Sacred/Event).
 5. **Content**: Sacred Content System Typen respektieren. Zod-Schema für Frontmatter.
-6. **Code-Style**: Striktes TypeScript, funktionale Komponenten, Server Components by default, Mobile-first.
+6. **i18n**: Neue UI-Strings über `useTranslations()`/`getTranslations()` aus `src/i18n/messages/{de,en}.json` — keine neuen hardcodierten Strings in Komponenten.
+7. **Code-Style**: Striktes TypeScript, funktionale Komponenten, Server Components by default, Mobile-first.
 
 ### Aktueller Stand
-Phase 1 (Foundation) ist vollständig abgeschlossen:
-- Alle Core-Pages gebaut: Home, Manifesto, About, Content, Journal, Events, Community, Contact, Legal
-- Layout-System: Navbar, Footer, SmoothScroll, AudioProvider, CustomCursor
-- UI-Primitives: Button, MagneticButton, AmbientOrb, ScrollReveal, ParallaxImage, ContentGrid
-- Content-System: Markdown + Frontmatter mit 3 Journal-Artikeln
-- SEO: Per-Page Metadata, Sitemap, OG-Tags
-- Responsive Design: Mobile & Tablet optimiert
-
-### Nächste Schritte
-Siehe `ARCHITECTURE.md` Section VII (Migration Path) für die nächsten strukturellen Änderungen vor neuem Feature-Bau. Dann `VISION.md` Section VIII (Product Staging) für MVP v1 Features.
-
+- Brand-System + "three depths" Design (cosmic → solarpunk → warm) live across the site; Style-Guide unter `/brand`.
+- Portal-Layer live: Journal, Map, Guide, Practice unter `(portal)/inner/*`, geschützt durch Auth-Middleware.
+- Phase 0 (Foundation) abgeschlossen: pnpm-Migration, `src/lib/env.ts` (Zod, fail-fast), `supabase/migrations` als einziger Migrationskanal, Sentry via `instrumentation.ts`/`instrumentation-client.ts`.
+- In Arbeit: Accounts/Identity (Phase 1) und Docker-Hosting (Phase 4, parallelisierbar).
+- Siehe **`docs/ROADMAP.md`** für den vollständigen Phasenplan (Accounts → AG-UI Agent → Akashic Records → Docker).

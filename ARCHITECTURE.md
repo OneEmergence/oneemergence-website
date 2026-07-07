@@ -39,10 +39,17 @@
 | Technology | Role | When to Use |
 |---|---|---|
 | **Vercel AI SDK** | AI streaming | AI Guide streaming responses, structured outputs with Zod schemas |
-| **Auth.js** or **Better Auth** | Authentication | Portal Entry, session management, OAuth providers |
-| **Postgres** (Neon or Supabase) | Database | User data, journal entries, map nodes, practice history |
+| **Supabase Auth** *(decided — supersedes Auth.js/Better Auth)* | Authentication | Portal Entry, session management, OAuth providers |
+| **Supabase Postgres** *(decided — supersedes Neon)*, **Drizzle ORM** | Database | User data, journal entries, map nodes, practice history |
 | **Supabase Realtime** or **Liveblocks** | Realtime | Collective Pulse, Live Ceremonies, shared space presence |
 | **Stripe** | Payments | Membership tiers (v3) |
+
+> **AG-UI supersedes "no chatbot frameworks" for the Guide (Phase 2).** The
+> Guide adopts the AG-UI protocol (streaming events, generative UI, tool
+> calls with human-in-the-loop confirmation) as its wire format — a
+> conscious, documented exception to the "Consciously Avoided" row below.
+> See [docs/plans/phase-2-agui-agent.md](./docs/plans/phase-2-agui-agent.md)
+> and [docs/ROADMAP.md](./docs/ROADMAP.md) Phase 2 for the rationale.
 
 ### Consciously Avoided
 
@@ -54,7 +61,7 @@
 | **Firebase** | Vendor lock-in, not EU-friendly, poor DX for relational data. |
 | **Electron / React Native** | PWA first. Native only if PWA proves insufficient. |
 | **Heavy CMS platforms** | MDX + filesystem first. Headless CMS only when editorial team needs it. |
-| **AI chatbot frameworks** | Build the Guide with Vercel AI SDK directly. No framework overhead. |
+| **AI chatbot frameworks** | Build the Guide with Vercel AI SDK directly. No framework overhead. *(Superseded for the Guide's transport layer by the AG-UI decision, Phase 2 — see note above.)* |
 | **Social features libraries** | No likes, follows, feeds. Build the minimal collective features from scratch. |
 
 ---
@@ -306,31 +313,33 @@ lint → typecheck → unit tests → build → playwright → lighthouse → de
 
 ## VII. Migration Path from Current State
 
-The current codebase (Phase 1 complete) needs these structural changes to support the architecture above:
+Status as of the Phase 0 audit (see [docs/ROADMAP.md](./docs/ROADMAP.md) for
+the current phased plan — this section is now a historical checklist, kept
+for traceability.
 
 ### Immediate (before new feature work)
 
-1. **Route groups**: Wrap existing public pages in `(marketing)` route group
-2. **Component reorganization**: Split `components/ui` into `ui/`, `motion/`, `layout/` (move ScrollReveal, ParallaxImage to `motion/`)
-3. **Content system**: Replace raw markdown loader with MDX pipeline + Zod validation
-4. **Zustand store**: Add intensity mode store, wire to existing motion components
-5. **Sentry**: Install and configure — errors, traces, source maps
-6. **Playwright**: Basic smoke tests for all existing routes
+1. **Route groups** — ✅ done. Public pages live under `(marketing)`, portal under `(portal)`.
+2. **Component reorganization** — ✅ done. `components/ui`, `motion/`, `layout/`, `scene/` split as planned.
+3. **Content system** — ✅ done. MDX pipeline + Zod-validated content types under `src/content/`.
+4. **Zustand store** — ✅ done. Intensity mode store wired to motion components.
+5. **Sentry** — ✅ done (Phase 0). `instrumentation.ts` + `instrumentation-client.ts` (Next 16 convention).
+6. **Playwright** — ✅ done. Smoke, a11y, content, perf, and mobile-responsive suites exist under `tests/`.
 
 ### Short-term (alongside MVP v1 features)
 
-7. **shadcn/ui**: Initialize and adopt for form elements, dialogs, navigation
-8. **next-intl**: Set up with DE as default, structure for EN
-9. **Panel navigation**: Replace hard route transitions with slide/panel patterns
-10. **Feature folders**: Create `features/` structure as features are built
-11. **Content folders**: Reorganize `content/` by sacred content type
+7. **shadcn/ui** — not adopted; forms/dialogs built as bespoke components instead.
+8. **next-intl** — ✅ scaffolded, 🔄 activating. Cookie-based locale resolution live in `request.ts`; Navbar/Footer migrated to `useTranslations`; remaining pages migrate incrementally (Phase 0 step 7 in ROADMAP).
+9. **Panel navigation** — not started.
+10. **Feature folders** — ✅ live. `src/features/{journal,guide,rituals,map}`; `auth` and `records` land in Phases 1 and 3.
+11. **Content folders** — ✅ done. `src/content/` organized by sacred content type.
 
 ### Before v2 (Portal layer)
 
-12. **Auth**: Install and configure Auth.js or Better Auth
-13. **Database**: Provision Postgres, set up schema for users + journal + map
-14. **Server actions**: Create `lib/actions/` for all mutations
-15. **(portal) route group**: Add authenticated layout with middleware protection
+12. **Auth** — 🔄 in progress. Supabase Auth (not Auth.js/Better Auth — superseded decision), see ROADMAP Phase 1.
+13. **Database** — ✅ done. Supabase Postgres provisioned; **`supabase/migrations` is the single migration channel** (platform SQL: extensions, `handle_new_user` trigger, RLS) and **`src/lib/db/schema.ts` (Drizzle) is the canonical shape mirror** for app tables — `drizzle-kit generate` produces the app-table migrations that land alongside it. The old hand-written `database/*.sql` drafts are archived in `docs/archive/database/`.
+14. **Server actions** — 🔄 in progress. Feature modules own their `actions.ts`; `src/lib/actions/` is being dissolved into features per ROADMAP §II.
+15. **(portal) route group** — ✅ done. Authenticated layout + middleware protection live; journal/map/guide/practice ship inside it.
 
 ---
 
@@ -341,7 +350,7 @@ The current codebase (Phase 1 complete) needs these structural changes to suppor
 | SSR vs SSG | **SSR + ISR** | Dynamic portal content needs SSR. Public pages use ISR for performance. |
 | State management | **Server state + Zustand islands** | No global client store. Server is the source of truth. Zustand only for UI preferences. |
 | Content pipeline | **MDX on filesystem** | No CMS dependency until editorial team exists. MDX gives component power. |
-| Auth provider | **Auth.js or Better Auth** | Self-hosted, EU-compatible, not a SaaS dependency. |
+| Auth provider | **Supabase Auth** (supersedes the original Auth.js/Better Auth plan) | Ships together with Supabase Postgres/Storage; EU-region hosting available; see ROADMAP Phase 1. |
 | AI integration | **Vercel AI SDK + Claude** | Streaming, structured outputs, edge-compatible. No chatbot framework. |
 | Realtime | **Deferred to v3** | Don't build infrastructure for collective features until personal layer is validated. |
 | Testing strategy | **E2E first** | Sacred motion and journey flows can't be unit tested meaningfully. Playwright is primary. |
@@ -349,4 +358,4 @@ The current codebase (Phase 1 complete) needs these structural changes to suppor
 
 ---
 
-*This is the canonical technical architecture for OneEmergence. For product vision, see [VISION.md](./VISION.md). For agent instructions, see [CLAUDE.md](./CLAUDE.md). For the tech stack evaluation and Supabase migration recommendation, see [TECH_STACK_RECOMMENDATION.md](./TECH_STACK_RECOMMENDATION.md).*
+*This is the canonical technical architecture for OneEmergence. For product vision, see [VISION.md](./VISION.md). For agent instructions, see [AGENTS.md](./AGENTS.md). For the current phased plan, see [docs/ROADMAP.md](./docs/ROADMAP.md). For the historical tech stack evaluation and Supabase migration recommendation (archived), see [docs/archive/TECH_STACK_RECOMMENDATION.md](./docs/archive/TECH_STACK_RECOMMENDATION.md).*

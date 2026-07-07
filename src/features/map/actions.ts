@@ -10,8 +10,8 @@ import {
   CreateEdgeInputSchema,
   UpdateNodeInputSchema,
   UpdateNodePositionSchema,
-} from '@/lib/schemas/map'
-import type { MapNode, MapEdge, MapData, CreateNodeInput, CreateEdgeInput } from '@/lib/schemas/map'
+} from './schemas'
+import type { MapNode, MapEdge, MapData, CreateNodeInput, CreateEdgeInput } from './schemas'
 
 type ActionResult<T> =
   | { success: true; data: T }

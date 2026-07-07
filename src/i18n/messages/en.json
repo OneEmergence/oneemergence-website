@@ -7,7 +7,15 @@
     "library": "Library",
     "events": "Events",
     "community": "Community",
-    "contact": "Contact"
+    "contact": "Contact",
+    "experiences": "Experiences",
+    "brand": "Brand",
+    "joinCta": "Join",
+    "menuOpenAria": "Open menu",
+    "menuCloseAria": "Close menu",
+    "audioMuteAria": "Turn off ambient sound",
+    "audioUnmuteAria": "Turn on ambient sound",
+    "intensityLabel": "Intensity"
   },
   "common": {
     "readMore": "Read more",
@@ -35,7 +43,17 @@
   },
   "footer": {
     "tagline": "Unity, Freedom, Love",
+    "description": "A digital home for unity, freedom, and love — free of dogma, with clarity and integrity.",
     "imprint": "Imprint",
-    "privacy": "Privacy"
+    "privacy": "Privacy",
+    "terms": "Terms of Service",
+    "columns": {
+      "explore": "Explore",
+      "join": "Get Involved",
+      "legal": "Legal"
+    },
+    "copyright": "© {year} OneEmergence. All rights reserved.",
+    "builtWithLove": "Built with love.",
+    "language": "Switch language"
   }
 }

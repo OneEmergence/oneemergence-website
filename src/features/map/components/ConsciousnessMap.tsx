@@ -16,9 +16,9 @@ import {
   updateNode,
   updateNodePosition,
 } from '../actions'
-import type { MapNode, MapEdge, MapData } from '@/lib/schemas/map'
-import type { CreateNodeInput } from '@/lib/schemas/map'
-import type { MapNodeType } from '@/lib/schemas/map'
+import type { MapNode, MapEdge, MapData } from '../schemas'
+import type { CreateNodeInput } from '../schemas'
+import type { MapNodeType } from '../schemas'
 
 interface ConsciousnessMapProps {
   initialData: MapData

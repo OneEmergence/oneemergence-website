@@ -7,7 +7,15 @@
     "library": "Bibliothek",
     "events": "Events",
     "community": "Community",
-    "contact": "Kontakt"
+    "contact": "Kontakt",
+    "experiences": "Erfahrungen",
+    "brand": "Brand",
+    "joinCta": "Mitmachen",
+    "menuOpenAria": "Menü öffnen",
+    "menuCloseAria": "Menü schließen",
+    "audioMuteAria": "Ambient-Ton ausschalten",
+    "audioUnmuteAria": "Ambient-Ton einschalten",
+    "intensityLabel": "Intensität"
   },
   "common": {
     "readMore": "Weiterlesen",
@@ -35,7 +43,17 @@
   },
   "footer": {
     "tagline": "Einheit, Freiheit, Liebe",
+    "description": "Eine digitale Heimat für Einheit, Freiheit und Liebe — ohne Dogma, mit Klarheit und Integrität.",
     "imprint": "Impressum",
-    "privacy": "Datenschutz"
+    "privacy": "Datenschutz",
+    "terms": "Nutzungsbedingungen",
+    "columns": {
+      "explore": "Erkunden",
+      "join": "Mitmachen",
+      "legal": "Rechtliches"
+    },
+    "copyright": "© {year} OneEmergence. Alle Rechte vorbehalten.",
+    "builtWithLove": "Mit Liebe gebaut.",
+    "language": "Sprache wechseln"
   }
 }

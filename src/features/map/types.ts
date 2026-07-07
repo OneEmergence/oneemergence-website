@@ -1,4 +1,4 @@
-import type { MapNode, MapEdge, MapData } from '@/lib/schemas/map'
+import type { MapNode, MapEdge, MapData } from './schemas'
 
 export type { MapNode, MapEdge, MapData }
 

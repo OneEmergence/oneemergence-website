@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
-import { usePathname, useRouter } from 'next/navigation'
+import { useState, useTransition } from 'react'
+import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { createClient } from '@/lib/supabase/client'
+import { signOut } from '@/features/auth'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
 import {
@@ -14,6 +14,7 @@ import {
   LogOut,
   Map,
   Menu,
+  Settings,
   Sparkles,
   X,
 } from 'lucide-react'
@@ -29,18 +30,20 @@ const navItems = [
   { href: '/inner/practice', label: 'Praxis', icon: Flame, disabled: false },
   { href: '/inner/map', label: 'Karte', icon: Map, disabled: false },
   { href: '/inner/guide', label: 'Guide', icon: Sparkles, disabled: false },
+  { href: '/inner/settings', label: 'Einstellungen', icon: Settings, disabled: false },
   { href: '/inner/paths', label: 'Pfade', icon: Compass, disabled: true },
 ] as const
 
 export function PortalSidebar({ userName, userImage }: PortalSidebarProps) {
   const pathname = usePathname()
-  const router = useRouter()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [isSigningOut, startSignOut] = useTransition()
 
-  async function handleSignOut() {
-    const supabase = createClient()
-    await supabase.auth.signOut()
-    router.push('/')
+  function handleSignOut() {
+    // Server action clears the session cookies and redirects to '/'.
+    startSignOut(() => {
+      void signOut()
+    })
   }
 
   function renderNav(onNavigate?: () => void) {
@@ -110,10 +113,11 @@ export function PortalSidebar({ userName, userImage }: PortalSidebarProps) {
         </div>
         <button
           onClick={handleSignOut}
-          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-oe-pure-light/40 transition-colors hover:bg-oe-warm-sand/5 hover:text-oe-warm-sand/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-warm-sand/50 focus-visible:ring-offset-2 focus-visible:ring-offset-oe-depth-warm"
+          disabled={isSigningOut}
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-oe-pure-light/40 transition-colors hover:bg-oe-warm-sand/5 hover:text-oe-warm-sand/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-warm-sand/50 focus-visible:ring-offset-2 focus-visible:ring-offset-oe-depth-warm disabled:cursor-not-allowed disabled:opacity-50"
         >
           <LogOut className="h-4 w-4" />
-          Abmelden
+          {isSigningOut ? 'Wird abgemeldet …' : 'Abmelden'}
         </button>
       </div>
     )
