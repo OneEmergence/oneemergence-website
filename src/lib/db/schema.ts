@@ -1,3 +1,9 @@
+// =============================================================================
+// Canonical table shapes. Migrations live in supabase/migrations — when you
+// change this file, write a matching migration (Supabase-native, YYYYMMDDHHmmss).
+// drizzle-kit is used for type introspection only, not as the migration channel.
+// =============================================================================
+
 import {
   pgTable,
   text,

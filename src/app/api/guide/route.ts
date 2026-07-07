@@ -7,6 +7,7 @@ import { eq, desc } from 'drizzle-orm'
 import { GuideMessageInput, GuideResponse } from '@/lib/schemas/guide'
 import { getUserContext } from '@/features/guide/context'
 import { buildSystemPrompt } from '@/features/guide/prompts'
+import { env } from '@/lib/env'
 
 export async function POST(request: Request) {
   try {
@@ -78,7 +79,7 @@ export async function POST(request: Request) {
 
     // Generate structured response using Vercel AI SDK
     const { object: guideResponse } = await generateObject({
-      model: provider('claude-sonnet-4-20250514'),
+      model: provider(env.AI_MODEL),
       schema: GuideResponse,
       system: systemPrompt,
       messages,

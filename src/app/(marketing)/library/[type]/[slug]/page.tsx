@@ -118,7 +118,6 @@ export default async function LibraryDetailPage({
 
   // ── Resolve content ────────────────────────────────────────────────────
   let title: string
-  let excerpt: string
   let date: string
   let cover: string | undefined
   let tags: string[]
@@ -134,7 +133,6 @@ export default async function LibraryDetailPage({
     if (!post) notFound()
 
     title = post.meta.title
-    excerpt = post.meta.excerpt
     date = post.meta.date
     cover = post.meta.cover
     tags = post.meta.tags
@@ -146,7 +144,6 @@ export default async function LibraryDetailPage({
 
     const meta: AnyContentMeta = result.meta
     title = meta.title
-    excerpt = meta.excerpt
     date = meta.date
     cover = meta.cover
     tags = meta.tags

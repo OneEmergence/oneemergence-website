@@ -1,4 +1,8 @@
 'use client'
+// Intentionally client-only: these are React hooks (useEffect/usePathname)
+// plus a thin Sentry.addBreadcrumb wrapper, not a component. They live in
+// `lib/analytics` rather than `components/` because they have no markup —
+// smallest-footprint home for client-side observability utilities.
 
 import { useEffect, useRef } from 'react'
 import { usePathname } from 'next/navigation'

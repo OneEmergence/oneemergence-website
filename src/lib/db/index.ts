@@ -1,5 +1,6 @@
 import { drizzle } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
+import { env } from '@/lib/env'
 import * as schema from './schema'
 
 /**
@@ -10,7 +11,7 @@ import * as schema from './schema'
  * the database should check for null and handle gracefully.
  */
 function createDb() {
-  const url = process.env.DATABASE_URL
+  const url = env.DATABASE_URL
   if (!url) {
     return null
   }

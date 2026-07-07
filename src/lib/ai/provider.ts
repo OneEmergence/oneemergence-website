@@ -1,4 +1,5 @@
 import { createAnthropic } from '@ai-sdk/anthropic'
+import { env } from '@/lib/env'
 
 /**
  * Anthropic provider for the AI Guide.
@@ -8,7 +9,7 @@ import { createAnthropic } from '@ai-sdk/anthropic'
  * configuration message instead of failing.
  */
 function createProvider() {
-  const apiKey = process.env.ANTHROPIC_API_KEY
+  const apiKey = env.ANTHROPIC_API_KEY
   if (!apiKey) {
     return null
   }

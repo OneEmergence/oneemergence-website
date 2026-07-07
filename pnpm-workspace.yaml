@@ -1,0 +1,17 @@
+allowBuilds:
+  '@parcel/watcher': true
+  '@sentry/cli': true
+  '@swc/core': true
+  esbuild: true
+  sharp: true
+  unrs-resolver: true
+minimumReleaseAgeExclude:
+  - '@supabase/cli-darwin-arm64@2.109.1'
+  - '@supabase/cli-darwin-x64@2.109.1'
+  - '@supabase/cli-linux-arm64-musl@2.109.1'
+  - '@supabase/cli-linux-arm64@2.109.1'
+  - '@supabase/cli-linux-x64-musl@2.109.1'
+  - '@supabase/cli-linux-x64@2.109.1'
+  - '@supabase/cli-windows-arm64@2.109.1'
+  - '@supabase/cli-windows-x64@2.109.1'
+  - supabase@2.109.1
