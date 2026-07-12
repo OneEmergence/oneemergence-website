@@ -22,6 +22,7 @@ export function IntensityProvider({ children }: { children: React.ReactNode }) {
     (s: { setPrefersReducedMotion: (prefers: boolean) => void }) => s.setPrefersReducedMotion
   )
   const effectiveMode = useIntensityStore((s: { effectiveMode: string }) => s.effectiveMode)
+  const hasHydrated = useIntensityStore((s: { hasHydrated: boolean }) => s.hasHydrated)
 
   // Sentry observability: breadcrumbs for intensity changes and route navigations
   useSentryIntensityBreadcrumbs()
@@ -35,8 +36,13 @@ export function IntensityProvider({ children }: { children: React.ReactNode }) {
   // Mirror effective mode onto <html> for CSS selectors
   // e.g. html[data-intensity="still"] .some-animation { display: none; }
   useEffect(() => {
+    if (!hasHydrated) {
+      document.documentElement.removeAttribute('data-intensity')
+      return
+    }
+
     document.documentElement.setAttribute('data-intensity', effectiveMode)
-  }, [effectiveMode])
+  }, [effectiveMode, hasHydrated])
 
   return <>{children}</>
 }

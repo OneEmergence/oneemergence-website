@@ -88,6 +88,303 @@ body {
   text-shadow: 0 0 12px rgba(232, 201, 168, 0.5), 0 0 40px rgba(232, 201, 168, 0.2);
 }
 
+/* ─── Three-depth page atmosphere ─── */
+.oe-atmosphere {
+  --oe-atmosphere-base: 10 15 31;
+  --oe-atmosphere-primary: 124 92 255;
+  --oe-atmosphere-secondary: 84 226 233;
+  --oe-atmosphere-seed: 246 196 83;
+  --oe-atmosphere-artwork: none;
+  --oe-atmosphere-artwork-echo: var(--oe-atmosphere-artwork);
+  --oe-atmosphere-artwork-opacity: 0.5;
+  contain: paint;
+}
+
+.oe-atmosphere[data-atmosphere="cosmic"] {
+  --oe-atmosphere-base: 10 15 31;
+  --oe-atmosphere-primary: 124 92 255;
+  --oe-atmosphere-secondary: 84 226 233;
+  --oe-atmosphere-seed: 246 196 83;
+}
+
+.oe-atmosphere[data-atmosphere="solarpunk"] {
+  --oe-atmosphere-base: 16 27 46;
+  --oe-atmosphere-primary: 110 219 143;
+  --oe-atmosphere-secondary: 246 196 83;
+  --oe-atmosphere-seed: 84 226 233;
+  --oe-atmosphere-artwork-opacity: 0.56;
+}
+
+.oe-atmosphere[data-atmosphere="transitional"] {
+  --oe-atmosphere-base: 10 15 31;
+  --oe-atmosphere-primary: 124 92 255;
+  --oe-atmosphere-secondary: 232 201 168;
+  --oe-atmosphere-seed: 246 196 83;
+  --oe-atmosphere-artwork-opacity: 0.42;
+}
+
+.oe-atmosphere[data-atmosphere="warm"] {
+  --oe-atmosphere-base: 26 22 16;
+  --oe-atmosphere-primary: 232 201 168;
+  --oe-atmosphere-secondary: 246 196 83;
+  --oe-atmosphere-seed: 124 92 255;
+  --oe-atmosphere-artwork-opacity: 0.38;
+}
+
+html:is([data-intensity="balanced"], [data-intensity="immersive"])
+  .oe-atmosphere[data-atmosphere="cosmic"] {
+  --oe-atmosphere-artwork: url("/images/backgrounds/depth-cosmic.webp");
+}
+
+html:is([data-intensity="balanced"], [data-intensity="immersive"])
+  .oe-atmosphere[data-atmosphere="solarpunk"] {
+  --oe-atmosphere-artwork: url("/images/backgrounds/depth-solarpunk.webp");
+}
+
+html:is([data-intensity="balanced"], [data-intensity="immersive"])
+  .oe-atmosphere[data-atmosphere="transitional"] {
+  --oe-atmosphere-artwork: url("/images/backgrounds/depth-cosmic.webp");
+  --oe-atmosphere-artwork-echo: url("/images/backgrounds/depth-warm.webp");
+}
+
+html:is([data-intensity="balanced"], [data-intensity="immersive"])
+  .oe-atmosphere[data-atmosphere="warm"] {
+  --oe-atmosphere-artwork: url("/images/backgrounds/depth-warm.webp");
+}
+
+@supports (background-image: image-set(url("/images/backgrounds/depth-cosmic.avif") type("image/avif"))) {
+  html:is([data-intensity="balanced"], [data-intensity="immersive"])
+    .oe-atmosphere[data-atmosphere="cosmic"],
+  html:is([data-intensity="balanced"], [data-intensity="immersive"])
+    .oe-atmosphere[data-atmosphere="transitional"] {
+    --oe-atmosphere-artwork: image-set(
+      url("/images/backgrounds/depth-cosmic.avif") type("image/avif"),
+      url("/images/backgrounds/depth-cosmic.webp") type("image/webp")
+    );
+  }
+
+  html:is([data-intensity="balanced"], [data-intensity="immersive"])
+    .oe-atmosphere[data-atmosphere="solarpunk"] {
+    --oe-atmosphere-artwork: image-set(
+      url("/images/backgrounds/depth-solarpunk.avif") type("image/avif"),
+      url("/images/backgrounds/depth-solarpunk.webp") type("image/webp")
+    );
+  }
+
+  html:is([data-intensity="balanced"], [data-intensity="immersive"])
+    .oe-atmosphere[data-atmosphere="warm"] {
+    --oe-atmosphere-artwork: image-set(
+      url("/images/backgrounds/depth-warm.avif") type("image/avif"),
+      url("/images/backgrounds/depth-warm.webp") type("image/webp")
+    );
+  }
+
+  html:is([data-intensity="balanced"], [data-intensity="immersive"])
+    .oe-atmosphere[data-atmosphere="transitional"] {
+    --oe-atmosphere-artwork-echo: image-set(
+      url("/images/backgrounds/depth-warm.avif") type("image/avif"),
+      url("/images/backgrounds/depth-warm.webp") type("image/webp")
+    );
+  }
+}
+
+.oe-atmosphere__wash,
+.oe-atmosphere__vignette,
+.oe-atmosphere__linework,
+.oe-atmosphere__artwork {
+  position: absolute;
+}
+
+.oe-atmosphere__wash {
+  inset: 0;
+  background:
+    radial-gradient(
+      ellipse 105% 48% at 52% -6%,
+      rgb(var(--oe-atmosphere-secondary) / 0.13),
+      transparent 68%
+    ),
+    radial-gradient(
+      ellipse 72% 36% at 4% 44%,
+      rgb(var(--oe-atmosphere-primary) / 0.09),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 66% 34% at 96% 82%,
+      rgb(var(--oe-atmosphere-seed) / 0.07),
+      transparent 72%
+    );
+}
+
+.oe-atmosphere__artwork {
+  left: 50%;
+  width: min(112rem, 132vw);
+  aspect-ratio: 16 / 9;
+  background-image: var(--oe-atmosphere-artwork);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 74%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 14%, #000 74%, transparent);
+  opacity: var(--oe-atmosphere-artwork-opacity);
+}
+
+.oe-atmosphere__artwork--top {
+  top: -1%;
+  transform: translateX(-50%) scale(1.02);
+}
+
+.oe-atmosphere__artwork--echo {
+  top: 54%;
+  background-image: var(--oe-atmosphere-artwork-echo);
+  opacity: calc(var(--oe-atmosphere-artwork-opacity) * 0.36);
+  transform: translateX(-50%) rotate(180deg) scale(0.88);
+}
+
+.oe-atmosphere__linework {
+  top: -1%;
+  left: 55%;
+  width: min(64rem, 90vw);
+  height: auto;
+  aspect-ratio: 5 / 12;
+  overflow: visible;
+  opacity: 0;
+  transform: translateX(-50%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 5%, #000 95%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 5%, #000 95%, transparent);
+}
+
+html:is([data-intensity="balanced"], [data-intensity="immersive"])
+  .oe-atmosphere__linework {
+  opacity: 1;
+}
+
+.oe-atmosphere__spine,
+.oe-atmosphere__orbit {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+}
+
+.oe-atmosphere__spine {
+  stroke: rgb(var(--oe-atmosphere-primary) / 0.2);
+  stroke-width: 1.1;
+}
+
+.oe-atmosphere__spine--halo {
+  stroke: rgb(var(--oe-atmosphere-secondary) / 0.045);
+  stroke-width: 18;
+}
+
+.oe-atmosphere__orbit {
+  stroke: rgb(var(--oe-atmosphere-secondary) / 0.22);
+  stroke-width: 0.8;
+  stroke-dasharray: 3 12;
+}
+
+.oe-atmosphere__orbit--b {
+  stroke: rgb(var(--oe-atmosphere-seed) / 0.2);
+  stroke-dasharray: 2 15;
+}
+
+.oe-atmosphere__node {
+  fill: rgb(var(--oe-atmosphere-seed) / 0.65);
+  stroke: rgb(var(--oe-atmosphere-secondary) / 0.35);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.oe-atmosphere__vignette {
+  inset: 0;
+  background:
+    linear-gradient(
+      90deg,
+      transparent 16%,
+      rgb(var(--oe-atmosphere-base) / 0.26) 38%,
+      rgb(var(--oe-atmosphere-base) / 0.26) 62%,
+      transparent 84%
+    ),
+    linear-gradient(
+      90deg,
+      rgb(var(--oe-atmosphere-base) / 0.18),
+      transparent 18%,
+      transparent 82%,
+      rgb(var(--oe-atmosphere-base) / 0.18)
+    ),
+    radial-gradient(
+      ellipse 48% 24% at 50% 18%,
+      transparent,
+      rgb(var(--oe-atmosphere-base) / 0.12) 100%
+    );
+}
+
+@keyframes oe-atmosphere-line-drift {
+  from {
+    translate: 0 -1.2%;
+  }
+  to {
+    translate: 0 1.2%;
+  }
+}
+
+@keyframes oe-atmosphere-art-drift {
+  from {
+    transform: translate(-50%, -1.5%) scale(1.02);
+  }
+  to {
+    transform: translate(-50%, 1.5%) scale(1.055);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll(root block)) {
+    html[data-intensity="immersive"] .oe-atmosphere__linework {
+      animation-name: oe-atmosphere-line-drift;
+      animation-duration: 1ms;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: scroll(root block);
+      animation-range: 0% 100%;
+    }
+
+    html[data-intensity="immersive"] .oe-atmosphere__artwork--top {
+      animation-name: oe-atmosphere-art-drift;
+      animation-duration: 1ms;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: scroll(root block);
+      animation-range: 0% 70%;
+    }
+  }
+}
+
+html[data-intensity="still"] .oe-atmosphere__linework,
+html[data-intensity="still"] .oe-atmosphere__artwork {
+  display: none;
+  animation: none !important;
+}
+
+@media (pointer: coarse) {
+  .oe-atmosphere__linework,
+  .oe-atmosphere__artwork {
+    animation: none !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .oe-atmosphere__artwork {
+    background-image: none;
+  }
+
+  .oe-atmosphere__linework {
+    left: 50%;
+    width: 168%;
+  }
+
+  .oe-atmosphere__spine--halo {
+    stroke-width: 10;
+  }
+}
+
 /* ─── Intensity mode CSS gates ─── */
 
 /* Still mode: disable all non-micro animations */
@@ -112,6 +409,12 @@ html[data-intensity="immersive"] .glow-interactive:hover {
 
 /* ─── Reduced motion safety net ─── */
 @media (prefers-reduced-motion: reduce) {
+  .oe-atmosphere__linework,
+  .oe-atmosphere__artwork {
+    display: none;
+    background-image: none !important;
+  }
+
   *,
   *::before,
   *::after {
@@ -124,7 +427,7 @@ html[data-intensity="immersive"] .glow-interactive:hover {
 
 /* Custom cursor — hide default on desktop (only in balanced/immersive) */
 @media (pointer: fine) {
-  html:not([data-intensity="still"]) * {
+  html:is([data-intensity="balanced"], [data-intensity="immersive"]) * {
     cursor: none !important;
   }
 }

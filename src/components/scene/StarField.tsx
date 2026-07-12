@@ -70,7 +70,7 @@ export function StarField({ className }: StarFieldProps) {
       const dpr = Math.min(window.devicePixelRatio, 2)
       canvas.width = canvas.offsetWidth * dpr
       canvas.height = canvas.offsetHeight * dpr
-      ctx.scale(dpr, dpr)
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       initStars(canvas.offsetWidth, canvas.offsetHeight)
     }
 
@@ -90,6 +90,9 @@ export function StarField({ className }: StarFieldProps) {
     handleScroll()
 
     const tint = getTimeOfDayHue()
+
+    let isIntersecting = false
+    let isRunning = false
 
     const animate = () => {
       const w = canvas.offsetWidth
@@ -113,15 +116,12 @@ export function StarField({ className }: StarFieldProps) {
         const px = star.x + mx * parallaxStrength
         const py = star.y + my * parallaxStrength
 
-        // Draw star with time-of-day tint
-        const gradient = ctx.createRadialGradient(px, py, 0, px, py, star.size * 2)
-        gradient.addColorStop(0, `rgba(${tint.r}, ${tint.g}, ${tint.b}, ${alpha})`)
-        gradient.addColorStop(0.5, `rgba(${tint.r}, ${tint.g}, ${tint.b}, ${alpha * 0.3})`)
-        gradient.addColorStop(1, `rgba(${tint.r}, ${tint.g}, ${tint.b}, 0)`)
-
+        // A small solid point is much cheaper than allocating a radial
+        // gradient for every star on every frame.
+        const radius = star.size * 0.75
         ctx.beginPath()
-        ctx.arc(px, py, star.size * 2, 0, Math.PI * 2)
-        ctx.fillStyle = gradient
+        ctx.arc(px, py, radius, 0, Math.PI * 2)
+        ctx.fillStyle = `rgba(${tint.r}, ${tint.g}, ${tint.b}, ${alpha})`
         ctx.fill()
 
         // Bright core for larger stars
@@ -147,20 +147,49 @@ export function StarField({ className }: StarFieldProps) {
       ctx.fillStyle = nebulaGrad
       ctx.fillRect(0, 0, w, h)
 
+      if (isRunning) rafRef.current = requestAnimationFrame(animate)
+    }
+
+    const start = () => {
+      if (isRunning || document.hidden) return
+      isRunning = true
       rafRef.current = requestAnimationFrame(animate)
     }
 
-    rafRef.current = requestAnimationFrame(animate)
+    const stop = () => {
+      isRunning = false
+      cancelAnimationFrame(rafRef.current)
+      rafRef.current = 0
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isIntersecting = entry.isIntersecting
+        if (isIntersecting) start()
+        else stop()
+      },
+      { rootMargin: '120px' },
+    )
+
+    const handleVisibility = () => {
+      if (document.hidden || !isIntersecting) stop()
+      else start()
+    }
+
+    observer.observe(canvas)
 
     window.addEventListener('resize', handleResize)
     window.addEventListener('mousemove', handleMouse)
     window.addEventListener('scroll', handleScroll, { passive: true })
+    document.addEventListener('visibilitychange', handleVisibility)
 
     return () => {
-      cancelAnimationFrame(rafRef.current)
+      stop()
+      observer.disconnect()
       window.removeEventListener('resize', handleResize)
       window.removeEventListener('mousemove', handleMouse)
       window.removeEventListener('scroll', handleScroll)
+      document.removeEventListener('visibilitychange', handleVisibility)
     }
   }, [allowSacred, initStars])
 

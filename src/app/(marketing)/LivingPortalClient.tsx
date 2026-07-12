@@ -4,8 +4,8 @@ import Link from 'next/link'
 import { motion, useScroll, useTransform, type Variants } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import { StarField } from '@/components/scene/StarField'
-import { AmbientOrb } from '@/components/motion/AmbientOrb'
 import { EmblemMark } from '@/components/motion/EmblemMark'
+import { LayerAtmosphere } from '@/components/motion/LayerAtmosphere'
 import { ScrollReveal } from '@/components/motion/ScrollReveal'
 import { ScrollIndicator } from '@/components/motion/ScrollIndicator'
 import { MagneticButton } from '@/components/ui/MagneticButton'
@@ -36,24 +36,19 @@ export function LivingPortalClient({ posts }: { posts: PostPreview[] }) {
   const heroScale = useTransform(scrollYProgress, [0, 0.15], [1, 0.95])
 
   return (
-    <div className="bg-oe-deep-space text-oe-pure-light">
+    <div className="relative isolate overflow-hidden bg-oe-deep-space text-oe-pure-light">
+      <LayerAtmosphere variant="cosmic" />
       {/* ── Hero: Living Portal ── */}
       <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden">
         <StarField />
-        <AmbientOrb />
 
         <motion.div
           style={{ opacity: heroOpacity, scale: heroScale }}
           className="relative z-10 flex flex-col items-center px-4 text-center"
         >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.85 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 1.4, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-            className="mb-8"
-          >
-            <EmblemMark size={116} glow="gold" priority />
-          </motion.div>
+          <div className="mb-8">
+            <EmblemMark size={116} priority />
+          </div>
 
           <motion.p
             initial={{ opacity: 0 }}

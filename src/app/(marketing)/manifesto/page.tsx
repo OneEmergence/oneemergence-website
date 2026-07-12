@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { ScrollReveal } from '@/components/motion/ScrollReveal'
 import { StarField } from '@/components/scene/StarField'
 import { EmblemMark } from '@/components/motion/EmblemMark'
+import { LayerAtmosphere } from '@/components/motion/LayerAtmosphere'
 import { NewsletterSignup } from '@/components/sections/NewsletterSignup'
 
 type PrincipleAccent = 'oe-spirit-cyan' | 'oe-aurora-violet' | 'oe-solar-gold'
@@ -146,7 +147,8 @@ function PrincipleSection({
 
 export default function ManifestoPage() {
   return (
-    <div className="bg-oe-deep-space text-oe-pure-light">
+    <div className="relative isolate overflow-hidden bg-oe-deep-space text-oe-pure-light">
+      <LayerAtmosphere variant="cosmic" />
       {/* Hero Section */}
       <section className="relative flex min-h-[80vh] flex-col items-center justify-center overflow-hidden px-4 pt-16 text-center sm:px-6 md:min-h-screen">
         <StarField />
@@ -236,15 +238,9 @@ export default function ManifestoPage() {
       {/* Closing CTA */}
       <section className="px-4 py-16 sm:px-6 md:py-24">
         <div className="mx-auto max-w-2xl text-center">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-            className="mb-10 flex justify-center"
-          >
-            <EmblemMark size={92} glow="violet" />
-          </motion.div>
+          <div className="mb-10 flex justify-center">
+            <EmblemMark size={92} />
+          </div>
           <ScrollReveal
             text="Bereit, Teil davon zu sein?"
             as="h2"

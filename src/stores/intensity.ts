@@ -17,6 +17,8 @@ export type IntensityMode = 'still' | 'balanced' | 'immersive'
 export type MotionLevel = 'micro' | 'flow' | 'sacred' | 'event'
 
 interface IntensityState {
+  /** Whether the persisted preference has finished hydrating on the client. */
+  hasHydrated: boolean
   /** User-selected intensity mode */
   mode: IntensityMode
   /** Whether the OS/browser prefers reduced motion */
@@ -27,6 +29,8 @@ interface IntensityState {
   setMode: (mode: IntensityMode) => void
   /** Called internally to sync the reduced-motion media query state */
   setPrefersReducedMotion: (prefers: boolean) => void
+  /** Called by Zustand after the persisted preference has been restored. */
+  finishHydration: () => void
 }
 
 function resolveEffectiveMode(
@@ -40,6 +44,7 @@ function resolveEffectiveMode(
 export const useIntensityStore = create<IntensityState>()(
   persist(
     (set) => ({
+      hasHydrated: false,
       mode: 'balanced',
       prefersReducedMotion: false,
       effectiveMode: 'balanced',
@@ -55,18 +60,22 @@ export const useIntensityStore = create<IntensityState>()(
           prefersReducedMotion: prefers,
           effectiveMode: resolveEffectiveMode(state.mode, prefers),
         })),
+
+      finishHydration: () =>
+        set((state) => ({
+          hasHydrated: true,
+          effectiveMode: resolveEffectiveMode(
+            state.mode,
+            state.prefersReducedMotion
+          ),
+        })),
     }),
     {
       name: 'oe-intensity-mode',
       partialize: (state) => ({ mode: state.mode }),
-      // On rehydration, recalculate effectiveMode from persisted mode
+      // Recalculate the derived mode before CSS is allowed to load rich assets.
       onRehydrateStorage: () => (state) => {
-        if (state) {
-          state.effectiveMode = resolveEffectiveMode(
-            state.mode,
-            state.prefersReducedMotion
-          )
-        }
+        state?.finishHydration()
       },
     }
   )

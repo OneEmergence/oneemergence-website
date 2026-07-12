@@ -9,6 +9,10 @@ import {
   getLibraryItems,
 } from '@/lib/content'
 import { ContentRenderer } from '@/components/content/ContentRenderer'
+import {
+  LayerAtmosphere,
+  type AtmosphereVariant,
+} from '@/components/motion/LayerAtmosphere'
 import { CONTENT_TYPE_DIRS, type ContentType, type AnyContentMeta } from '@/lib/schemas/content'
 
 // ─── Type labels & colors (German-first) ───────────────────────────────────
@@ -55,6 +59,30 @@ const TYPE_META: Record<
 }
 
 const VALID_TYPES = new Set(['journal', ...Object.keys(CONTENT_TYPE_DIRS)])
+
+const ATMOSPHERE_BY_TYPE: Record<string, AtmosphereVariant> = {
+  journal: 'transitional',
+  teaching: 'solarpunk',
+  reflection: 'transitional',
+  practice: 'warm',
+  transmission: 'cosmic',
+  'visual-essay': 'cosmic',
+  'sound-journey': 'warm',
+}
+
+const DEPTH_SURFACE: Record<AtmosphereVariant, string> = {
+  cosmic: 'bg-oe-depth-cosmic',
+  solarpunk: 'bg-oe-depth-solarpunk',
+  transitional: 'bg-oe-depth-cosmic',
+  warm: 'bg-oe-depth-warm',
+}
+
+const COVER_FADE: Record<AtmosphereVariant, string> = {
+  cosmic: 'to-oe-depth-cosmic',
+  solarpunk: 'to-oe-depth-solarpunk',
+  transitional: 'to-oe-depth-cosmic',
+  warm: 'to-oe-depth-warm',
+}
 
 // ─── Static params ─────────────────────────────────────────────────────────
 
@@ -162,6 +190,7 @@ export default async function LibraryDetailPage({
   }
 
   const typeMeta = TYPE_META[type] ?? TYPE_META.journal
+  const atmosphere = ATMOSPHERE_BY_TYPE[type] ?? 'transitional'
 
   // ── Adjacent items for navigation ──────────────────────────────────────
   const allItems = getLibraryItems()
@@ -172,7 +201,10 @@ export default async function LibraryDetailPage({
   const next = currentIndex > 0 ? allItems[currentIndex - 1] : null
 
   return (
-    <div className="min-h-screen bg-oe-deep-space">
+    <div
+      className={`relative isolate min-h-screen overflow-hidden ${DEPTH_SURFACE[atmosphere]}`}
+    >
+      <LayerAtmosphere variant={atmosphere} />
       {/* Hero Cover */}
       {cover && (
         <div className="relative h-[220px] w-full sm:h-[300px] md:h-[400px]">
@@ -183,7 +215,9 @@ export default async function LibraryDetailPage({
             priority
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#0A0F1F]" />
+          <div
+            className={`absolute inset-0 bg-gradient-to-b from-transparent via-transparent ${COVER_FADE[atmosphere]}`}
+          />
         </div>
       )}
 

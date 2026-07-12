@@ -1,16 +1,13 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import { LayerAtmosphere } from '@/components/motion/LayerAtmosphere'
 import { PortalAuth } from '@/features/auth'
 
 export function PortalEntryClient() {
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-oe-deep-space to-oe-depth-warm">
-      {/* Ambient glow — cosmic aura outside, warmth emerging at the core */}
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute left-1/2 top-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-oe-aurora-violet/10 blur-[120px]" />
-        <div className="absolute left-1/2 top-1/2 h-[300px] w-[300px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-oe-warm-sand/10 blur-[80px]" />
-      </div>
+    <div className="relative isolate flex min-h-screen flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-oe-deep-space to-oe-depth-warm">
+      <LayerAtmosphere variant="transitional" />
 
       {/* Portal content */}
       <motion.div
