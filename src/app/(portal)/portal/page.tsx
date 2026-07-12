@@ -1,19 +1,29 @@
-import { getCurrentUser } from '@/lib/auth/session'
-import { redirect } from 'next/navigation'
 import type { Metadata } from 'next'
+import { redirect } from 'next/navigation'
+import { getTranslations } from 'next-intl/server'
+import { getCurrentUser } from '@/lib/auth/session'
+import { getWorkspaceAccess } from '@/features/workspaces'
 import { PortalEntryClient } from './PortalEntryClient'
 
-export const metadata: Metadata = {
-  title: 'Portal — Tritt ein',
-  description: 'Der Übergang in deinen inneren Raum. Kein Login — eine Schwelle.',
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('auth.metadata')
+
+  return {
+    title: t('title'),
+    description: t('description'),
+  }
 }
 
 export default async function PortalEntryPage() {
   const user = await getCurrentUser()
 
-  // Already authenticated — proceed to inner space
   if (user) {
-    redirect('/inner')
+    const access = await getWorkspaceAccess()
+    if (access.activeWorkspace) redirect('/inner')
+    if (access.memberships.some((membership) => membership.status === 'pending')) {
+      redirect('/portal/pending')
+    }
+    redirect('/portal/access')
   }
 
   return <PortalEntryClient />

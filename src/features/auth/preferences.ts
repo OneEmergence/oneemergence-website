@@ -5,7 +5,7 @@ import { eq } from 'drizzle-orm'
 import { revalidatePath } from 'next/cache'
 
 import { requireDb } from '@/lib/db'
-import { requireAuth } from '@/lib/auth/session'
+import { requireWorkspaceAccess } from '@/features/workspaces'
 import { userPreferences } from '@/lib/db/schema'
 
 // ---------------------------------------------------------------------------
@@ -68,7 +68,7 @@ export async function updatePreferences(
 ): Promise<UpdateResult> {
   try {
     const db = requireDb()
-    const user = await requireAuth()
+    const { user } = await requireWorkspaceAccess()
 
     const raw = Object.fromEntries(formData.entries())
     const parsed = preferencesSchema.parse(raw)
@@ -120,7 +120,7 @@ export async function updatePreferences(
 export async function getPreferences(): Promise<PreferencesRow | null> {
   try {
     const db = requireDb()
-    const user = await requireAuth()
+    const { user } = await requireWorkspaceAccess()
 
     const rows = await db
       .select({
@@ -156,7 +156,7 @@ export async function completeOnboarding(
 ): Promise<UpdateResult> {
   try {
     const db = requireDb()
-    const user = await requireAuth()
+    const { user } = await requireWorkspaceAccess()
 
     const raw = Object.fromEntries(formData.entries())
     const parsed = onboardingSchema.parse(raw)

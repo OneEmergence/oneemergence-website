@@ -37,19 +37,20 @@ src/
   app/
     (marketing)/   → Public routes: home, manifesto, about, experiences,
                       library, events, community, contact, journal, brand
-    (portal)/      → Authenticated routes: portal entry, inner/{journal,map,guide,practice}
+    (portal)/      → Auth + workspace routes: portal states, inner/{journal,map,guide,practice,settings,admin}
     api/           → API routes (guide streaming endpoint; webhooks/auth callbacks)
     auth/          → Auth callback routes
     legal/         → Imprint, privacy
   components/      → ui/, motion/, scene/, content/, layout/, sections/, providers/
-  features/        → Feature modules: journal/, guide/, rituals/, map/ (auth/records planned)
+  features/        → Feature modules: auth/, workspaces/, journal/, guide/, rituals/, map/
   lib/             → env.ts (Zod-validated env), db/ (Drizzle schema), supabase/, ai/,
                       content/, schemas/, analytics/, auth/, actions/, utils.ts
   stores/          → Zustand: intensity, audio, preferences
   i18n/            → next-intl config, request.ts, messages/{de,en}.json
   content/         → MDX by sacred content type (teachings, reflections, practices, ...)
 supabase/
-  migrations/      → the single migration channel (extensions, auth trigger, RLS)
+  schemas/         → declarative desired database state (source of truth)
+  migrations/      → append-only deployment history (the only deployment channel)
 tests/             → Playwright: smoke, a11y, content, performance, mobile
 ```
 
@@ -71,13 +72,16 @@ tests/             → Playwright: smoke, a11y, content, performance, mobile
 | `/brand` | Brand & style guide |
 | `/legal/imprint`, `/legal/privacy` | Legal pages |
 | `/portal` | Portal entry / threshold experience (auth) |
-| `/inner` | Dashboard (auth) |
+| `/portal/pending`, `/portal/access` | Membership approval/access states |
+| `/inner` | Dashboard (auth + active workspace membership) |
 | `/inner/journal`, `/inner/map`, `/inner/guide`, `/inner/practice` | Portal features (auth) |
+| `/inner/settings` | Global and workspace-specific profile preferences |
+| `/inner/admin/members`, `/inner/admin/workspaces` | Admin-only access and workspace management |
 
 ## Environment
 
-Copy `.env.example` to `.env` and fill in the values (Supabase project URL/keys,
-`DATABASE_URL`, Sentry DSN, AI provider key). Env access is Zod-validated at
+Copy `.env.example` to `.env` and fill in the values (`NEXT_PUBLIC_SITE_URL`,
+Supabase project URL/keys, `DATABASE_URL`, Sentry DSN, AI provider key). Env access is Zod-validated at
 boot via `src/lib/env.ts` — a missing/invalid var fails fast instead of at
 request time.
 
@@ -96,8 +100,11 @@ pnpm test:content      # content/MDX validation
 pnpm test:perf         # performance tests
 pnpm test:mobile       # responsive/mobile smoke
 pnpm db:push           # supabase db push (apply migrations)
-pnpm db:diff           # supabase db diff
+pnpm db:diff           # diff migrations against supabase/schemas desired state
 ```
+
+For the schema workflow and the one-time first-admin bootstrap, see
+[`supabase/schemas/README.md`](./supabase/schemas/README.md).
 
 ## Planning
 

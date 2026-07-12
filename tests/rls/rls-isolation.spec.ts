@@ -57,6 +57,21 @@ test.describe("RLS: user A cannot read user B's journal entries", () => {
     expect(b.error, b.error?.message).toBeNull();
     userAId = a.data.user!.id;
     userBId = b.data.user!.id;
+
+    // This suite tests owner isolation, so both users must first pass the
+    // independent workspace-access gate introduced by the workspace schema.
+    const workspace = await admin
+      .from("workspaces")
+      .select("id")
+      .eq("slug", "one-emergence")
+      .single();
+    expect(workspace.error, workspace.error?.message).toBeNull();
+    const approval = await admin
+      .from("workspace_memberships")
+      .update({ status: "active", approved_at: new Date().toISOString() })
+      .eq("workspace_id", workspace.data!.id)
+      .in("user_id", [userAId, userBId]);
+    expect(approval.error, approval.error?.message).toBeNull();
   });
 
   test.afterAll(async () => {
@@ -117,4 +132,5 @@ test.describe("RLS: user A cannot read user B's journal entries", () => {
     expect(aReadsOwn.error).toBeNull();
     expect(aReadsOwn.data ?? []).toHaveLength(1);
   });
+
 });

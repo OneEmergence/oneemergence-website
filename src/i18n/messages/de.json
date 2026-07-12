@@ -25,7 +25,8 @@
     "previous": "Vorheriger",
     "next": "Nächster",
     "joinCommunity": "Community beitreten",
-    "noContent": "Noch keine Beiträge vorhanden."
+    "noContent": "Noch keine Beiträge vorhanden.",
+    "skipToContent": "Zum Inhalt springen"
   },
   "content": {
     "teaching": "Lehre",
@@ -43,7 +44,7 @@
   },
   "footer": {
     "tagline": "Einheit, Freiheit, Liebe",
-    "description": "Eine digitale Heimat für Einheit, Freiheit und Liebe — ohne Dogma, mit Klarheit und Integrität.",
+    "description": "Eine digitale Heimat für Einheit, Freiheit und Liebe, ohne Dogma, mit Klarheit und Integrität.",
     "imprint": "Impressum",
     "privacy": "Datenschutz",
     "terms": "Nutzungsbedingungen",
@@ -55,5 +56,224 @@
     "copyright": "© {year} OneEmergence. Alle Rechte vorbehalten.",
     "builtWithLove": "Mit Liebe gebaut.",
     "language": "Sprache wechseln"
+  },
+  "auth": {
+    "metadata": {
+      "title": "Portal",
+      "description": "Der Zugang zu deinem persönlichen OneEmergence Workspace."
+    },
+    "title": "Tritt über die Schwelle",
+    "intro": "Dein innerer Raum beginnt hier. Melde dich an oder bitte um Zugang.",
+    "modeLabel": "Zugangsart",
+    "modes": {
+      "login": "Anmelden",
+      "signup": "Registrieren"
+    },
+    "fields": {
+      "email": "E-Mail",
+      "emailPlaceholder": "du@beispiel.de",
+      "password": "Passwort",
+      "passwordPlaceholder": "Dein Passwort",
+      "passwordHelp": "Mindestens 8 Zeichen.",
+      "displayName": "Anzeigename",
+      "displayNamePlaceholder": "Wie dürfen wir dich nennen?",
+      "optional": "(optional)"
+    },
+    "actions": {
+      "signIn": "Anmelden",
+      "signingIn": "Anmeldung läuft...",
+      "signUp": "Zugang anfragen",
+      "creatingAccount": "Zugang wird erstellt...",
+      "magicLink": "Login-Link senden",
+      "sendingLink": "Link wird gesendet...",
+      "forgotPassword": "Passwort vergessen?",
+      "google": "Mit Google anmelden",
+      "redirecting": "Weiterleitung..."
+    },
+    "errors": {
+      "generic": "Das hat nicht funktioniert. Bitte versuche es erneut."
+    },
+    "or": "oder",
+    "privacyNote": "Deine persönlichen Inhalte bleiben privat. Du kannst deine Daten jederzeit exportieren oder dein Konto löschen.",
+    "backToSite": "Zur öffentlichen Seite",
+    "video": {
+      "pause": "Hintergrundvideo pausieren",
+      "play": "Hintergrundvideo fortsetzen"
+    },
+    "pending": {
+      "metadataTitle": "Freigabe ausstehend",
+      "title": "Dein Zugang wartet auf Freigabe",
+      "description": "Ein Admin prüft deine Anfrage. Sobald dein Workspace aktiv ist, kannst du deinen inneren Raum betreten.",
+      "workspace": "Workspace: {name}",
+      "check": "Freigabe prüfen",
+      "account": "Konto und Daten",
+      "signOut": "Abmelden"
+    },
+    "access": {
+      "metadataTitle": "Zugang pausiert",
+      "title": "Dieser Zugang ist pausiert",
+      "description": "Deine Anmeldung funktioniert weiterhin, aber der Workspace-Zugang wurde ausgesetzt. Wende dich für eine Freigabe an einen Admin.",
+      "contact": "Support kontaktieren",
+      "account": "Konto und Daten",
+      "signOut": "Abmelden"
+    }
+  },
+  "profile": {
+    "settings": {
+      "metadataTitle": "Einstellungen",
+      "title": "Einstellungen",
+      "description": "Deine Identität, dein Workspace und deine persönliche Erfahrung."
+    },
+    "account": {
+      "metadataTitle": "Konto und Datenschutz",
+      "title": "Konto und Datenschutz",
+      "description": "Dieser Bereich bleibt auch ohne aktiven Workspace erreichbar. Hier kannst du deine Daten mitnehmen oder dein Konto löschen.",
+      "back": "Zurück zum Zugangsstatus",
+      "signOut": "Abmelden"
+    },
+    "workspace": {
+      "title": "Workspace-Profil",
+      "description": "Diese Angaben und Erlebnisoptionen gelten nur in {workspace}.",
+      "displayName": "Anzeigename im Workspace",
+      "displayNamePlaceholder": "Dein Name in diesem Workspace",
+      "bio": "Bio im Workspace",
+      "bioPlaceholder": "Was soll dieser Workspace über dich wissen?",
+      "focusThemes": "Fokusthemen",
+      "focusThemesPlaceholder": "Achtsamkeit, Kreativität, Integration",
+      "focusThemesHelp": "Mit Kommas trennen.",
+      "intensity": "Intensität",
+      "audio": "Ambient-Klang aktivieren",
+      "save": "Workspace-Profil speichern",
+      "saving": "Speichert..."
+    },
+    "intensity": {
+      "still": "Still",
+      "stillDescription": "Ruhig und ohne dekorative Bewegung",
+      "balanced": "Balanciert",
+      "balancedDescription": "Sanfte Bewegung mit klarer Orientierung",
+      "immersive": "Immersiv",
+      "immersiveDescription": "Die vollständige visuelle Erfahrung"
+    },
+    "danger": {
+      "title": "Deine Daten",
+      "description": "Privatsphäre ist absolut. Nimm alles mit oder lösche alles.",
+      "exportTitle": "Daten exportieren",
+      "exportDescription": "Lade deine persönlichen Inhalte als offene JSON-Datei herunter.",
+      "export": "Daten herunterladen (JSON)",
+      "exporting": "Daten werden gesammelt...",
+      "exportSuccess": "Deine Daten wurden als JSON-Datei heruntergeladen.",
+      "exportFailed": "Der Datenexport ist fehlgeschlagen.",
+      "deleteTitle": "Konto löschen",
+      "deleteDescription": "Dies entfernt dein Konto und alle deine Daten unwiderruflich. Tippe {confirmation}, um zu bestätigen.",
+      "confirmationLabel": "Tippe {confirmation} zur Bestätigung",
+      "delete": "Konto endgültig löschen",
+      "deleting": "Konto wird gelöscht...",
+      "errors": {
+        "deletionUnavailable": "Die Kontolöschung ist derzeit nicht verfügbar.",
+        "recentSignInRequired": "Melde dich erneut an und versuche die Löschung dann noch einmal.",
+        "adminDeletionForbidden": "Ein anderer Admin muss deine Admin-Rolle entfernen, bevor du dieses Konto löschen kannst.",
+        "deletionFailed": "Das Konto konnte nicht gelöscht werden."
+      }
+    }
+  },
+  "workspace": {
+    "selectorLabel": "Workspace",
+    "switch": "Wechseln",
+    "switching": "Wechselt...",
+    "noActive": "Kein aktiver Workspace",
+    "currentRole": "Rolle: {role}",
+    "navigation": {
+      "dashboard": "Dashboard",
+      "journal": "Journal",
+      "practice": "Praxis",
+      "map": "Karte",
+      "guide": "Guide",
+      "settings": "Einstellungen",
+      "paths": "Pfade",
+      "members": "User verwalten",
+      "workspaces": "Workspaces"
+    },
+    "sidebar": {
+      "menuOpen": "Menü öffnen",
+      "menuClose": "Menü schließen",
+      "comingSoon": "Bald",
+      "traveler": "Reisender",
+      "administration": "Administration",
+      "signOut": "Abmelden",
+      "signingOut": "Wird abgemeldet..."
+    }
+  },
+  "admin": {
+    "members": {
+      "metadataTitle": "User verwalten",
+      "title": "User verwalten",
+      "description": "Zugänge freischalten, pausieren und Plattformrollen zuweisen.",
+      "empty": "In diesem Workspace gibt es noch keine User.",
+      "unnamed": "User ohne Anzeigename",
+      "addTitle": "Mitglied hinzufügen",
+      "email": "E-Mail",
+      "emailPlaceholder": "user@beispiel.de",
+      "add": "Hinzufügen",
+      "adding": "Wird hinzugefügt...",
+      "name": "User",
+      "role": "Rolle",
+      "status": "Zugang",
+      "joined": "Angefragt",
+      "actions": "Aktionen",
+      "saveRole": "Rolle speichern",
+      "approve": "Freischalten",
+      "suspend": "Pausieren",
+      "demoteFirst": "Zuerst demoten",
+      "working": "Wird gespeichert...",
+      "roleDescriptions": {
+        "user": "Standard-Account für einen Menschen.",
+        "agent": "Nicht-menschlicher Agenten-Account.",
+        "superuser": "Privilegierter Account für kommende AI-Funktionen.",
+        "admin": "Verwaltet die Plattform und weist Rollen zu."
+      }
+    },
+    "workspaces": {
+      "metadataTitle": "Workspaces verwalten",
+      "title": "Workspaces",
+      "description": "Arbeitsräume anlegen und ihren Zugang verwalten.",
+      "createTitle": "Workspace anlegen",
+      "name": "Name",
+      "namePlaceholder": "Workspace-Name",
+      "slug": "Slug",
+      "slugPlaceholder": "workspace-name",
+      "descriptionLabel": "Beschreibung",
+      "descriptionPlaceholder": "Wofür ist dieser Workspace gedacht?",
+      "create": "Workspace anlegen",
+      "creating": "Wird angelegt...",
+      "empty": "Noch keine Workspaces vorhanden."
+    },
+    "feedback": {
+      "workspace-created": "Der Workspace wurde angelegt.",
+      "membership-approved": "Der Zugang wurde freigeschaltet.",
+      "membership-suspended": "Der Zugang wurde pausiert.",
+      "membership-added": "Das Mitglied wurde als wartend hinzugefügt.",
+      "membership-exists": "Dieser Account gehört bereits zum Workspace.",
+      "role-updated": "Die Rolle wurde aktualisiert.",
+      "workspace-profile-updated": "Das Workspace-Profil wurde gespeichert.",
+      "active-workspace-updated": "Der Workspace wurde gewechselt.",
+      "invalid-input": "Bitte prüfe deine Eingaben.",
+      "forbidden": "Du hast für diese Aktion keine Berechtigung.",
+      "cannot-change-own-role": "Du kannst deine eigene Admin-Rolle nicht ändern.",
+      "demote-admin-first": "Entferne zuerst die globale Admin-Rolle und pausiere den Zugang danach.",
+      "user-not-found": "Für diese E-Mail wurde kein Account gefunden.",
+      "failed": "Die Aktion konnte nicht abgeschlossen werden.",
+      "saved": "Gespeichert."
+    }
+  },
+  "roles": {
+    "user": "User",
+    "agent": "Agent",
+    "superuser": "Superuser",
+    "admin": "Admin"
+  },
+  "membershipStatus": {
+    "pending": "Wartet auf Freigabe",
+    "active": "Aktiv",
+    "suspended": "Pausiert"
   }
 }

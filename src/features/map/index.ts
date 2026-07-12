@@ -4,7 +4,6 @@ export { ForceGraph } from './components/ForceGraph'
 export { EditNodeDialog } from './components/EditNodeDialog'
 export { CreateEdgeDialog } from './components/CreateEdgeDialog'
 export { extractThemes, THEME_VOCABULARY, MAX_THEMES_PER_ENTRY } from './extract-themes'
-export { generateNodesFromJournal } from './generate-nodes'
 export { toGraphNode, toGraphEdge } from './types'
 export type { GraphNode, GraphEdge } from './types'
 

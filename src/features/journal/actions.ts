@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { eq, and, desc } from 'drizzle-orm'
 import { requireDb } from '@/lib/db'
-import { requireAuth } from '@/lib/auth/session'
+import { requireWorkspaceAccess } from '@/features/workspaces'
 import { journalEntries } from '@/lib/db/schema'
 import { JournalEntryInputSchema } from './schemas'
 import { generateNodesFromJournal } from '@/features/map/generate-nodes'
@@ -17,7 +17,7 @@ export async function createEntry(
   formData: FormData
 ): Promise<ActionResult<JournalEntry>> {
   try {
-    const user = await requireAuth()
+    const { user } = await requireWorkspaceAccess()
     const db = requireDb()
 
     const raw = {
@@ -78,18 +78,8 @@ export async function updateEntry(
   formData: FormData
 ): Promise<ActionResult<JournalEntry>> {
   try {
-    const user = await requireAuth()
+    const { user } = await requireWorkspaceAccess()
     const db = requireDb()
-
-    // Verify ownership
-    const [existing] = await db
-      .select()
-      .from(journalEntries)
-      .where(and(eq(journalEntries.id, id), eq(journalEntries.userId, user.id!)))
-
-    if (!existing) {
-      return { success: false, error: 'Eintrag nicht gefunden.' }
-    }
 
     const raw = {
       title: formData.get('title') as string,
@@ -112,8 +102,17 @@ export async function updateEntry(
         themes: parsed.data.themes,
         updatedAt: new Date(),
       })
-      .where(eq(journalEntries.id, id))
+      .where(
+        and(
+          eq(journalEntries.id, id),
+          eq(journalEntries.userId, user.id)
+        )
+      )
       .returning()
+
+    if (!updated) {
+      return { success: false, error: 'Eintrag nicht gefunden.' }
+    }
 
     revalidatePath('/inner/journal')
 
@@ -136,26 +135,26 @@ export async function deleteEntry(
   id: string
 ): Promise<ActionResult<{ id: string }>> {
   try {
-    const user = await requireAuth()
+    const { user } = await requireWorkspaceAccess()
     const db = requireDb()
 
-    // Verify ownership
-    const [existing] = await db
-      .select()
-      .from(journalEntries)
-      .where(and(eq(journalEntries.id, id), eq(journalEntries.userId, user.id!)))
+    const [deleted] = await db
+      .delete(journalEntries)
+      .where(
+        and(
+          eq(journalEntries.id, id),
+          eq(journalEntries.userId, user.id)
+        )
+      )
+      .returning({ id: journalEntries.id })
 
-    if (!existing) {
+    if (!deleted) {
       return { success: false, error: 'Eintrag nicht gefunden.' }
     }
 
-    await db
-      .delete(journalEntries)
-      .where(eq(journalEntries.id, id))
-
     revalidatePath('/inner/journal')
 
-    return { success: true, data: { id } }
+    return { success: true, data: deleted }
   } catch (error) {
     return {
       success: false,
@@ -169,7 +168,7 @@ export async function deleteEntry(
 
 export async function getEntries(): Promise<ActionResult<JournalEntry[]>> {
   try {
-    const user = await requireAuth()
+    const { user } = await requireWorkspaceAccess()
     const db = requireDb()
 
     const entries = await db

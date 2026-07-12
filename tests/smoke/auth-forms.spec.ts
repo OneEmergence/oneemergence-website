@@ -1,73 +1,58 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from '@playwright/test'
 
-/**
- * Auth UI smoke tests — pure DOM presence, no mocking.
- *
- * The portal entry (`/portal`) and reset-password page both call the Supabase
- * server client during render (session lookup), so they are skipped when
- * NEXT_PUBLIC_SUPABASE_URL is absent (e.g. CI without Supabase credentials),
- * consistent with the other portal smoke tests.
- */
+const supabaseConfigured = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL)
 
-const supabaseConfigured = !!process.env.NEXT_PUBLIC_SUPABASE_URL;
+test.describe('Portal entry auth forms', () => {
+  test.skip(!supabaseConfigured, 'Skipped: NEXT_PUBLIC_SUPABASE_URL is required')
 
-test.describe("Portal entry — auth forms", () => {
-  test.skip(
-    !supabaseConfigured,
-    "Skipped: NEXT_PUBLIC_SUPABASE_URL not set — requires Supabase credentials"
-  );
+  test('/portal renders login and signup options', async ({ page }) => {
+    await page.goto('/portal', { waitUntil: 'domcontentloaded' })
 
-  test("/portal renders the login/signup threshold with email + password fields", async ({
-    page,
-  }) => {
-    await page.goto("/portal", { waitUntil: "domcontentloaded" });
+    await expect(page.getByRole('button', { name: 'Anmelden' })).toHaveAttribute(
+      'aria-pressed',
+      'true'
+    )
+    await expect(page.getByRole('button', { name: 'Registrieren' })).toHaveAttribute(
+      'aria-pressed',
+      'false'
+    )
+    await expect(page.locator('#login-email')).toBeVisible()
+    await expect(page.locator('#login-password')).toBeVisible()
+    await expect(page.getByRole('button', { name: /Mit Google anmelden/i })).toBeVisible()
+    await expect(page.getByRole('button', { name: /Login-Link senden/i })).toBeVisible()
+  })
 
-    // Both threshold tabs are present.
-    await expect(page.getByRole("tab", { name: "Eintreten" })).toBeVisible();
-    await expect(
-      page.getByRole("tab", { name: "Schwelle überschreiten" })
-    ).toBeVisible();
+  test('/portal can switch to signup', async ({ page }) => {
+    await page.goto('/portal', { waitUntil: 'domcontentloaded' })
+    await page.getByRole('button', { name: 'Registrieren' }).click()
 
-    // Login form fields are present.
-    await expect(page.locator('input[type="email"]').first()).toBeVisible();
-    await expect(page.locator('input[type="password"]').first()).toBeVisible();
+    await expect(page.locator('#signup-name')).toBeVisible()
+    await expect(page.locator('#signup-email')).toBeVisible()
+    await expect(page.locator('#signup-password')).toBeVisible()
+  })
 
-    // Alternative entry paths.
-    await expect(
-      page.getByRole("button", { name: /Mit Google eintreten/i })
-    ).toBeVisible();
-    await expect(
-      page.getByRole("button", { name: /Magischen Link senden/i })
-    ).toBeVisible();
-  });
+  test('/portal skips video when reduced motion is requested', async ({ browser }) => {
+    const context = await browser.newContext({ reducedMotion: 'reduce' })
+    const page = await context.newPage()
+    await page.goto('/portal', { waitUntil: 'domcontentloaded' })
 
-  test("/portal can switch to the signup tab", async ({ page }) => {
-    await page.goto("/portal", { waitUntil: "domcontentloaded" });
-    await page.getByRole("tab", { name: "Schwelle überschreiten" }).click();
-    // The signup form exposes an optional name field.
-    await expect(page.locator("#signup-email")).toBeVisible();
-    await expect(page.locator("#signup-password")).toBeVisible();
-  });
-});
+    await expect(page.locator('[data-motion-level="sacred"]')).toBeVisible()
+    await expect(page.locator('video')).toHaveCount(0)
+    await context.close()
+  })
+})
 
-test.describe("Password reset page", () => {
-  test.skip(
-    !supabaseConfigured,
-    "Skipped: NEXT_PUBLIC_SUPABASE_URL not set — requires Supabase credentials"
-  );
+test.describe('Password reset page', () => {
+  test.skip(!supabaseConfigured, 'Skipped: NEXT_PUBLIC_SUPABASE_URL is required')
 
-  test("/auth/reset-password renders the request form", async ({ page }) => {
-    const response = await page.goto("/auth/reset-password", {
-      waitUntil: "domcontentloaded",
-    });
-    expect(response?.status()).toBeLessThan(400);
+  test('/auth/reset-password renders the request form', async ({ page }) => {
+    const response = await page.goto('/auth/reset-password', {
+      waitUntil: 'domcontentloaded',
+    })
+    expect(response?.status()).toBeLessThan(400)
 
-    await expect(
-      page.getByRole("heading", { name: /Passwort zurücksetzen/i })
-    ).toBeVisible();
-    await expect(page.locator('input[type="email"]').first()).toBeVisible();
-    await expect(
-      page.getByRole("button", { name: /Link zum Zurücksetzen senden/i })
-    ).toBeVisible();
-  });
-});
+    await expect(page.getByRole('heading', { name: /Passwort zurücksetzen/i })).toBeVisible()
+    await expect(page.locator('input[type="email"]').first()).toBeVisible()
+    await expect(page.getByRole('button', { name: /Link zum Zurücksetzen senden/i })).toBeVisible()
+  })
+})

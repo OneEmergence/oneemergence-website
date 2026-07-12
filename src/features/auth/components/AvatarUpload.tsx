@@ -37,14 +37,19 @@ export function AvatarUpload({ userId, initialUrl, displayName }: AvatarUploadPr
     startTransition(async () => {
       try {
         const supabase = createClient()
-        const ext = file.name.split('.').pop()?.toLowerCase() ?? 'png'
         // Path MUST be prefixed with the user id — the storage RLS policy only
         // allows writes inside the user's own `auth.uid()` folder.
-        const path = `${userId}/${crypto.randomUUID()}.${ext}`
+        // A stable key makes replacements overwrite the previous avatar instead
+        // of accumulating personal files that later need separate retention.
+        const path = `${userId}/avatar`
 
         const { error: uploadError } = await supabase.storage
           .from('avatars')
-          .upload(path, file, { upsert: true, contentType: file.type })
+          .upload(path, file, {
+            upsert: true,
+            contentType: file.type,
+            cacheControl: '0',
+          })
 
         if (uploadError) {
           setError('Upload fehlgeschlagen. Bitte versuche es erneut.')
@@ -59,7 +64,7 @@ export function AvatarUpload({ userId, initialUrl, displayName }: AvatarUploadPr
           setError(result.error)
           return
         }
-        setUrl(publicUrl)
+        setUrl(`${publicUrl}?v=${Date.now()}`)
       } catch {
         setError('Upload fehlgeschlagen. Bitte versuche es erneut.')
       }

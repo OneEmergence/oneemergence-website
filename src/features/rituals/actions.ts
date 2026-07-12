@@ -2,7 +2,7 @@
 
 import { requireDb } from '@/lib/db'
 import { practices } from '@/lib/db/schema'
-import { requireAuth } from '@/lib/auth/session'
+import { requireWorkspaceAccess } from '@/features/workspaces'
 import { revalidatePath } from 'next/cache'
 import { eq, desc } from 'drizzle-orm'
 import { LogPracticeInputSchema } from './schemas'
@@ -29,7 +29,7 @@ type HistoryResult =
 
 export async function getPracticeHistory(): Promise<HistoryResult> {
   try {
-    const user = await requireAuth()
+    const { user } = await requireWorkspaceAccess()
     const db = requireDb()
 
     const rows = await db
@@ -59,7 +59,7 @@ export async function getPracticeHistory(): Promise<HistoryResult> {
 
 export async function logPractice(formData: FormData): Promise<ActionResult> {
   try {
-    const user = await requireAuth()
+    const { user } = await requireWorkspaceAccess()
     const db = requireDb()
 
     const parsed = LogPracticeInputSchema.safeParse({

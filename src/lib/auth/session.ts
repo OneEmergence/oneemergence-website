@@ -1,3 +1,5 @@
+import 'server-only'
+
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 
@@ -13,13 +15,18 @@ export interface AppUser {
   image: string | null
 }
 
-function toAppUser(supabaseUser: { id: string; email?: string; user_metadata?: Record<string, unknown> }): AppUser {
+function toAppUser(supabaseUser: {
+  id: string
+  email?: string
+  user_metadata?: Record<string, unknown>
+}): AppUser {
   const meta = supabaseUser.user_metadata ?? {}
+  const metadataString = (key: string) => (typeof meta[key] === 'string' ? meta[key] : null)
   return {
     id: supabaseUser.id,
-    name: (meta.full_name as string) ?? (meta.name as string) ?? null,
+    name: metadataString('full_name') ?? metadataString('name'),
     email: supabaseUser.email ?? null,
-    image: (meta.avatar_url as string) ?? (meta.picture as string) ?? null,
+    image: metadataString('avatar_url') ?? metadataString('picture'),
   }
 }
 
@@ -29,7 +36,9 @@ function toAppUser(supabaseUser: { id: string; email?: string; user_metadata?: R
  */
 export async function getCurrentUser(): Promise<AppUser | null> {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
   if (!user) return null
   return toAppUser(user)
 }

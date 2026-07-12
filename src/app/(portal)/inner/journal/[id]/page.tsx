@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { eq, and } from 'drizzle-orm'
-import { requireAuth } from '@/lib/auth/session'
+import { requireWorkspaceAccess } from '@/features/workspaces'
 import { requireDb } from '@/lib/db'
 import { journalEntries } from '@/lib/db/schema'
 import { JournalEditor } from '@/features/journal'
@@ -14,11 +14,17 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { id } = await params
 
   try {
+    const { user } = await requireWorkspaceAccess()
     const db = requireDb()
     const [entry] = await db
-      .select()
+      .select({ title: journalEntries.title })
       .from(journalEntries)
-      .where(eq(journalEntries.id, id))
+      .where(
+        and(
+          eq(journalEntries.id, id),
+          eq(journalEntries.userId, user.id)
+        )
+      )
 
     return { title: entry?.title ?? 'Eintrag' }
   } catch {
@@ -28,7 +34,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function EditJournalEntryPage({ params }: PageProps) {
   const { id } = await params
-  const user = await requireAuth()
+  const { user } = await requireWorkspaceAccess()
   const db = requireDb()
 
   const [entry] = await db

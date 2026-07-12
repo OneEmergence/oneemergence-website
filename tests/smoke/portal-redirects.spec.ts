@@ -3,12 +3,12 @@ import { test, expect } from "@playwright/test";
 /**
  * Portal auth-redirect smoke tests.
  *
- * These tests verify that the Supabase middleware correctly redirects
+ * These tests verify that the Supabase session proxy correctly redirects
  * unauthenticated users from /inner/* to /portal.
  *
  * The tests are skipped when NEXT_PUBLIC_SUPABASE_URL is not configured
  * (e.g. CI without Supabase credentials) to avoid false failures caused
- * by the middleware throwing when credentials are absent.
+ * by the proxy throwing when credentials are absent.
  */
 
 const supabaseConfigured = !!process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -19,6 +19,7 @@ const protectedRoutes = [
   { path: "/inner/guide", name: "AI Guide" },
   { path: "/inner/map", name: "Consciousness Map" },
   { path: "/inner/practice", name: "Practice" },
+  { path: "/portal/account", name: "Account lifecycle" },
 ];
 
 test.describe("Portal auth redirects (unauthenticated)", () => {
@@ -27,7 +28,7 @@ test.describe("Portal auth redirects (unauthenticated)", () => {
   for (const route of protectedRoutes) {
     test(`${route.name} (${route.path}) redirects unauthenticated users to /portal`, async ({ page }) => {
       await page.goto(route.path, { waitUntil: "domcontentloaded" });
-      // Middleware redirects /inner/* → /portal when no session
+      // The Next.js proxy redirects /inner/* → /portal when no session
       expect(page.url()).toContain("/portal");
     });
   }

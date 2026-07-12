@@ -12,10 +12,11 @@ const schema = z.object({
 
   NEXT_PUBLIC_SUPABASE_URL: z.string().min(1).optional(),
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1).optional(),
+  NEXT_PUBLIC_SITE_URL: z.string().url().optional(),
 
   // Service-role key — privileged, server-only. Required exclusively for admin
-  // operations (GDPR account deletion via supabase.auth.admin). Optional: the
-  // app runs fully without it; only account deletion degrades to a clear error.
+  // operations (GDPR account deletion and avatar cleanup). Optional: the app
+  // runs fully without it; only account deletion degrades to a clear error.
   // MUST never be imported into a 'use client' module or exposed to the browser.
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1).optional(),
 
@@ -29,6 +30,7 @@ const schema = z.object({
 
 /** Optional in dev (graceful degrade), but a production boot without these is a misconfiguration. */
 const REQUIRED_IN_PROD = [
+  'NEXT_PUBLIC_SITE_URL',
   'NEXT_PUBLIC_SUPABASE_URL',
   'NEXT_PUBLIC_SUPABASE_ANON_KEY',
   'DATABASE_URL',
@@ -42,6 +44,7 @@ if (!parsed.success) {
 }
 
 export const env = parsed.data
+export const siteUrl = env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
 
 if (env.NODE_ENV === 'production') {
   const missing = REQUIRED_IN_PROD.filter((key) => !env[key])

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { requireAuth } from '@/lib/auth/session'
+import { requireWorkspaceAccess } from '@/features/workspaces'
 import { getMapData } from '@/features/map/actions'
 import { ConsciousnessMap } from '@/features/map/components/ConsciousnessMap'
 
@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 }
 
 export default async function MapPage() {
-  await requireAuth()
+  await requireWorkspaceAccess()
 
   const result = await getMapData()
   const data = result.success ? result.data : { nodes: [], edges: [] }

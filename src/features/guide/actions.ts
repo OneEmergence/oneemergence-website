@@ -3,12 +3,16 @@
 import { revalidatePath } from 'next/cache'
 import { eq, and, desc } from 'drizzle-orm'
 import { requireDb } from '@/lib/db'
-import { requireAuth } from '@/lib/auth/session'
+import { requireWorkspaceAccess } from '@/features/workspaces'
 import {
   guideConversations,
   guideMessages,
   savedPromptCards,
 } from '@/lib/db/schema'
+import {
+  GuideConversationId,
+  PromptCard as PromptCardSchema,
+} from './schemas'
 import type {
   GuideConversation,
   GuideMessage,
@@ -28,7 +32,7 @@ export async function getConversations(): Promise<
   ActionResult<GuideConversation[]>
 > {
   try {
-    const user = await requireAuth()
+    const { user } = await requireWorkspaceAccess()
     const db = requireDb()
 
     const conversations = await db
@@ -56,7 +60,7 @@ export async function getConversation(
   id: string
 ): Promise<ActionResult<{ conversation: GuideConversation; messages: GuideMessage[] }>> {
   try {
-    const user = await requireAuth()
+    const { user } = await requireWorkspaceAccess()
     const db = requireDb()
 
     const [conversation] = await db
@@ -101,30 +105,26 @@ export async function deleteConversation(
   id: string
 ): Promise<ActionResult<{ id: string }>> {
   try {
-    const user = await requireAuth()
+    const { user } = await requireWorkspaceAccess()
     const db = requireDb()
 
-    const [existing] = await db
-      .select()
-      .from(guideConversations)
+    const [deleted] = await db
+      .delete(guideConversations)
       .where(
         and(
           eq(guideConversations.id, id),
           eq(guideConversations.userId, user.id!)
         )
       )
+      .returning({ id: guideConversations.id })
 
-    if (!existing) {
+    if (!deleted) {
       return { success: false, error: 'Konversation nicht gefunden.' }
     }
 
-    await db
-      .delete(guideConversations)
-      .where(eq(guideConversations.id, id))
-
     revalidatePath('/inner/guide')
 
-    return { success: true, data: { id } }
+    return { success: true, data: deleted }
   } catch (error) {
     return {
       success: false,
@@ -145,17 +145,42 @@ export async function savePromptCard(
   conversationId?: string
 ): Promise<ActionResult<SavedCard>> {
   try {
-    const user = await requireAuth()
+    const { user } = await requireWorkspaceAccess()
     const db = requireDb()
+    const parsedCard = PromptCardSchema.safeParse(card)
+    const parsedConversationId = GuideConversationId.optional().safeParse(
+      conversationId
+    )
+
+    if (!parsedCard.success || !parsedConversationId.success) {
+      return { success: false, error: 'Ungültige Karte.' }
+    }
+
+    if (parsedConversationId.data) {
+      const [conversation] = await db
+        .select({ id: guideConversations.id })
+        .from(guideConversations)
+        .where(
+          and(
+            eq(guideConversations.id, parsedConversationId.data),
+            eq(guideConversations.userId, user.id!)
+          )
+        )
+        .limit(1)
+
+      if (!conversation) {
+        return { success: false, error: 'Konversation nicht gefunden.' }
+      }
+    }
 
     const [saved] = await db
       .insert(savedPromptCards)
       .values({
         userId: user.id!,
-        question: card.question,
-        context: card.context ?? null,
-        type: card.type,
-        sourceConversationId: conversationId ?? null,
+        question: parsedCard.data.question,
+        context: parsedCard.data.context ?? null,
+        type: parsedCard.data.type,
+        sourceConversationId: parsedConversationId.data ?? null,
       })
       .returning()
 
@@ -178,7 +203,7 @@ export async function savePromptCard(
 
 export async function getSavedCards(): Promise<ActionResult<SavedCard[]>> {
   try {
-    const user = await requireAuth()
+    const { user } = await requireWorkspaceAccess()
     const db = requireDb()
 
     const cards = await db
@@ -206,28 +231,26 @@ export async function deleteSavedCard(
   id: string
 ): Promise<ActionResult<{ id: string }>> {
   try {
-    const user = await requireAuth()
+    const { user } = await requireWorkspaceAccess()
     const db = requireDb()
 
-    const [existing] = await db
-      .select()
-      .from(savedPromptCards)
+    const [deleted] = await db
+      .delete(savedPromptCards)
       .where(
         and(
           eq(savedPromptCards.id, id),
           eq(savedPromptCards.userId, user.id!)
         )
       )
+      .returning({ id: savedPromptCards.id })
 
-    if (!existing) {
+    if (!deleted) {
       return { success: false, error: 'Karte nicht gefunden.' }
     }
 
-    await db.delete(savedPromptCards).where(eq(savedPromptCards.id, id))
-
     revalidatePath('/inner/guide/cards')
 
-    return { success: true, data: { id } }
+    return { success: true, data: deleted }
   } catch (error) {
     return {
       success: false,

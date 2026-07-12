@@ -1,7 +1,10 @@
 import type { Metadata } from 'next'
-import { requireAuth } from '@/lib/auth/session'
+import {
+  getWorkspaceProfile,
+  requireWorkspaceAccess,
+} from '@/features/workspaces'
 import { getMapData } from '@/features/map/actions'
-import { getPreferences } from '@/features/auth'
+import { getPreferences, getProfile } from '@/features/auth'
 import { DashboardClient } from './DashboardClient'
 import { MapPreview } from '@/features/map/components/MapPreview'
 import type { MapData } from '@/features/map'
@@ -54,11 +57,16 @@ function getDailyImpulse() {
 }
 
 export default async function InnerDashboardPage() {
-  const user = await requireAuth()
+  const access = await requireWorkspaceAccess()
+  const user = access.user
   const impulse = getDailyImpulse()
 
   // Load preferences non-critically — null means no DB or new user → show onboarding
-  const prefs = await getPreferences()
+  const [prefs, profile, workspaceProfile] = await Promise.all([
+    getPreferences(),
+    getProfile(),
+    getWorkspaceProfile(access.activeWorkspace.workspaceId),
+  ])
   const onboardingCompleted = prefs?.onboardingCompleted ?? false
 
   // Load map data for preview (non-critical — gracefully handle failure)
@@ -75,7 +83,7 @@ export default async function InnerDashboardPage() {
   return (
     <>
       <DashboardClient
-        userName={user.name}
+        userName={workspaceProfile?.displayName ?? profile?.displayName ?? user.name}
         impulseText={impulse.text}
         impulseSource={impulse.source}
         onboardingCompleted={onboardingCompleted}

@@ -1,6 +1,6 @@
 # OneEmergence — Platform Roadmap
 
-Date: 2026-07-07 · Status: Proposed (from full repo audit + vision session with Julius)
+Date: 2026-07-12 · Status: Active implementation
 
 This document turns the website into an **expanding, emergently growing
 OneEmergence app**. It has four parts: (I) critical findings from the repo
@@ -83,11 +83,11 @@ exists but is uninitialized (no `config.toml`).
 |---|---|---|
 | Package manager | **pnpm** (delete `package-lock.json`, commit `pnpm-lock.yaml`, CI → `pnpm/action-setup`, `corepack enable`) | Already generated locally; strict node_modules caught a real bug (d3); fastest CI cache |
 | Node | **22 LTS** pinned via `.nvmrc` + `engines` | Reproducibility across dev/CI/Docker |
-| Schema source of truth | **Drizzle owns app tables** (`drizzle-kit generate` → SQL migrations); **`supabase/migrations` owns platform SQL** (extensions, auth trigger, RLS, storage policies). `database/*.sql` is archived after reconciliation | One generator per concern; both land in git as migrations |
+| Schema source of truth | **`supabase/schemas` declares the complete desired database state**; **`supabase/migrations` is the append-only deployment history** generated/reviewed from that state; **Drizzle mirrors the runtime types** in `src/lib/db/schema.ts`. `database/*.sql` stays archived | One readable end state, one deployment channel, one type-safe runtime mirror |
 | Security model | **RLS on every user table as defense-in-depth**, manual `userId` filters stay as first line; document that `DATABASE_URL` is service-role; add a Playwright test that user A cannot read user B | Honest about today's architecture, safe against tomorrow's mistake |
 | Env | **`src/lib/env.ts`** — Zod-validated `process.env`, fail fast at boot, typed access everywhere | Kills the `!` assertions; makes Docker/CI misconfig loud |
 | Server actions | **All mutations live in `src/features/<feature>/actions.ts`**; `src/lib/actions/` dissolves into features (guide, onboarding→auth feature, preferences) | One rule, no exceptions; feature = unit of growth |
-| Feature module contract | Every feature: `actions.ts` · `schemas.ts` · `types.ts` · `components/` · `index.ts` (public API — nothing else imported cross-feature) | The emergence mechanism: add features, don't grow shared code |
+| Feature module contract | Every feature: `actions.ts` · `schemas.ts` · `types.ts` · `components/` · `index.ts`; server consumers use the root entrypoint, client consumers use a client-safe `components/index.ts` when the root exports `server-only` code | Stable public APIs without pulling database/server modules into client bundles |
 | i18n | **Keep next-intl, activate honestly**: cookie-based locale in `request.ts`, extract strings page-by-page as pages are touched; DE default, EN grows incrementally | Vision demands EN/DE; big-bang extraction is waste |
 | API routes | Allowed for: webhooks, **streaming/AG-UI endpoints**, auth callbacks. Everything else stays server actions | Streaming agents genuinely need a route; update the paradigm docs instead of violating them silently |
 | Docs | README/AGENTS.md/.claude/CLAUDE.md get a truth pass; stale planning docs move to `docs/archive/`; AGENTS.md is the single agent-facing file (`.claude/CLAUDE.md` just points to it) | Agents and humans currently get misled on every read |
@@ -104,7 +104,8 @@ src/
 │       └── webhooks/
 ├── components/           # shared presentational only (ui/motion/layout/...)
 ├── features/             # THE growth surface — one folder per capability
-│   ├── auth/             # NEW: portal entry, onboarding, account settings
+│   ├── auth/             # Portal entry, onboarding, account settings
+│   ├── workspaces/       # Access state, membership approval, roles, personalization
 │   ├── journal/ map/ rituals/ guide/   # existing, normalized to contract
 │   ├── records/          # NEW Phase 3: Akashic Records (graph + embeddings)
 │   └── field/            # LATER v3: collective features
@@ -114,8 +115,8 @@ src/
 ├── i18n/  hooks/  stores/  content/  types/
 supabase/
 ├── config.toml           # NEW: supabase init + link
-└── migrations/           # NEW: platform SQL (extensions, triggers, RLS)
-drizzle/                  # NEW: generated app-table migrations
+├── schemas/              # Declarative desired state (readable source of truth)
+└── migrations/           # Append-only deployment history
 Dockerfile  .dockerignore # NEW Phase 4
 ```
 
@@ -195,8 +196,20 @@ Goal: real members. Supabase Auth end-to-end, GDPR-clean.
 - **Auth feature module** (`src/features/auth/`): email+password, magic
   link, Google OAuth via Supabase; Portal Entry stays the threshold
   *experience* wrapping these flows (cosmic→warm gradient already built).
+- **Workspace access model** (`src/features/workspaces/`): authentication
+  proves identity; a `pending → active → suspended` membership controls entry
+  to each workspace. New accounts join the default workspace as `pending` and
+  an admin explicitly activates them.
+- **Global role model**: `user` is the standard human account, `agent` marks
+  a non-human agent account, `superuser` carries privileged capabilities for
+  later features, and `admin` manages the platform, workspaces, memberships,
+  and role assignment. Roles never replace workspace membership state.
+- **Privacy boundary**: journals, practices, maps, and guide conversations stay
+  user-owned. Workspace membership supplies access and profile overrides; any
+  future shared workspace content gets its own explicit tables and policies.
 - Profile & settings page (display name, avatar via Supabase Storage +
-  storage RLS policy, bio, locale, intensity default).
+  storage RLS policy, bio, locale, intensity default), plus per-workspace
+  display-name, bio, focus, audio, and intensity overrides.
 - Account lifecycle: email verification, password reset, **data export
   (JSON of all user rows) and account deletion** (cascade + auth.users) —
   "Privacy is absolute" (VISION) made real.
@@ -204,13 +217,18 @@ Goal: real members. Supabase Auth end-to-end, GDPR-clean.
   read-B Playwright test.
 - Onboarding flow persists to the reconciled schema.
 
-Exit criteria: a stranger can sign up, cross the portal, journal, practice,
-talk to the guide, export their data, and delete themselves — on the cloud
-Supabase with RLS enforced.
+Exit criteria: a stranger can sign up, verify their identity, wait in a clear
+pending state, be activated by an admin, choose an available workspace, cross
+the portal, journal, practice, talk to the guide, export their data, and delete
+themselves — on the cloud Supabase with RLS enforced.
 
 ### Phase 2 — The AG-UI Agent (~2–3 weeks)
 
 Goal: the Guide becomes a streaming, acting, permission-asking companion.
+
+- **Launch gate:** enforce per-account request/cost limits at the hosting edge
+  before opening AI access broadly; role capabilities decide eligibility, but
+  they do not replace abuse protection or spend quotas.
 
 - **Adopt the AG-UI protocol** as the wire format between guide backend and
   frontend: `src/app/api/agent/route.ts` streams AG-UI events (SSE).

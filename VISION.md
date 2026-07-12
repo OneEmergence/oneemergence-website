@@ -126,6 +126,17 @@ Implementation: A global Zustand store (`useIntensityMode`) that every motion co
 - Everything connects: journal entries link to paths, practices link to map nodes
 - Privacy is absolute — this is the most intimate digital space a person can have
 
+#### Identity & Workspace Contract
+
+- Authentication establishes identity; an active workspace membership grants access.
+- `user` is the standard human account, `agent` a non-human agent account,
+  `superuser` a privileged account for advanced capabilities, and `admin` the
+  platform-management role.
+- A workspace carries access and a personal profile/experience override. It does
+  not make journals, practices, maps, or Guide conversations visible to admins.
+- Shared workspace information is introduced only through explicit shared-data
+  features with their own permissions — never by weakening private ownership.
+
 ---
 
 ### Layer 3: Collective Field Layer

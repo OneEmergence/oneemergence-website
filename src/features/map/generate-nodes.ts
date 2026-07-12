@@ -1,4 +1,4 @@
-'use server'
+import 'server-only'
 
 import { eq, and } from 'drizzle-orm'
 import { requireDb } from '@/lib/db'
@@ -69,7 +69,12 @@ export async function generateNodesFromJournal(
       await db
         .update(mapNodes)
         .set({ size: newSize })
-        .where(eq(mapNodes.id, existingTheme.id))
+        .where(
+          and(
+            eq(mapNodes.id, existingTheme.id),
+            eq(mapNodes.userId, userId)
+          )
+        )
       themeNodeId = existingTheme.id
     } else {
       // Create new theme node

@@ -36,4 +36,9 @@ export interface UserDataExport {
   guideConversations: unknown[]
   guideMessages: unknown[]
   savedPromptCards: unknown[]
+  role: unknown | null
+  workspaces: unknown[]
+  workspaceMemberships: unknown[]
+  workspaceProfiles: unknown[]
+  workspaceMembershipEvents: unknown[]
 }

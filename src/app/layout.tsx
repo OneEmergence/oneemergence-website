@@ -3,11 +3,6 @@ import { Inter, Cormorant } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import "./globals.css";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
-import { AudioProvider } from "@/components/layout/AudioProvider";
-import { SmoothScroll } from "@/components/layout/SmoothScroll";
-import { CustomCursor } from "@/components/motion/CustomCursor";
 import { IntensityProvider } from "@/components/providers/IntensityProvider";
 
 const inter = Inter({
@@ -78,26 +73,9 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} className={`${inter.variable} ${cormorant.variable}`}>
-      <body className="font-sans bg-oe-deep-space cursor-none">
+      <body className="bg-background font-sans text-foreground">
         <NextIntlClientProvider messages={messages}>
-          <IntensityProvider>
-          <SmoothScroll>
-            <AudioProvider>
-              <CustomCursor />
-              <a
-                href="#main-content"
-                className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-md focus:bg-oe-aurora-violet focus:text-oe-pure-light focus:outline-none focus:ring-2 focus:ring-oe-solar-gold"
-              >
-                Zum Inhalt springen
-              </a>
-              <Navbar />
-              <main id="main-content" className="min-h-screen">
-                {children}
-              </main>
-              <Footer />
-            </AudioProvider>
-          </SmoothScroll>
-          </IntensityProvider>
+          <IntensityProvider>{children}</IntensityProvider>
         </NextIntlClientProvider>
       </body>
     </html>

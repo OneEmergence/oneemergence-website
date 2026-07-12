@@ -40,12 +40,13 @@ Dieses Dokument ist der Einstiegspunkt für Claude (und andere Agents), um an On
 - `src/app/api/`: API routes (guide streaming endpoint; webhooks/auth callbacks land here too)
 - `src/app/auth/`: auth callback routes
 - `src/components/`: `ui/`, `motion/`, `scene/`, `content/`, `layout/`, `sections/`, `providers/`
-- `src/features/`: feature modules — `journal/`, `guide/`, `rituals/`, `map/` (each with `components/`, actions co-located)
+- `src/features/`: feature modules — `auth/`, `workspaces/`, `journal/`, `guide/`, `rituals/`, `map/` (each with `components/`, actions co-located)
 - `src/lib/`: `env.ts` (Zod-validated env), `utils.ts`, `db/` (Drizzle schema), `supabase/`, `ai/`, `content/`, `schemas/`, `analytics/`, `auth/`, `actions/` (being dissolved into features)
 - `src/stores/`: Zustand — `intensity.ts`, `audio.ts`, `preferences.ts`
 - `src/i18n/`: next-intl config, `request.ts`, `messages/{de,en}.json`
 - `src/content/`: MDX by sacred content type (`teachings/`, `reflections/`, `practices/`, `transmissions/`, `essays/`, `journeys/`, `journal/`, `pages/`)
-- `supabase/migrations/`: the single migration channel (extensions, `handle_new_user` trigger, RLS)
+- `supabase/schemas/`: declarative desired database state (human-readable source of truth)
+- `supabase/migrations/`: the single append-only deployment channel (extensions, triggers, RLS, reviewed DML)
 - `docs/archive/`: superseded planning docs (kept for traceability, not current guidance)
 
 See `ARCHITECTURE.md` §III for the full target structure.
@@ -66,10 +67,11 @@ See `ARCHITECTURE.md` §III for the full target structure.
 5. **Content**: Sacred Content System Typen respektieren. Zod-Schema für Frontmatter.
 6. **i18n**: Neue UI-Strings über `useTranslations()`/`getTranslations()` aus `src/i18n/messages/{de,en}.json` — keine neuen hardcodierten Strings in Komponenten.
 7. **Code-Style**: Striktes TypeScript, funktionale Komponenten, Server Components by default, Mobile-first.
+8. **Feature entrypoints**: Server-Code importiert über `src/features/<feature>/index.ts`. Client-Komponenten nutzen einen client-sicheren Barrel wie `src/features/<feature>/components/index.ts`, wenn der Root-Barrel `server-only` Exports enthält.
 
 ### Aktueller Stand
 - Brand-System + "three depths" Design (cosmic → solarpunk → warm) live across the site; Style-Guide unter `/brand`.
-- Portal-Layer live: Journal, Map, Guide, Practice unter `(portal)/inner/*`, geschützt durch Auth-Middleware.
-- Phase 0 (Foundation) abgeschlossen: pnpm-Migration, `src/lib/env.ts` (Zod, fail-fast), `supabase/migrations` als einziger Migrationskanal, Sentry via `instrumentation.ts`/`instrumentation-client.ts`.
-- In Arbeit: Accounts/Identity (Phase 1) und Docker-Hosting (Phase 4, parallelisierbar).
+- Portal-Layer live: Workspace-Freigabe, Profile, Journal, Map, Guide, Practice und Admin-Verwaltung unter `(portal)/inner/*`.
+- Phase 0 (Foundation) abgeschlossen: pnpm-Migration, `src/lib/env.ts` (Zod, fail-fast), deklarative Schemas plus append-only Migrationen, Sentry via `instrumentation.ts`/`instrumentation-client.ts`.
+- In Arbeit: Abschluss/Cloud-Verifikation von Accounts & Workspace Identity (Phase 1) und Docker-Hosting (Phase 4, parallelisierbar).
 - Siehe **`docs/ROADMAP.md`** für den vollständigen Phasenplan (Accounts → AG-UI Agent → Akashic Records → Docker).

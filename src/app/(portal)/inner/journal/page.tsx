@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { desc, eq } from 'drizzle-orm'
-import { requireAuth } from '@/lib/auth/session'
+import { requireWorkspaceAccess } from '@/features/workspaces'
 import { db } from '@/lib/db'
 import { journalEntries } from '@/lib/db/schema'
 import { JournalList } from '@/features/journal'
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 }
 
 export default async function JournalPage() {
-  const user = await requireAuth()
+  const { user } = await requireWorkspaceAccess()
 
   let entries: JournalEntry[] = []
 

@@ -427,7 +427,8 @@ html[data-intensity="immersive"] .glow-interactive:hover {
 
 /* Custom cursor — hide default on desktop (only in balanced/immersive) */
 @media (pointer: fine) {
-  html:is([data-intensity="balanced"], [data-intensity="immersive"]) * {
+  html:is([data-intensity="balanced"], [data-intensity="immersive"])
+    .oe-marketing-shell * {
     cursor: none !important;
   }
 }

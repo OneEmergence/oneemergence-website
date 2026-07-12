@@ -24,3 +24,13 @@ for (const route of publicRoutes) {
     await expectAccessible(page);
   });
 }
+
+test("Portal entry passes accessibility checks", async ({ page }) => {
+  test.skip(
+    !process.env.NEXT_PUBLIC_SUPABASE_URL,
+    "Skipped: portal rendering requires Supabase credentials"
+  );
+  await page.goto("/portal", { waitUntil: "domcontentloaded" });
+  await page.waitForTimeout(500);
+  await expectAccessible(page);
+});

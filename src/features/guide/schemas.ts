@@ -12,8 +12,18 @@ export type GuideRole = z.infer<typeof GuideRole>
 // =============================================================================
 
 export const PromptCard = z.object({
-  question: z.string().describe('A powerful reflection question for the user'),
-  context: z.string().optional().describe('Brief context for why this question matters'),
+  question: z
+    .string()
+    .trim()
+    .min(1)
+    .max(1000)
+    .describe('A powerful reflection question for the user'),
+  context: z
+    .string()
+    .trim()
+    .max(2000)
+    .optional()
+    .describe('Brief context for why this question matters'),
   type: z.enum(['reflection', 'inquiry', 'practice', 'vision']).describe('The nature of this prompt'),
 })
 export type PromptCard = z.infer<typeof PromptCard>
@@ -46,10 +56,12 @@ export type GuideResponse = z.infer<typeof GuideResponse>
 // API Input Schemas
 // =============================================================================
 
+export const GuideConversationId = z.string().uuid()
+
 export const GuideMessageInput = z.object({
   message: z.string().min(1).max(4000),
   role: GuideRole,
-  conversationId: z.string().optional(),
+  conversationId: GuideConversationId.optional(),
 })
 export type GuideMessageInput = z.infer<typeof GuideMessageInput>
 

@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="en" data-resolution="landscape">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>OneEmergence Portal Loop</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        margin: 0;
+        overflow: hidden;
+        background: #0a0f1f;
+      }
+
+      #root {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+      }
+
+      #portal-scene,
+      .scene-fill,
+      canvas {
+        position: absolute;
+        inset: 0;
+        width: 1920px;
+        height: 1080px;
+      }
+
+      #portal-scene {
+        overflow: hidden;
+      }
+
+      .scene-fill {
+        background: #0a0f1f;
+      }
+
+      #fallback-field {
+        z-index: 1;
+      }
+
+      #portal-field {
+        z-index: 2;
+      }
+
+      #portal-orbits {
+        z-index: 3;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-width="1920"
+      data-height="1080"
+      data-duration="8"
+    >
+      <section
+        id="portal-scene"
+        class="clip"
+        data-start="0"
+        data-duration="8"
+        data-track-index="1"
+        aria-hidden="true"
+      >
+        <div class="scene-fill" data-layout-ignore></div>
+        <canvas id="fallback-field" width="1920" height="1080" data-layout-ignore></canvas>
+        <canvas id="portal-field" width="1920" height="1080" data-layout-ignore></canvas>
+        <canvas id="portal-orbits" width="1920" height="1080" data-layout-ignore></canvas>
+      </section>
+    </div>
+
+    <script>
+      (() => {
+        const WIDTH = 1920;
+        const HEIGHT = 1080;
+        const TAU = Math.PI * 2;
+        const fieldCanvas = document.querySelector("#portal-field");
+        const fallbackCanvas = document.querySelector("#fallback-field");
+        const orbitCanvas = document.querySelector("#portal-orbits");
+        const fallback = fallbackCanvas.getContext("2d");
+        const orbits = orbitCanvas.getContext("2d");
+        const gl = fieldCanvas.getContext("webgl", {
+          alpha: false,
+          antialias: false,
+          depth: false,
+          preserveDrawingBuffer: true,
+          premultipliedAlpha: false,
+        });
+
+        const vertexSource = `
+          attribute vec2 aPosition;
+          varying vec2 vUv;
+
+          void main() {
+            vUv = aPosition * 0.5 + 0.5;
+            gl_Position = vec4(aPosition, 0.0, 1.0);
+          }
+        `;
+
+        const fragmentSource = `
+          precision highp float;
+
+          uniform vec2 uResolution;
+          uniform float uPhase;
+          varying vec2 vUv;
+
+          const float TAU = 6.28318530718;
+          const vec3 DEEP = vec3(10.0, 15.0, 31.0) / 255.0;
+          const vec3 VIOLET = vec3(124.0, 92.0, 255.0) / 255.0;
+          const vec3 CYAN = vec3(84.0, 226.0, 233.0) / 255.0;
+          const vec3 GOLD = vec3(246.0, 196.0, 83.0) / 255.0;
+          const vec3 WARM = vec3(232.0, 201.0, 168.0) / 255.0;
+          const vec3 EARTH = vec3(26.0, 22.0, 16.0) / 255.0;
+
+          float hash21(vec2 p) {
+            p = fract(p * vec2(123.34, 456.21));
+            p += dot(p, p + 45.32);
+            return fract(p.x * p.y);
+          }
+
+          float noise(vec2 p) {
+            vec2 i = floor(p);
+            vec2 f = fract(p);
+            f = f * f * (3.0 - 2.0 * f);
+            return mix(
+              mix(hash21(i), hash21(i + vec2(1.0, 0.0)), f.x),
+              mix(hash21(i + vec2(0.0, 1.0)), hash21(i + vec2(1.0)), f.x),
+              f.y
+            );
+          }
+
+          float fbm(vec2 p) {
+            float value = 0.0;
+            float amplitude = 0.5;
+            mat2 turn = mat2(0.82, -0.57, 0.57, 0.82);
+            for (int i = 0; i < 5; i++) {
+              value += noise(p) * amplitude;
+              p = turn * p * 2.03 + 8.17;
+              amplitude *= 0.5;
+            }
+            return value;
+          }
+
+          float lineBand(float value, float center, float width) {
+            return 1.0 - smoothstep(width, width * 2.2, abs(value - center));
+          }
+
+          void main() {
+            vec2 uv = vUv;
+            float angle = uPhase * TAU;
+            float aspect = uResolution.x / uResolution.y;
+            vec2 portal = vec2(0.715, 0.505);
+            vec2 p = (uv - portal) * vec2(aspect, 1.0);
+            vec2 cycleA = vec2(cos(angle), sin(angle));
+            vec2 cycleB = vec2(cos(angle + 2.094), sin(angle + 2.094));
+
+            float fieldA = fbm(p * 1.28 + cycleA * 0.17 + vec2(3.1, 7.4));
+            float fieldB = fbm((p + vec2(fieldA - 0.5, 0.5 - fieldA) * 0.32) * 2.05 + cycleB * 0.12);
+            vec2 warp = p + vec2(fieldA - 0.5, fieldB - 0.5) * 0.31;
+            float radius = length(warp);
+            float polar = atan(warp.y, warp.x);
+
+            float quiet = smoothstep(0.30, 0.61, uv.x);
+            float breath = 0.94 + sin(angle - 1.5708) * 0.055;
+            float envelope = exp(-radius * 1.75) * quiet;
+            float folds = lineBand(fract(fieldB * 2.2 + polar / TAU * 1.7 + sin(angle) * 0.035), 0.5, 0.075);
+            float filaments = lineBand(fract(fieldA * 3.1 - radius * 0.83 + cos(angle) * 0.028), 0.5, 0.047);
+            float haloRing = exp(-abs(radius - (0.34 + sin(angle) * 0.012)) * 28.0);
+            float outerRing = exp(-abs(radius - (0.69 + cos(angle) * 0.018)) * 19.0);
+
+            vec3 color = mix(DEEP, EARTH, smoothstep(0.55, 0.0, radius) * 0.14);
+            color += VIOLET * folds * envelope * 0.48;
+            color += CYAN * filaments * envelope * 0.31;
+            color += mix(VIOLET, CYAN, fieldA) * haloRing * quiet * 0.16;
+            color += CYAN * outerRing * quiet * (0.045 + fieldB * 0.05);
+
+            float core = exp(-radius * 5.6 / breath);
+            float heart = exp(-radius * 15.5 / breath);
+            float ember = exp(-length(p + vec2(0.018, -0.008)) * 31.0);
+            color += GOLD * core * quiet * 0.68;
+            color += WARM * heart * quiet * 0.72;
+            color += WARM * ember * quiet * 0.34;
+
+            vec2 starGrid = vec2(178.0, 100.0);
+            vec2 starCell = floor(uv * starGrid);
+            vec2 starLocal = fract(uv * starGrid) - 0.5;
+            float starSeed = hash21(starCell);
+            float starShape = smoothstep(0.075, 0.0, length(starLocal));
+            float starPulse = 0.62 + 0.38 * sin(angle + starSeed * TAU);
+            float stars = step(0.9835, starSeed) * starShape * starPulse;
+            color += mix(VIOLET, WARM, starSeed) * stars * quiet * 0.46;
+
+            float leftVeil = 0.13 + quiet * 0.87;
+            color = mix(DEEP, color, leftVeil);
+            vec2 edge = (uv * 2.0 - 1.0) * vec2(0.73, 1.0);
+            float vignette = smoothstep(1.18, 0.24, length(edge));
+            color *= 0.58 + vignette * 0.42;
+
+            float grainSeed = hash21(floor(gl_FragCoord.xy));
+            float grain = (grainSeed - 0.5) * (0.014 + 0.009 * sin(angle + grainSeed * TAU));
+            color += grain;
+            color = pow(max(color, 0.0), vec3(0.96));
+
+            gl_FragColor = vec4(color, 1.0);
+          }
+        `;
+
+        function compileShader(type, source) {
+          if (!gl) return null;
+          const shader = gl.createShader(type);
+          gl.shaderSource(shader, source);
+          gl.compileShader(shader);
+          if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+            gl.deleteShader(shader);
+            return null;
+          }
+          return shader;
+        }
+
+        function createField() {
+          if (!gl) return null;
+          const vertex = compileShader(gl.VERTEX_SHADER, vertexSource);
+          const fragment = compileShader(gl.FRAGMENT_SHADER, fragmentSource);
+          if (!vertex || !fragment) return null;
+
+          const program = gl.createProgram();
+          gl.attachShader(program, vertex);
+          gl.attachShader(program, fragment);
+          gl.linkProgram(program);
+          gl.deleteShader(vertex);
+          gl.deleteShader(fragment);
+          if (!gl.getProgramParameter(program, gl.LINK_STATUS)) return null;
+
+          const buffer = gl.createBuffer();
+          gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+          gl.bufferData(
+            gl.ARRAY_BUFFER,
+            new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]),
+            gl.STATIC_DRAW,
+          );
+
+          gl.useProgram(program);
+          const position = gl.getAttribLocation(program, "aPosition");
+          gl.enableVertexAttribArray(position);
+          gl.vertexAttribPointer(position, 2, gl.FLOAT, false, 0, 0);
+          gl.uniform2f(gl.getUniformLocation(program, "uResolution"), WIDTH, HEIGHT);
+          gl.viewport(0, 0, WIDTH, HEIGHT);
+
+          return {
+            phase: gl.getUniformLocation(program, "uPhase"),
+          };
+        }
+
+        const field = createField();
+        if (!field) fieldCanvas.style.opacity = "0";
+
+        function seeded(seed) {
+          const value = Math.sin(seed * 127.1 + 311.7) * 43758.5453123;
+          return value - Math.floor(value);
+        }
+
+        function drawFallback(phase) {
+          const angle = phase * TAU;
+          fallback.clearRect(0, 0, WIDTH, HEIGHT);
+          fallback.fillStyle = "#0A0F1F";
+          fallback.fillRect(0, 0, WIDTH, HEIGHT);
+
+          const cx = 1373 + Math.sin(angle) * 10;
+          const cy = 545 + Math.cos(angle) * 8;
+          const aura = fallback.createRadialGradient(cx, cy, 0, cx, cy, 680);
+          aura.addColorStop(0, "rgba(232,201,168,0.88)");
+          aura.addColorStop(0.08, "rgba(246,196,83,0.58)");
+          aura.addColorStop(0.28, "rgba(124,92,255,0.24)");
+          aura.addColorStop(0.55, "rgba(84,226,233,0.10)");
+          aura.addColorStop(1, "rgba(10,15,31,0)");
+          fallback.fillStyle = aura;
+          fallback.fillRect(0, 0, WIDTH, HEIGHT);
+
+          fallback.globalCompositeOperation = "screen";
+          for (let i = 0; i < 20; i += 1) {
+            const y = 90 + i * 50;
+            const drift = Math.sin(angle + i * 0.71) * (24 + i * 0.9);
+            fallback.beginPath();
+            fallback.moveTo(650, y + drift * 0.28);
+            fallback.bezierCurveTo(
+              930,
+              y - 150 + drift,
+              1240,
+              810 - y + Math.cos(angle + i) * 86,
+              1800,
+              220 + i * 25 + drift * 0.45,
+            );
+            fallback.strokeStyle = i % 2
+              ? `rgba(124,92,255,${0.035 + seeded(i) * 0.055})`
+              : `rgba(84,226,233,${0.025 + seeded(i + 20) * 0.045})`;
+            fallback.lineWidth = 1 + seeded(i + 40) * 2.5;
+            fallback.stroke();
+          }
+          fallback.globalCompositeOperation = "source-over";
+
+          const quiet = fallback.createLinearGradient(0, 0, 960, 0);
+          quiet.addColorStop(0, "rgba(10,15,31,0.92)");
+          quiet.addColorStop(0.55, "rgba(10,15,31,0.68)");
+          quiet.addColorStop(1, "rgba(10,15,31,0)");
+          fallback.fillStyle = quiet;
+          fallback.fillRect(0, 0, 960, HEIGHT);
+        }
+
+        function drawOrbits(phase) {
+          const angle = phase * TAU;
+          const cx = 1373;
+          const cy = 545;
+          const colors = ["#7C5CFF", "#54E2E9", "#F6C453", "#E8C9A8"];
+          orbits.clearRect(0, 0, WIDTH, HEIGHT);
+          orbits.globalCompositeOperation = "screen";
+
+          for (let i = 0; i < 4; i += 1) {
+            const rx = 245 + i * 145;
+            const ry = 110 + i * 58;
+            const tilt = -0.34 + i * 0.19 + Math.sin(angle + i * 1.7) * 0.055;
+            orbits.save();
+            orbits.translate(cx, cy);
+            orbits.rotate(tilt);
+            orbits.beginPath();
+            orbits.ellipse(0, 0, rx, ry, 0, -2.55 + i * 0.18, 1.7 + i * 0.13);
+            orbits.strokeStyle = `${colors[i]}${i === 2 ? "24" : "1C"}`;
+            orbits.lineWidth = i === 2 ? 1.8 : 1.25;
+            orbits.stroke();
+            orbits.restore();
+          }
+
+          for (let i = 0; i < 34; i += 1) {
+            const a = seeded(i + 1) * TAU + angle * (i % 5 === 0 ? -1 : 1);
+            const rx = 185 + seeded(i + 31) * 660;
+            const ry = rx * (0.28 + seeded(i + 59) * 0.28);
+            const tilt = -0.42 + seeded(i + 83) * 0.68;
+            const ox = Math.cos(a) * rx;
+            const oy = Math.sin(a) * ry;
+            const x = cx + ox * Math.cos(tilt) - oy * Math.sin(tilt);
+            const y = cy + ox * Math.sin(tilt) + oy * Math.cos(tilt);
+            const quiet = Math.max(0, Math.min(1, (x - 650) / 520));
+            if (quiet <= 0) continue;
+
+            const size = 0.9 + seeded(i + 107) * 2.4;
+            const color = colors[i % colors.length];
+            orbits.beginPath();
+            orbits.arc(x, y, size * 3.4, 0, TAU);
+            orbits.fillStyle = `${color}0A`;
+            orbits.fill();
+            orbits.beginPath();
+            orbits.arc(x, y, size, 0, TAU);
+            orbits.fillStyle = `${color}${Math.round((0.28 + seeded(i + 139) * 0.36) * quiet * 255)
+              .toString(16)
+              .padStart(2, "0")}`;
+            orbits.fill();
+          }
+
+          orbits.globalCompositeOperation = "source-over";
+          const vignette = orbits.createRadialGradient(1373, 545, 300, 960, 540, 1130);
+          vignette.addColorStop(0, "rgba(10,15,31,0)");
+          vignette.addColorStop(0.68, "rgba(10,15,31,0.08)");
+          vignette.addColorStop(1, "rgba(10,15,31,0.52)");
+          orbits.fillStyle = vignette;
+          orbits.fillRect(0, 0, WIDTH, HEIGHT);
+        }
+
+        function drawFrame(phase) {
+          const loopPhase = phase <= 0.001 || phase >= 0.99 ? 0 : phase;
+          if (field) {
+            gl.uniform1f(field.phase, loopPhase);
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+            gl.finish();
+          } else {
+            drawFallback(loopPhase);
+          }
+          drawOrbits(loopPhase);
+        }
+
+        drawFrame(0);
+
+        window.__timelines = window.__timelines || {};
+        const playhead = { phase: 0 };
+        const timeline = gsap.timeline({ paused: true });
+        timeline.to(playhead, {
+          phase: 1,
+          duration: 8,
+          ease: "none",
+          onUpdate: () => drawFrame(playhead.phase),
+        });
+        window.__timelines.main = timeline;
+      })();
+    </script>
+  </body>
+</html>

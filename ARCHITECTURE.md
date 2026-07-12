@@ -150,6 +150,8 @@ app/
 │   ├── portal/               # Threshold entry experience
 │   ├── inner/
 │   │   ├── page.tsx          # Dashboard — Inner State
+│   │   ├── settings/         # Global + workspace profile personalization
+│   │   ├── admin/            # Admin-only members and workspaces
 │   │   ├── practice/
 │   │   ├── journal/
 │   │   ├── map/
@@ -190,13 +192,15 @@ src/
 │   ├── guide/                # AI Guide: roles, prompt system, response renderers
 │   ├── rituals/              # Practice room: timer, soundscape, breathwork
 │   ├── map/                  # Consciousness Map: nodes, connections, force layout
+│   ├── auth/                 # Supabase Auth, account lifecycle, global profile
+│   ├── workspaces/           # Membership access, global roles, workspace profiles
 │   └── paths/                # Learning Pathways: progress, stages, flow
 ├── lib/
 │   ├── actions/              # Server actions: saveEntry, updateMap, submitContact
 │   ├── schemas/              # Zod schemas: content types, forms, API responses
 │   ├── content/              # Content loader, MDX pipeline, type validators
 │   ├── analytics/            # Sentry setup, custom events, performance marks
-│   ├── auth/                 # Auth config, session helpers, middleware
+│   ├── auth/                 # Auth config, session helpers, Next.js proxy
 │   └── utils.ts              # cn(), formatDate, etc.
 ├── i18n/                     # next-intl messages: de.json, en.json
 ├── content/
@@ -331,15 +335,15 @@ for traceability.
 7. **shadcn/ui** — not adopted; forms/dialogs built as bespoke components instead.
 8. **next-intl** — ✅ scaffolded, 🔄 activating. Cookie-based locale resolution live in `request.ts`; Navbar/Footer migrated to `useTranslations`; remaining pages migrate incrementally (Phase 0 step 7 in ROADMAP).
 9. **Panel navigation** — not started.
-10. **Feature folders** — ✅ live. `src/features/{journal,guide,rituals,map}`; `auth` and `records` land in Phases 1 and 3.
+10. **Feature folders** — ✅ live. `src/features/{auth,workspaces,journal,guide,rituals,map}`; `records` lands in Phase 3.
 11. **Content folders** — ✅ done. `src/content/` organized by sacred content type.
 
 ### Before v2 (Portal layer)
 
-12. **Auth** — 🔄 in progress. Supabase Auth (not Auth.js/Better Auth — superseded decision), see ROADMAP Phase 1.
-13. **Database** — ✅ done. Supabase Postgres provisioned; **`supabase/migrations` is the single migration channel** (platform SQL: extensions, `handle_new_user` trigger, RLS) and **`src/lib/db/schema.ts` (Drizzle) is the canonical shape mirror** for app tables — `drizzle-kit generate` produces the app-table migrations that land alongside it. The old hand-written `database/*.sql` drafts are archived in `docs/archive/database/`.
+12. **Auth & workspace access** — 🔄 in progress. Supabase Auth proves identity; active workspace membership authorizes the private app. Global `user`, `agent`, `superuser`, and `admin` roles provide capability tiers without conflating them with membership status.
+13. **Database** — ✅ governed. **`supabase/schemas` is the declarative desired state**, **`supabase/migrations` is the only append-only deployment channel**, and **`src/lib/db/schema.ts` is the type-safe Drizzle mirror** used by the app. The old hand-written drafts remain archived in `docs/archive/database/`.
 14. **Server actions** — 🔄 in progress. Feature modules own their `actions.ts`; `src/lib/actions/` is being dissolved into features per ROADMAP §II.
-15. **(portal) route group** — ✅ done. Authenticated layout + middleware protection live; journal/map/guide/practice ship inside it.
+15. **(portal) route group** — ✅ done. Authenticated layout + Next.js proxy protection live; journal/map/guide/practice ship inside it.
 
 ---
 
@@ -351,6 +355,8 @@ for traceability.
 | State management | **Server state + Zustand islands** | No global client store. Server is the source of truth. Zustand only for UI preferences. |
 | Content pipeline | **MDX on filesystem** | No CMS dependency until editorial team exists. MDX gives component power. |
 | Auth provider | **Supabase Auth** (supersedes the original Auth.js/Better Auth plan) | Ships together with Supabase Postgres/Storage; EU-region hosting available; see ROADMAP Phase 1. |
+| Authorization | **Global capability role + per-workspace membership state** | Keeps account type (`user`, non-human `agent`, `superuser`, `admin`) separate from approval (`pending`, `active`, `suspended`). |
+| Workspace data boundary | **Personal records remain user-owned; workspace sharing is explicit** | Joining a workspace must not silently expose journals, practices, maps, or guide conversations to its admins. |
 | AI integration | **Vercel AI SDK + Claude** | Streaming, structured outputs, edge-compatible. No chatbot framework. |
 | Realtime | **Deferred to v3** | Don't build infrastructure for collective features until personal layer is validated. |
 | Testing strategy | **E2E first** | Sacred motion and journey flows can't be unit tested meaningfully. Playwright is primary. |

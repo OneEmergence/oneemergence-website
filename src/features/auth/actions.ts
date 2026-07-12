@@ -2,11 +2,13 @@
 
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
-import { headers } from 'next/headers'
+import { cookies } from 'next/headers'
 import { eq, inArray } from 'drizzle-orm'
 
 import { createClient } from '@/lib/supabase/server'
+import { env, siteUrl } from '@/lib/env'
 import { requireAuth } from '@/lib/auth/session'
+import { requireWorkspaceAccess } from '@/features/workspaces'
 import { requireDb } from '@/lib/db'
 import {
   profiles,
@@ -18,6 +20,11 @@ import {
   guideConversations,
   guideMessages,
   savedPromptCards,
+  userRoles,
+  workspaces,
+  workspaceMemberships,
+  workspaceProfiles,
+  workspaceMembershipEvents,
 } from '@/lib/db/schema'
 import { createAdminClient } from './admin'
 import {
@@ -36,13 +43,13 @@ import type { AuthActionState, ProfileRow, UserDataExport } from './types'
 // ---------------------------------------------------------------------------
 
 /** Absolute origin of the current request, for OAuth / email redirect URLs. */
-async function getOrigin(): Promise<string> {
-  const h = await headers()
-  const origin = h.get('origin')
-  if (origin) return origin
-  const host = h.get('x-forwarded-host') ?? h.get('host')
-  const proto = h.get('x-forwarded-proto') ?? 'https'
-  return host ? `${proto}://${host}` : ''
+function getOrigin(): string {
+  return new URL(siteUrl).origin
+}
+
+async function clearWorkspaceSelection(): Promise<void> {
+  const cookieStore = await cookies()
+  cookieStore.delete('oe-workspace')
 }
 
 /** Map known Supabase auth error strings to calm German UI copy. */
@@ -110,7 +117,7 @@ export async function signUp(formData: FormData): Promise<AuthActionState> {
   }
 
   const supabase = await createClient()
-  const origin = await getOrigin()
+  const origin = getOrigin()
   const { data, error } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
@@ -149,12 +156,12 @@ export async function signInWithMagicLink(
   }
 
   const supabase = await createClient()
-  const origin = await getOrigin()
+  const origin = getOrigin()
   const { error } = await supabase.auth.signInWithOtp({
     email: parsed.data.email,
     options: {
       emailRedirectTo: `${origin}/auth/callback`,
-      shouldCreateUser: true,
+      shouldCreateUser: false,
     },
   })
 
@@ -172,7 +179,7 @@ export async function signInWithMagicLink(
 /** Google OAuth. Redirects the browser to the provider consent screen. */
 export async function signInWithGoogle(): Promise<AuthActionState> {
   const supabase = await createClient()
-  const origin = await getOrigin()
+  const origin = getOrigin()
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: { redirectTo: `${origin}/auth/callback` },
@@ -192,6 +199,7 @@ export async function signInWithGoogle(): Promise<AuthActionState> {
 export async function signOut(): Promise<void> {
   const supabase = await createClient()
   await supabase.auth.signOut()
+  await clearWorkspaceSelection()
   revalidatePath('/', 'layout')
   redirect('/')
 }
@@ -210,7 +218,7 @@ export async function resetPassword(
   }
 
   const supabase = await createClient()
-  const origin = await getOrigin()
+  const origin = getOrigin()
   const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
     redirectTo: `${origin}/auth/callback?next=/auth/reset-password`,
   })
@@ -271,7 +279,7 @@ export async function updatePassword(
 export async function getProfile(): Promise<ProfileRow | null> {
   try {
     const db = requireDb()
-    const user = await requireAuth()
+    const { user } = await requireWorkspaceAccess()
 
     const rows = await db
       .select({
@@ -304,7 +312,7 @@ export async function updateProfile(
 
   try {
     const db = requireDb()
-    const user = await requireAuth()
+    const { user } = await requireWorkspaceAccess()
 
     await db
       .insert(profiles)
@@ -346,13 +354,32 @@ export async function updateProfile(
 export async function updateAvatarUrl(
   avatarUrl: string
 ): Promise<AuthActionState> {
-  if (typeof avatarUrl !== 'string' || avatarUrl.length === 0) {
+  if (
+    typeof avatarUrl !== 'string' ||
+    avatarUrl.length === 0 ||
+    avatarUrl.length > 2048 ||
+    !URL.canParse(avatarUrl)
+  ) {
     return { status: 'error', error: 'Ungültige Avatar-Adresse.' }
   }
 
   try {
     const db = requireDb()
-    const user = await requireAuth()
+    const { user } = await requireWorkspaceAccess()
+    const storageUrl = env.NEXT_PUBLIC_SUPABASE_URL
+    if (!storageUrl) {
+      return { status: 'error', error: 'Avatar-Upload ist nicht konfiguriert.' }
+    }
+
+    const parsedUrl = new URL(avatarUrl)
+    const expectedOrigin = new URL(storageUrl).origin
+    const expectedPath = `/storage/v1/object/public/avatars/${user.id}/`
+    if (
+      parsedUrl.origin !== expectedOrigin ||
+      !parsedUrl.pathname.startsWith(expectedPath)
+    ) {
+      return { status: 'error', error: 'Ungültige Avatar-Adresse.' }
+    }
 
     await db
       .insert(profiles)
@@ -386,9 +413,9 @@ type ExportResult =
   | { success: false; error: string }
 
 /**
- * Gather every row the user owns across the 9 application tables into a single
- * JSON object. The client turns this into a downloadable file. "Privacy is
- * absolute" — the user can take everything with them.
+ * Gather the user's identity, access, personalization, and private application
+ * rows into a single JSON object. The client turns this into a downloadable
+ * file. "Privacy is absolute" — the user can take everything with them.
  */
 export async function exportUserData(): Promise<ExportResult> {
   try {
@@ -405,6 +432,10 @@ export async function exportUserData(): Promise<ExportResult> {
       edgeRows,
       conversationRows,
       cardRows,
+      roleRows,
+      membershipRows,
+      workspaceProfileRows,
+      membershipEventRows,
     ] = await Promise.all([
       db.select().from(profiles).where(eq(profiles.id, uid)),
       db.select().from(userPreferences).where(eq(userPreferences.userId, uid)),
@@ -414,6 +445,19 @@ export async function exportUserData(): Promise<ExportResult> {
       db.select().from(mapEdges).where(eq(mapEdges.userId, uid)),
       db.select().from(guideConversations).where(eq(guideConversations.userId, uid)),
       db.select().from(savedPromptCards).where(eq(savedPromptCards.userId, uid)),
+      db.select().from(userRoles).where(eq(userRoles.userId, uid)),
+      db
+        .select()
+        .from(workspaceMemberships)
+        .where(eq(workspaceMemberships.userId, uid)),
+      db
+        .select()
+        .from(workspaceProfiles)
+        .where(eq(workspaceProfiles.userId, uid)),
+      db
+        .select()
+        .from(workspaceMembershipEvents)
+        .where(eq(workspaceMembershipEvents.userId, uid)),
     ])
 
     // guide_messages has no user_id — scope through owned conversations.
@@ -424,6 +468,15 @@ export async function exportUserData(): Promise<ExportResult> {
             .select()
             .from(guideMessages)
             .where(inArray(guideMessages.conversationId, conversationIds))
+        : []
+
+    const workspaceIds = membershipRows.map((membership) => membership.workspaceId)
+    const workspaceRows =
+      workspaceIds.length > 0
+        ? await db
+            .select()
+            .from(workspaces)
+            .where(inArray(workspaces.id, workspaceIds))
         : []
 
     const data: UserDataExport = {
@@ -439,6 +492,11 @@ export async function exportUserData(): Promise<ExportResult> {
       guideConversations: conversationRows,
       guideMessages: messageRows,
       savedPromptCards: cardRows,
+      role: roleRows[0] ?? null,
+      workspaces: workspaceRows,
+      workspaceMemberships: membershipRows,
+      workspaceProfiles: workspaceProfileRows,
+      workspaceMembershipEvents: membershipEventRows,
     }
 
     return { success: true, data }
@@ -454,10 +512,11 @@ export async function exportUserData(): Promise<ExportResult> {
 }
 
 /**
- * Permanently delete the account: every user-owned row (FK-safe order) and
- * finally the auth user via the service-role admin client. Requires the user to
- * type the confirmation word. If the service role is not configured, fails with
- * a clear message rather than leaving a half-deleted account.
+ * Permanently delete the auth user through the service-role admin client.
+ * Every user-owned row references auth.users with ON DELETE CASCADE, so the
+ * database performs the deletion atomically instead of a fragile manual sweep.
+ * Requires the confirmation word and a sign-in no more than 15 minutes old.
+ * Admins must first hand their role to another account and be demoted.
  */
 export async function deleteAccount(
   formData: FormData
@@ -473,61 +532,95 @@ export async function deleteAccount(
   if (!admin) {
     return {
       status: 'error',
-      error:
-        'Kontolöschung ist auf diesem Server nicht verfügbar (SUPABASE_SERVICE_ROLE_KEY fehlt). Bitte kontaktiere uns, damit wir dein Konto entfernen.',
+      error: 'deletion-unavailable',
     }
   }
 
-  let uid: string
-  try {
-    const db = requireDb()
-    const user = await requireAuth()
-    uid = user.id
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) redirect('/portal')
 
-    // Delete owned rows in FK-safe order (edges before nodes, messages before
-    // conversations). Uses the service-role Drizzle connection (bypasses RLS).
-    const conversationRows = await db
-      .select({ id: guideConversations.id })
-      .from(guideConversations)
-      .where(eq(guideConversations.userId, uid))
-    const conversationIds = conversationRows.map((c) => c.id)
-
-    await db.delete(savedPromptCards).where(eq(savedPromptCards.userId, uid))
-    if (conversationIds.length > 0) {
-      await db
-        .delete(guideMessages)
-        .where(inArray(guideMessages.conversationId, conversationIds))
-    }
-    await db.delete(guideConversations).where(eq(guideConversations.userId, uid))
-    await db.delete(mapEdges).where(eq(mapEdges.userId, uid))
-    await db.delete(mapNodes).where(eq(mapNodes.userId, uid))
-    await db.delete(journalEntries).where(eq(journalEntries.userId, uid))
-    await db.delete(practices).where(eq(practices.userId, uid))
-    await db.delete(userPreferences).where(eq(userPreferences.userId, uid))
-    await db.delete(profiles).where(eq(profiles.id, uid))
-  } catch (error) {
+  const signedInAt = Date.parse(user.last_sign_in_at ?? '')
+  if (
+    !Number.isFinite(signedInAt) ||
+    Date.now() - signedInAt > 15 * 60 * 1000
+  ) {
     return {
       status: 'error',
-      error:
-        error instanceof Error
-          ? error.message
-          : 'Dein Konto konnte nicht gelöscht werden.',
+      error: 'recent-sign-in-required',
     }
   }
 
-  // Finally remove the auth user (cascades any residual FK rows too).
+  const uid = user.id
+  const [roleRow] = await requireDb()
+    .select({ role: userRoles.role })
+    .from(userRoles)
+    .where(eq(userRoles.userId, uid))
+    .limit(1)
+  if (roleRow?.role === 'admin') {
+    return { status: 'error', error: 'admin-deletion-forbidden' }
+  }
+
+  const avatarPaths: string[] = []
+  let avatarListError: string | null = null
+  const avatarFolders = [uid]
+
+  for (let folderIndex = 0; folderIndex < avatarFolders.length; folderIndex++) {
+    const folder = avatarFolders[folderIndex]
+
+    for (let offset = 0; ; offset += 1000) {
+      const { data: avatarFiles, error } = await admin.storage
+        .from('avatars')
+        .list(folder, { limit: 1000, offset })
+
+      if (error) {
+        avatarListError = error.message
+        break
+      }
+
+      for (const file of avatarFiles ?? []) {
+        const path = `${folder}/${file.name}`
+        if (file.id === null) {
+          avatarFolders.push(path)
+        } else {
+          avatarPaths.push(path)
+        }
+      }
+
+      if (!avatarFiles || avatarFiles.length < 1000) break
+    }
+
+    if (avatarListError) break
+  }
+
+  if (avatarListError) {
+    console.error('[Account deletion] Avatar listing failed', avatarListError)
+    return { status: 'error', error: 'deletion-failed' }
+  }
+
+  for (let offset = 0; offset < avatarPaths.length; offset += 1000) {
+    const { error: storageError } = await admin.storage
+      .from('avatars')
+      .remove(avatarPaths.slice(offset, offset + 1000))
+    if (storageError) {
+      console.error('[Account deletion] Avatar cleanup failed', storageError)
+      return { status: 'error', error: 'deletion-failed' }
+    }
+  }
+
   const { error: adminError } = await admin.auth.admin.deleteUser(uid)
   if (adminError) {
     return {
       status: 'error',
-      error:
-        'Deine Daten wurden entfernt, aber das Auth-Konto konnte nicht gelöscht werden. Bitte kontaktiere uns.',
+      error: 'deletion-failed',
     }
   }
 
   // Clear the now-orphaned session and leave.
-  const supabase = await createClient()
   await supabase.auth.signOut()
+  await clearWorkspaceSelection()
   revalidatePath('/', 'layout')
   redirect('/')
 }

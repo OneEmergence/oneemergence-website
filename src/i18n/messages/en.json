@@ -25,7 +25,8 @@
     "previous": "Previous",
     "next": "Next",
     "joinCommunity": "Join community",
-    "noContent": "No content available yet."
+    "noContent": "No content available yet.",
+    "skipToContent": "Skip to content"
   },
   "content": {
     "teaching": "Teaching",
@@ -43,7 +44,7 @@
   },
   "footer": {
     "tagline": "Unity, Freedom, Love",
-    "description": "A digital home for unity, freedom, and love — free of dogma, with clarity and integrity.",
+    "description": "A digital home for unity, freedom, and love, free of dogma, with clarity and integrity.",
     "imprint": "Imprint",
     "privacy": "Privacy",
     "terms": "Terms of Service",
@@ -55,5 +56,224 @@
     "copyright": "© {year} OneEmergence. All rights reserved.",
     "builtWithLove": "Built with love.",
     "language": "Switch language"
+  },
+  "auth": {
+    "metadata": {
+      "title": "Portal",
+      "description": "Access your personal OneEmergence workspace."
+    },
+    "title": "Cross the threshold",
+    "intro": "Your inner space begins here. Sign in or request access.",
+    "modeLabel": "Access method",
+    "modes": {
+      "login": "Sign in",
+      "signup": "Register"
+    },
+    "fields": {
+      "email": "Email",
+      "emailPlaceholder": "you@example.com",
+      "password": "Password",
+      "passwordPlaceholder": "Your password",
+      "passwordHelp": "At least 8 characters.",
+      "displayName": "Display name",
+      "displayNamePlaceholder": "What should we call you?",
+      "optional": "(optional)"
+    },
+    "actions": {
+      "signIn": "Sign in",
+      "signingIn": "Signing in...",
+      "signUp": "Request access",
+      "creatingAccount": "Creating access...",
+      "magicLink": "Send sign-in link",
+      "sendingLink": "Sending link...",
+      "forgotPassword": "Forgot password?",
+      "google": "Sign in with Google",
+      "redirecting": "Redirecting..."
+    },
+    "errors": {
+      "generic": "That did not work. Please try again."
+    },
+    "or": "or",
+    "privacyNote": "Your personal content stays private. You can export your data or delete your account at any time.",
+    "backToSite": "Back to the public site",
+    "video": {
+      "pause": "Pause background video",
+      "play": "Resume background video"
+    },
+    "pending": {
+      "metadataTitle": "Approval pending",
+      "title": "Your access is waiting for approval",
+      "description": "An admin is reviewing your request. Once your workspace is active, you can enter your inner space.",
+      "workspace": "Workspace: {name}",
+      "check": "Check approval",
+      "account": "Account and data",
+      "signOut": "Sign out"
+    },
+    "access": {
+      "metadataTitle": "Access paused",
+      "title": "This access is paused",
+      "description": "Your sign-in still works, but workspace access has been suspended. Contact an admin to restore access.",
+      "contact": "Contact support",
+      "account": "Account and data",
+      "signOut": "Sign out"
+    }
+  },
+  "profile": {
+    "settings": {
+      "metadataTitle": "Settings",
+      "title": "Settings",
+      "description": "Your identity, workspace, and personal experience."
+    },
+    "account": {
+      "metadataTitle": "Account and privacy",
+      "title": "Account and privacy",
+      "description": "This area remains available without an active workspace. Export your data or delete your account here.",
+      "back": "Back to access status",
+      "signOut": "Sign out"
+    },
+    "workspace": {
+      "title": "Workspace profile",
+      "description": "These details and experience options only apply in {workspace}.",
+      "displayName": "Workspace display name",
+      "displayNamePlaceholder": "Your name in this workspace",
+      "bio": "Workspace bio",
+      "bioPlaceholder": "What should this workspace know about you?",
+      "focusThemes": "Focus themes",
+      "focusThemesPlaceholder": "Mindfulness, creativity, integration",
+      "focusThemesHelp": "Separate themes with commas.",
+      "intensity": "Intensity",
+      "audio": "Enable ambient sound",
+      "save": "Save workspace profile",
+      "saving": "Saving..."
+    },
+    "intensity": {
+      "still": "Still",
+      "stillDescription": "Calm, with no decorative motion",
+      "balanced": "Balanced",
+      "balancedDescription": "Gentle motion with clear orientation",
+      "immersive": "Immersive",
+      "immersiveDescription": "The complete visual experience"
+    },
+    "danger": {
+      "title": "Your data",
+      "description": "Privacy is absolute. Take everything with you or delete it all.",
+      "exportTitle": "Export data",
+      "exportDescription": "Download your personal content as an open JSON file.",
+      "export": "Download data (JSON)",
+      "exporting": "Collecting data...",
+      "exportSuccess": "Your data was downloaded as a JSON file.",
+      "exportFailed": "The data export failed.",
+      "deleteTitle": "Delete account",
+      "deleteDescription": "This permanently removes your account and all of its data. Type {confirmation} to confirm.",
+      "confirmationLabel": "Type {confirmation} to confirm",
+      "delete": "Delete account permanently",
+      "deleting": "Deleting account...",
+      "errors": {
+        "deletionUnavailable": "Account deletion is currently unavailable.",
+        "recentSignInRequired": "Sign in again, then retry the deletion.",
+        "adminDeletionForbidden": "Another admin must remove your admin role before you can delete this account.",
+        "deletionFailed": "The account could not be deleted."
+      }
+    }
+  },
+  "workspace": {
+    "selectorLabel": "Workspace",
+    "switch": "Switch",
+    "switching": "Switching...",
+    "noActive": "No active workspace",
+    "currentRole": "Role: {role}",
+    "navigation": {
+      "dashboard": "Dashboard",
+      "journal": "Journal",
+      "practice": "Practice",
+      "map": "Map",
+      "guide": "Guide",
+      "settings": "Settings",
+      "paths": "Paths",
+      "members": "Manage users",
+      "workspaces": "Workspaces"
+    },
+    "sidebar": {
+      "menuOpen": "Open menu",
+      "menuClose": "Close menu",
+      "comingSoon": "Soon",
+      "traveler": "Traveler",
+      "administration": "Administration",
+      "signOut": "Sign out",
+      "signingOut": "Signing out..."
+    }
+  },
+  "admin": {
+    "members": {
+      "metadataTitle": "Manage users",
+      "title": "Manage users",
+      "description": "Approve, pause, and assign platform roles.",
+      "empty": "There are no users in this workspace yet.",
+      "unnamed": "User without a display name",
+      "addTitle": "Add member",
+      "email": "Email",
+      "emailPlaceholder": "user@example.com",
+      "add": "Add",
+      "adding": "Adding...",
+      "name": "User",
+      "role": "Role",
+      "status": "Access",
+      "joined": "Requested",
+      "actions": "Actions",
+      "saveRole": "Save role",
+      "approve": "Approve",
+      "suspend": "Pause",
+      "demoteFirst": "Demote first",
+      "working": "Saving...",
+      "roleDescriptions": {
+        "user": "Standard account for a human.",
+        "agent": "Non-human agent account.",
+        "superuser": "Privileged account for upcoming AI features.",
+        "admin": "Manages the platform and assigns roles."
+      }
+    },
+    "workspaces": {
+      "metadataTitle": "Manage workspaces",
+      "title": "Workspaces",
+      "description": "Create spaces and manage their access.",
+      "createTitle": "Create a workspace",
+      "name": "Name",
+      "namePlaceholder": "Workspace name",
+      "slug": "Slug",
+      "slugPlaceholder": "workspace-name",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "What is this workspace for?",
+      "create": "Create workspace",
+      "creating": "Creating...",
+      "empty": "No workspaces yet."
+    },
+    "feedback": {
+      "workspace-created": "The workspace was created.",
+      "membership-approved": "Access was approved.",
+      "membership-suspended": "Access was paused.",
+      "membership-added": "The member was added with pending access.",
+      "membership-exists": "This account already belongs to the workspace.",
+      "role-updated": "The role was updated.",
+      "workspace-profile-updated": "The workspace profile was saved.",
+      "active-workspace-updated": "The workspace was switched.",
+      "invalid-input": "Please check your input.",
+      "forbidden": "You do not have permission for this action.",
+      "cannot-change-own-role": "You cannot change your own admin role.",
+      "demote-admin-first": "Remove the global admin role before pausing this access.",
+      "user-not-found": "No account was found for this email.",
+      "failed": "The action could not be completed.",
+      "saved": "Saved."
+    }
+  },
+  "roles": {
+    "user": "User",
+    "agent": "Agent",
+    "superuser": "Superuser",
+    "admin": "Admin"
+  },
+  "membershipStatus": {
+    "pending": "Waiting for approval",
+    "active": "Active",
+    "suspended": "Paused"
   }
 }

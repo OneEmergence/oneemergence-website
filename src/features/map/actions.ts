@@ -3,7 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { eq, and, desc } from 'drizzle-orm'
 import { requireDb } from '@/lib/db'
-import { requireAuth } from '@/lib/auth/session'
+import { requireWorkspaceAccess } from '@/features/workspaces'
 import { mapNodes, mapEdges } from '@/lib/db/schema'
 import {
   CreateNodeInputSchema,
@@ -19,7 +19,7 @@ type ActionResult<T> =
 
 export async function getMapData(): Promise<ActionResult<MapData>> {
   try {
-    const user = await requireAuth()
+    const { user } = await requireWorkspaceAccess()
     const db = requireDb()
 
     const nodes = await db
@@ -56,7 +56,7 @@ export async function createNode(
   data: CreateNodeInput
 ): Promise<ActionResult<MapNode>> {
   try {
-    const user = await requireAuth()
+    const { user } = await requireWorkspaceAccess()
     const db = requireDb()
 
     const parsed = CreateNodeInputSchema.safeParse(data)
@@ -100,18 +100,8 @@ export async function updateNode(
   data: unknown
 ): Promise<ActionResult<MapNode>> {
   try {
-    const user = await requireAuth()
+    const { user } = await requireWorkspaceAccess()
     const db = requireDb()
-
-    // Verify ownership
-    const [existing] = await db
-      .select()
-      .from(mapNodes)
-      .where(and(eq(mapNodes.id, id), eq(mapNodes.userId, user.id!)))
-
-    if (!existing) {
-      return { success: false, error: 'Knoten nicht gefunden.' }
-    }
 
     const parsed = UpdateNodeInputSchema.safeParse(data)
     if (!parsed.success) {
@@ -121,8 +111,12 @@ export async function updateNode(
     const [updated] = await db
       .update(mapNodes)
       .set(parsed.data)
-      .where(eq(mapNodes.id, id))
+      .where(and(eq(mapNodes.id, id), eq(mapNodes.userId, user.id!)))
       .returning()
+
+    if (!updated) {
+      return { success: false, error: 'Knoten nicht gefunden.' }
+    }
 
     revalidatePath('/inner/map')
 
@@ -145,26 +139,21 @@ export async function deleteNode(
   id: string
 ): Promise<ActionResult<{ id: string }>> {
   try {
-    const user = await requireAuth()
+    const { user } = await requireWorkspaceAccess()
     const db = requireDb()
 
-    // Verify ownership
-    const [existing] = await db
-      .select()
-      .from(mapNodes)
+    const [deleted] = await db
+      .delete(mapNodes)
       .where(and(eq(mapNodes.id, id), eq(mapNodes.userId, user.id!)))
+      .returning({ id: mapNodes.id })
 
-    if (!existing) {
+    if (!deleted) {
       return { success: false, error: 'Knoten nicht gefunden.' }
     }
 
-    await db
-      .delete(mapNodes)
-      .where(eq(mapNodes.id, id))
-
     revalidatePath('/inner/map')
 
-    return { success: true, data: { id } }
+    return { success: true, data: deleted }
   } catch (error) {
     return {
       success: false,
@@ -180,7 +169,7 @@ export async function createEdge(
   data: CreateEdgeInput
 ): Promise<ActionResult<MapEdge>> {
   try {
-    const user = await requireAuth()
+    const { user } = await requireWorkspaceAccess()
     const db = requireDb()
 
     const parsed = CreateEdgeInputSchema.safeParse(data)
@@ -239,26 +228,21 @@ export async function deleteEdge(
   id: string
 ): Promise<ActionResult<{ id: string }>> {
   try {
-    const user = await requireAuth()
+    const { user } = await requireWorkspaceAccess()
     const db = requireDb()
 
-    // Verify ownership
-    const [existing] = await db
-      .select()
-      .from(mapEdges)
+    const [deleted] = await db
+      .delete(mapEdges)
       .where(and(eq(mapEdges.id, id), eq(mapEdges.userId, user.id!)))
+      .returning({ id: mapEdges.id })
 
-    if (!existing) {
+    if (!deleted) {
       return { success: false, error: 'Verbindung nicht gefunden.' }
     }
 
-    await db
-      .delete(mapEdges)
-      .where(eq(mapEdges.id, id))
-
     revalidatePath('/inner/map')
 
-    return { success: true, data: { id } }
+    return { success: true, data: deleted }
   } catch (error) {
     return {
       success: false,
@@ -276,18 +260,8 @@ export async function updateNodePosition(
   y: number
 ): Promise<ActionResult<MapNode>> {
   try {
-    const user = await requireAuth()
+    const { user } = await requireWorkspaceAccess()
     const db = requireDb()
-
-    // Verify ownership
-    const [existing] = await db
-      .select()
-      .from(mapNodes)
-      .where(and(eq(mapNodes.id, id), eq(mapNodes.userId, user.id!)))
-
-    if (!existing) {
-      return { success: false, error: 'Knoten nicht gefunden.' }
-    }
 
     const parsed = UpdateNodePositionSchema.safeParse({ x, y })
     if (!parsed.success) {
@@ -300,8 +274,12 @@ export async function updateNodePosition(
         x: parsed.data.x,
         y: parsed.data.y,
       })
-      .where(eq(mapNodes.id, id))
+      .where(and(eq(mapNodes.id, id), eq(mapNodes.userId, user.id!)))
       .returning()
+
+    if (!updated) {
+      return { success: false, error: 'Knoten nicht gefunden.' }
+    }
 
     revalidatePath('/inner/map')
 
