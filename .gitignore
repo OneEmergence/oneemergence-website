@@ -47,6 +47,10 @@ next-env.d.ts
 .claude/*.md
 !.claude/CLAUDE.md
 
+# Python bytecode (ui-ux-pro-max skill scripts)
+__pycache__/
+*.pyc
+
 # Test artifacts
 playwright-report/
 test-results/

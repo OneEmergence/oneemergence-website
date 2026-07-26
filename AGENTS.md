@@ -9,7 +9,8 @@ Dieses Dokument ist der Einstiegspunkt für Claude (und andere Agents), um an On
 - React 19
 - TypeScript (strict, no `any`)
 - Tailwind CSS v4 + CSS custom properties
-- Motion (Framer Motion), clsx, tailwind-merge, lucide-react
+- framer-motion v12 — importiert aus `"framer-motion"`, **nicht** aus `"motion/react"` (das Paket `motion` ist nicht installiert; der Import löst nicht auf, auch wenn das der aktuelle Name der Library ist)
+- clsx, tailwind-merge, lucide-react
 - Zustand (client state islands), Zod (validation)
 - MDX for content, next-intl for i18n (activating incrementally, see below)
 - Supabase (Postgres, Auth, Storage) + Drizzle ORM, Vercel AI SDK
@@ -59,11 +60,14 @@ See `ARCHITECTURE.md` §III for the full target structure.
 5. **Performance budget**: LCP < 2.5s, CLS < 0.1, INP < 200ms. WebGL is lazy-loaded.
 6. **Accessibility-first mysticism**: WCAG AA baseline, `prefers-reduced-motion` respected, Still mode is a first-class experience.
 
+### Frontend-Skill-Routing
+Für JEDE Frontend-/Design-Arbeit zuerst `.agents/skills/frontend-workflow/SKILL.md` lesen — es routet zwischen den überlappenden Design-Skills (impeccable, ui-ux-pro-max, frontend-design, accessibility, dataviz) und pinnt die Projekt-Constraints, die deren generische Empfehlungen überstimmen (framer-motion statt GSAP, `useMotionLevel`-Gating statt CSS-Nuke, committed Brand-Tokens).
+
 ### Aufgaben für Agents
 1. **Komponentenbau**: Erstelle UI-Komponenten in `src/components/ui/` und nutze `cn()` aus `src/lib/utils.ts`.
 2. **Seitenaufbau**: Folge `VISION.md` für Produkt-Vision und `ARCHITECTURE.md` für technische Entscheidungen.
 3. **Styling**: Strikt Tailwind und die definierten Brand-Farben. Darkness as space.
-4. **Motion**: Verwende Motion (Framer Motion) und deklariere die Motion-Ebene (Micro/Flow/Sacred/Event).
+4. **Motion**: Verwende framer-motion (Import aus `"framer-motion"`) und deklariere die Motion-Ebene (Micro/Flow/Sacred/Event).
 5. **Content**: Sacred Content System Typen respektieren. Zod-Schema für Frontmatter.
 6. **i18n**: Neue UI-Strings über `useTranslations()`/`getTranslations()` aus `src/i18n/messages/{de,en}.json` — keine neuen hardcodierten Strings in Komponenten.
 7. **Code-Style**: Striktes TypeScript, funktionale Komponenten, Server Components by default, Mobile-first.

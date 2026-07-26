@@ -46,7 +46,10 @@ if (!parsed.success) {
 export const env = parsed.data
 export const siteUrl = env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
 
-if (env.NODE_ENV === 'production') {
+// Skip during `next build` — this guards runtime boot, not build-time page-data
+// collection (which has no runtime secrets and shouldn't need them).
+// ponytail: NEXT_PHASE is Next's own build marker; no new dep.
+if (env.NODE_ENV === 'production' && process.env.NEXT_PHASE !== 'phase-production-build') {
   const missing = REQUIRED_IN_PROD.filter((key) => !env[key])
   if (missing.length > 0) {
     throw new Error(`Missing required environment variables in production: ${missing.join(', ')}`)
