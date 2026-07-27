@@ -22,7 +22,7 @@ export function TransmissionRenderer({ meta, content }: TransmissionRendererProp
           {meta.title}
         </h1>
         {meta.attribution && (
-          <p className="mt-6 text-sm italic text-oe-pure-light/40">— {meta.attribution}</p>
+          <p className="mt-6 text-sm italic text-oe-pure-light/55">— {meta.attribution}</p>
         )}
       </header>
 
@@ -34,7 +34,7 @@ export function TransmissionRenderer({ meta, content }: TransmissionRendererProp
       {/* Audio/visual placeholder for non-text mediums */}
       {meta.medium !== 'text' && (
         <div className="mt-12 rounded-xl border border-oe-solar-gold/15 bg-oe-solar-gold/5 p-8 text-center">
-          <p className="text-sm text-oe-pure-light/40">
+          <p className="text-sm text-oe-pure-light/55">
             {meta.medium === 'audio' ? 'Audio-Wiedergabe' : 'Visuelle Erfahrung'} wird in einer
             zukünftigen Version verfügbar sein.
           </p>

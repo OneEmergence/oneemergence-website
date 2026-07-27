@@ -18,6 +18,7 @@ import {
   Users,
   X,
 } from 'lucide-react'
+import { LocaleSwitcher } from '@/components/layout/LocaleSwitcher'
 import { signOut } from '@/features/auth'
 import { WorkspaceSwitcher, type AppRole } from '@/features/workspaces/components'
 import { cn } from '@/lib/utils'
@@ -56,6 +57,7 @@ export function PortalSidebar({
   const navigation = useTranslations('workspace.navigation')
   const sidebar = useTranslations('workspace.sidebar')
   const roles = useTranslations('roles')
+  const auth = useTranslations('auth')
   const dialogRef = useRef<HTMLDialogElement>(null)
   const [isSigningOut, startSignOut] = useTransition()
 
@@ -88,7 +90,7 @@ export function PortalSidebar({
         <item.icon className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
         <span>{navigation(item.key)}</span>
         {isDisabled ? (
-          <span className="ml-auto text-[10px] text-oe-pure-light/45">{sidebar('comingSoon')}</span>
+          <span className="ml-auto text-[10px] text-oe-pure-light/55">{sidebar('comingSoon')}</span>
         ) : null}
       </>
     )
@@ -138,7 +140,7 @@ export function PortalSidebar({
 
           {role === 'admin' ? (
             <nav aria-label={sidebar('administration')} className="mt-7 space-y-1">
-              <p className="px-3 pb-2 text-xs font-medium text-oe-pure-light/40">
+              <p className="px-3 pb-2 text-xs font-medium text-oe-pure-light/55">
                 {sidebar('administration')}
               </p>
               {adminItems.map((item) => navLink(item, closeAfterNavigation))}
@@ -163,9 +165,16 @@ export function PortalSidebar({
               <p className="truncate text-sm text-oe-pure-light/75">
                 {userName ?? sidebar('traveler')}
               </p>
-              <p className="text-xs text-oe-pure-light/40">{roles(role)}</p>
+              <p className="text-xs text-oe-pure-light/55">{roles(role)}</p>
             </div>
           </div>
+          <Link
+            href="/"
+            className="flex min-h-10 w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-oe-pure-light/50 transition-colors hover:bg-oe-warm-sand/5 hover:text-oe-warm-sand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-solar-gold"
+          >
+            <Home className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
+            {auth('backToSite')}
+          </Link>
           <button
             type="button"
             onClick={handleSignOut}
@@ -175,6 +184,11 @@ export function PortalSidebar({
             <LogOut className="h-4 w-4" strokeWidth={1.5} aria-hidden="true" />
             {isSigningOut ? sidebar('signingOut') : sidebar('signOut')}
           </button>
+          {/* The DE/EN switch lives here rather than in the public footer:
+              only the portal still resolves its locale from the cookie. */}
+          <div className="mt-3 px-3">
+            <LocaleSwitcher />
+          </div>
         </div>
       </>
     )

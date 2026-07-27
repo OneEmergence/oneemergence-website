@@ -35,8 +35,8 @@ const ACCENT_ICON_CLASSES: Record<AccentColor, { container: string; icon: string
   },
   'oe-aurora-violet': {
     container: 'border-oe-aurora-violet/20 bg-oe-aurora-violet/5',
-    icon: 'text-oe-aurora-violet/70',
-    label: 'text-oe-aurora-violet/70',
+    icon: 'text-oe-aurora-violet-ink',
+    label: 'text-oe-aurora-violet-ink',
   },
   'oe-living-green': {
     container: 'border-oe-living-green/20 bg-oe-living-green/5',
@@ -182,7 +182,7 @@ export function ExperiencesClient() {
                         >
                           {exp.typeLabel}
                         </span>
-                        <span className="flex items-center gap-1 text-[10px] text-oe-pure-light/30">
+                        <span className="flex items-center gap-1 text-[10px] text-oe-pure-light/55">
                           <Clock size={10} />
                           {exp.duration}
                         </span>
@@ -204,7 +204,7 @@ export function ExperiencesClient() {
                           </Button>
                         </Link>
                       ) : (
-                        <span className="inline-flex items-center rounded-full border border-oe-pure-light/10 px-4 py-2 text-xs text-oe-pure-light/30">
+                        <span className="inline-flex items-center rounded-full border border-oe-pure-light/10 px-4 py-2 text-xs text-oe-pure-light/55">
                           Bald verfügbar
                         </span>
                       )}

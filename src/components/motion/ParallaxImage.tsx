@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useMotionLevel } from "@/hooks/useMotionLevel";
 import { useIntensityMode } from "@/hooks/useIntensityMode";
+import { useFinePointer } from "@/hooks/usePointerType";
 
 interface ParallaxImageProps {
   children: React.ReactNode;
@@ -25,13 +26,14 @@ export function ParallaxImage({ children, offset = 20, className = "" }: Paralla
   const allowFlow = useMotionLevel('flow');
   const { effectiveMode } = useIntensityMode();
 
-  // Check for coarse pointer (touch device) at mount time — safe on client
-  const isCoarsePointer =
-    typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
+  // SSR-stable and reactive. A bare `matchMedia` read during render made the
+  // server (false → offset 20) and the first client render on touch (0)
+  // disagree, i.e. a hydration mismatch on every cover in the journal grid.
+  const isFinePointer = useFinePointer();
 
   // Still: no parallax; Balanced: subtle; Immersive: full depth
   const depthScale = effectiveMode === 'immersive' ? 1 : 0.5;
-  const effectiveOffset = !allowFlow || isCoarsePointer ? 0 : offset * depthScale;
+  const effectiveOffset = !allowFlow || !isFinePointer ? 0 : offset * depthScale;
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -51,7 +53,10 @@ export function ParallaxImage({ children, offset = 20, className = "" }: Paralla
           bottom: `-${effectiveOffset}px`,
           left: 0,
         }}
-        className="will-change-transform"
+        // Only promote a layer that actually moves; a standing
+        // `will-change: transform` costs GPU memory on exactly the devices
+        // (touch, Still mode) where the offset is zeroed anyway.
+        className={effectiveOffset !== 0 ? "will-change-transform" : undefined}
       >
         {children}
       </motion.div>

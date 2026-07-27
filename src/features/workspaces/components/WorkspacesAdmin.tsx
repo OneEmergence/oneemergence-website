@@ -8,7 +8,7 @@ import { initialWorkspaceActionState, type Workspace, type WorkspaceActionState 
 import { WorkspaceActionFeedback } from './WorkspaceActionFeedback'
 
 const inputClasses =
-  'w-full rounded-lg border border-oe-warm-sand/20 bg-oe-warm-sand/[0.04] px-4 py-3 text-sm text-oe-pure-light placeholder:text-oe-pure-light/35 focus:border-oe-solar-gold focus:outline-none focus:ring-2 focus:ring-oe-solar-gold/30'
+  'w-full rounded-lg border border-oe-warm-sand/20 bg-oe-warm-sand/[0.04] px-4 py-3 text-sm text-oe-pure-light placeholder:text-oe-pure-light/55 focus:border-oe-solar-gold focus:outline-none focus:ring-2 focus:ring-oe-solar-gold/30'
 
 export function WorkspacesAdmin({ workspaces }: { workspaces: Workspace[] }) {
   const t = useTranslations('admin.workspaces')

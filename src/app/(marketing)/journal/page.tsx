@@ -2,19 +2,31 @@ import { getPosts } from "@/lib/content";
 import { ContentGrid } from "@/components/sections/ContentGrid";
 import { LayerAtmosphere } from "@/components/motion/LayerAtmosphere";
 
+/**
+ * The journal index.
+ *
+ * It has to exist: every article canonicalises to `/journal/<slug>` and links
+ * back here, and the sitemap advertises it. Previously this route 404'd while
+ * `journal/layout.tsx` still told search engines the articles lived under it.
+ *
+ * This is the old `/content` page, which was an orphaned duplicate of exactly
+ * this view; `/content` now redirects to `/library` (see next.config.ts).
+ */
 export const metadata = {
-  title: "Inhalte | OneEmergence",
-  description: "Philosophische Texte, Reflexionen und Einladungen zum Erwachen.",
+  title: "Journal",
+  description:
+    "Philosophische Texte, Reflexionen und Einladungen zum Erwachen.",
+  alternates: { canonical: "/journal" },
+  openGraph: { url: "/journal" },
 };
 
-export default function ContentPage() {
+export default function JournalIndexPage() {
   const posts = getPosts();
 
   return (
     <div className="relative isolate min-h-screen overflow-hidden bg-oe-deep-space pt-24 pb-16 md:pt-28 md:pb-20">
       <LayerAtmosphere variant="solarpunk" />
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
-        {/* Header */}
         <div className="mb-10 md:mb-16 text-center">
           <p className="mb-3 font-mono text-xs tracking-[0.3em] text-oe-living-green uppercase">
             Journal
@@ -28,7 +40,6 @@ export default function ContentPage() {
           </p>
         </div>
 
-        {/* Grid with parallax cover images */}
         <ContentGrid posts={posts} />
       </div>
     </div>

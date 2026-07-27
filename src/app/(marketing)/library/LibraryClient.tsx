@@ -7,33 +7,13 @@ import { ArrowRight } from 'lucide-react'
 import { ScrollReveal } from '@/components/motion/ScrollReveal'
 import { LayerAtmosphere } from '@/components/motion/LayerAtmosphere'
 import type { LibraryItem } from '@/lib/content'
+import {
+  libraryItemHref,
+  libraryTypeMeta,
+  type LibraryType,
+} from '@/lib/content/library-types'
 
-const contentTypes = [
-  { id: 'all', label: 'Alle' },
-  { id: 'teaching', label: 'Lehren', color: 'oe-solar-gold' },
-  { id: 'reflection', label: 'Reflexionen', color: 'oe-spirit-cyan' },
-  { id: 'journal', label: 'Journal', color: 'oe-aurora-violet' },
-] as const
-
-type FilterId = (typeof contentTypes)[number]['id']
-
-function filterIdForItem(item: LibraryItem): FilterId {
-  if (item.libraryType === 'teaching') return 'teaching'
-  if (item.libraryType === 'reflection') return 'reflection'
-  return 'journal'
-}
-
-function typeLabel(item: LibraryItem): string {
-  if (item.libraryType === 'teaching') return 'Lehre'
-  if (item.libraryType === 'reflection') return 'Reflexion'
-  return 'Journal'
-}
-
-function dotColor(item: LibraryItem): string {
-  if (item.libraryType === 'teaching') return 'bg-oe-solar-gold'
-  if (item.libraryType === 'reflection') return 'bg-oe-spirit-cyan'
-  return 'bg-oe-living-green'
-}
+type FilterId = 'all' | LibraryType
 
 const cardVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
@@ -44,10 +24,20 @@ const cardVariants: Variants = {
 export function LibraryClient({ items }: { items: LibraryItem[] }) {
   const [activeFilter, setActiveFilter] = useState<FilterId>('all')
 
+  // Only offer filters for types that actually have entries, so the four
+  // currently-empty content directories do not produce dead pills.
+  const contentTypes: Array<{ id: FilterId; label: string }> = [
+    { id: 'all', label: 'Alle' },
+    ...[...new Set(items.map((item) => item.libraryType))].map((type) => ({
+      id: type as FilterId,
+      label: libraryTypeMeta(type).label,
+    })),
+  ]
+
   const filtered =
     activeFilter === 'all'
       ? items
-      : items.filter((item) => filterIdForItem(item) === activeFilter)
+      : items.filter((item) => item.libraryType === activeFilter)
 
   return (
     <div className="relative isolate min-h-screen overflow-hidden bg-oe-deep-space pt-24 pb-16 md:pt-28 md:pb-20">
@@ -96,7 +86,7 @@ export function LibraryClient({ items }: { items: LibraryItem[] }) {
               className={`rounded-full border px-4 py-2 text-xs font-medium uppercase tracking-wider transition-all duration-200 ${
                 activeFilter === type.id
                   ? 'border-oe-living-green/70 bg-oe-living-green/15 text-oe-pure-light'
-                  : 'border-oe-pure-light/10 text-oe-pure-light/40 hover:border-oe-pure-light/30 hover:text-oe-pure-light/70'
+                  : 'border-oe-pure-light/10 text-oe-pure-light/55 hover:border-oe-pure-light/30 hover:text-oe-pure-light/70'
               }`}
             >
               {type.label}
@@ -112,7 +102,7 @@ export function LibraryClient({ items }: { items: LibraryItem[] }) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="py-16 text-center text-oe-pure-light/40"
+              className="py-16 text-center text-oe-pure-light/55"
             >
               Noch keine Inhalte in dieser Kategorie.
             </motion.p>
@@ -132,21 +122,21 @@ export function LibraryClient({ items }: { items: LibraryItem[] }) {
                   layout
                 >
                   <Link
-                    href={`/library/${item.libraryType}/${item.slug}`}
+                    href={libraryItemHref(item)}
                     data-cursor-hover
                     className="group relative block overflow-hidden rounded-2xl border border-oe-pure-light/8 bg-oe-depth-solarpunk/40 p-6 transition-all duration-300 hover:border-oe-living-green/40 hover:bg-oe-living-green/5"
                   >
                     {/* Content type indicator */}
                     <div className="mb-3 flex items-center gap-3">
                       <span
-                        className={`inline-block h-1.5 w-1.5 rounded-full ${dotColor(item)}`}
+                        className={`inline-block h-1.5 w-1.5 rounded-full ${libraryTypeMeta(item.libraryType).dotColor}`}
                       />
-                      <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-oe-pure-light/30">
-                        {typeLabel(item)}
+                      <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-oe-pure-light/55">
+                        {libraryTypeMeta(item.libraryType).label}
                       </span>
                     </div>
 
-                    <time className="font-mono text-xs tracking-wider text-oe-pure-light/30">
+                    <time className="font-mono text-xs tracking-wider text-oe-pure-light/55">
                       {new Date(item.date).toLocaleDateString('de-DE', {
                         day: 'numeric',
                         month: 'long',

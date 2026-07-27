@@ -56,9 +56,9 @@ export function MapPreview({ nodes, edges }: MapPreviewProps) {
         href="/inner/map"
         className="group flex flex-col items-center justify-center gap-3 rounded-xl border border-oe-pure-light/5 p-5 transition-all hover:border-oe-pure-light/10 hover:bg-oe-pure-light/[0.02]"
       >
-        <Map className="h-5 w-5 text-oe-aurora-violet/40" />
+        <Map className="h-5 w-5 text-oe-aurora-violet-ink" />
         <div className="text-center">
-          <p className="text-xs uppercase tracking-widest text-oe-pure-light/30">
+          <p className="text-xs uppercase tracking-widest text-oe-pure-light/55">
             Bewusstseinskarte
           </p>
           <p className="mt-1 text-sm text-oe-pure-light/50">
@@ -74,7 +74,7 @@ export function MapPreview({ nodes, edges }: MapPreviewProps) {
       href="/inner/map"
       className="group block rounded-xl border border-oe-pure-light/5 p-4 transition-all hover:border-oe-pure-light/10 hover:bg-oe-pure-light/[0.02]"
     >
-      <p className="mb-3 text-xs uppercase tracking-widest text-oe-pure-light/30">
+      <p className="mb-3 text-xs uppercase tracking-widest text-oe-pure-light/55">
         Bewusstseinskarte
       </p>
 
@@ -120,7 +120,7 @@ export function MapPreview({ nodes, edges }: MapPreviewProps) {
         </svg>
       </motion.div>
 
-      <p className="mt-2 text-xs text-oe-pure-light/40">
+      <p className="mt-2 text-xs text-oe-pure-light/55">
         {nodes.length} Knoten · {edges.length} Verbindungen
       </p>
     </Link>

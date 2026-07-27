@@ -6,6 +6,15 @@
   --color-foreground: var(--foreground);
   --color-oe-deep-space: #0A0F1F;
   --color-oe-aurora-violet: #7C5CFF;
+  /* Two accessible derivations of the brand violet. Same hue — this is not a
+     palette change, it is the contrast note the brand page already publishes.
+     Measured against #FFF and #0A0F1F respectively:
+       #7C5CFF on white text .. 4.34:1  ✗ AA
+       #7C5CFF as text on deep space .. 4.38:1  ✗ AA
+     Keep `oe-aurora-violet` for glows, borders and tinted surfaces, where
+     contrast ratios do not apply. */
+  --color-oe-aurora-violet-deep: #7454F5; /* fill under white text — 4.85:1 */
+  --color-oe-aurora-violet-ink: #8A6DFF; /* accent text on dark — 5.19:1 */
   --color-oe-solar-gold: #F6C453;
   --color-oe-spirit-cyan: #54E2E9;
   --color-oe-pure-light: #F7F8FB;
@@ -24,16 +33,24 @@
   --font-serif: var(--font-cormorant), "Cormorant", Georgia, serif;
 }
 
+/* Deep space is the default, not a dark-mode override.
+ *
+ * The light values used to sit in `:root` with dark behind
+ * `prefers-color-scheme: dark`, so on a machine set to light appearance the
+ * body was #F7F8FB — and the error boundary drew #F7F8FB text on it, i.e. a
+ * completely blank error page. It also meant the overscroll gutter and the
+ * paint before the shell's own `bg-oe-deep-space` settled were white on a site
+ * whose whole thesis is that darkness is space.
+ *
+ * A light theme was never designed; there is no light variant of any page. If
+ * one is ever built, it belongs behind an explicit opt-in, not a media query.
+ */
 :root {
-  --background: #F7F8FB;
-  --foreground: #0A0F1F;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0A0F1F;
-    --foreground: #F7F8FB;
-  }
+  --background: #0A0F1F;
+  --foreground: #F7F8FB;
+  /* Makes native UI — scrollbars, form controls, autofill, date pickers —
+     render dark. Previously only patched inline on /contact. */
+  color-scheme: dark;
 }
 
 body {
@@ -641,7 +658,24 @@ html[data-intensity="immersive"] .glow-interactive:hover {
   box-shadow: 0 0 30px rgba(124, 92, 255, 0.4), 0 0 80px rgba(124, 92, 255, 0.15);
 }
 
-/* ─── Reduced motion safety net ─── */
+/* ─── Reduced motion safety net ───────────────────────────────────────────────
+ *
+ * Targeted on purpose. The usual blanket
+ * `*, *::before, *::after { animation-duration: .01ms !important }` used to
+ * live here and was actively harmful:
+ *
+ *  - It bought nothing it appeared to buy. framer-motion drives animation
+ *    through WAAPI and rAF, which CSS `animation-duration` cannot touch — so
+ *    every large motion on the site ran at full length anyway.
+ *  - What it *did* kill was the Micro layer that Still mode is designed to
+ *    keep: nav-link colour transitions, card hovers, focus rings, and both
+ *    `animate-spin` submit loaders (which froze mid-rotation, leaving a
+ *    reduced-motion user staring at a dead form for 1.2s).
+ *
+ * Reduced motion now reaches JS animation the only way it can: through the
+ * store (`useReducedMotion` → `effectiveMode: 'still'` → `MotionConfig` +
+ * `useMotionLevel`). CSS only handles what CSS owns.
+ */
 @media (prefers-reduced-motion: reduce) {
   .oe-atmosphere__linework,
   .oe-atmosphere__artwork {
@@ -649,20 +683,46 @@ html[data-intensity="immersive"] .glow-interactive:hover {
     background-image: none !important;
   }
 
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+  /* Scroll-linked and looping decoration — the classes the project already
+     declares for exactly this. Micro-level feedback is deliberately spared. */
+  .motion-flow,
+  .motion-sacred,
+  .motion-event,
+  [data-motion-level="flow"],
+  [data-motion-level="sacred"],
+  [data-motion-level="event"] {
+    animation: none !important;
+  }
+
+  html {
     scroll-behavior: auto !important;
   }
 }
 
-/* Custom cursor — hide default on desktop (only in balanced/immersive) */
+/* ─── Custom cursor ───────────────────────────────────────────────────────────
+ *
+ * Gated on `data-custom-cursor`, which CustomCursor.tsx sets only once its
+ * replacement is actually visible (previously this keyed off `data-intensity`,
+ * so between intensity resolving and the first mousemove there was no pointer
+ * at all — permanently so for anyone who arrived by keyboard or wheel).
+ *
+ * Text inputs keep their I-beam and disabled controls keep `not-allowed`:
+ * the old `*` selector stripped the caret affordance from every field on the
+ * contact form and silently overrode `disabled:cursor-not-allowed`.
+ */
 @media (pointer: fine) {
-  html:is([data-intensity="balanced"], [data-intensity="immersive"])
-    .oe-marketing-shell * {
+  html[data-custom-cursor="on"]
+    .oe-marketing-shell
+    *:not(:is(input, textarea, select, [contenteditable], :disabled)) {
     cursor: none !important;
+  }
+}
+
+/* Windows High Contrast overrides colour but not `cursor`, so the custom
+   cursor's translucent borders vanish while the native one stays hidden —
+   leaving no pointer whatsoever. */
+@media (forced-colors: active) {
+  .oe-marketing-shell * {
+    cursor: auto !important;
   }
 }

@@ -14,7 +14,7 @@ const mobileRoutes = [
   { path: "/", name: "Homepage" },
   { path: "/manifesto", name: "Manifesto" },
   { path: "/about", name: "About" },
-  { path: "/content", name: "Content" },
+  { path: "/journal", name: "Journal" },
   { path: "/library", name: "Library" },
   { path: "/experiences", name: "Experiences" },
   { path: "/contact", name: "Contact" },

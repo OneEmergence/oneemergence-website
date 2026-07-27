@@ -50,13 +50,13 @@ export function PromptCardDisplay({ card, conversationId }: PromptCardDisplayPro
       )}
     >
       <div className="mb-2 flex items-center justify-between">
-        <span className="text-[10px] font-medium uppercase tracking-wider text-oe-pure-light/40">
+        <span className="text-[10px] font-medium uppercase tracking-wider text-oe-pure-light/55">
           {typeLabels[card.type]}
         </span>
         <button
           onClick={handleSave}
           disabled={saved || saving}
-          className="text-oe-pure-light/30 transition-colors hover:text-oe-pure-light/60 disabled:text-oe-solar-gold/60"
+          className="text-oe-pure-light/55 transition-colors hover:text-oe-pure-light/60 disabled:text-oe-solar-gold/60"
           title={saved ? 'Gespeichert' : 'Karte speichern'}
         >
           {saved ? (
@@ -72,7 +72,7 @@ export function PromptCardDisplay({ card, conversationId }: PromptCardDisplayPro
       </p>
 
       {card.context && (
-        <p className="mt-2 text-sm text-oe-pure-light/40">
+        <p className="mt-2 text-sm text-oe-pure-light/55">
           {card.context}
         </p>
       )}

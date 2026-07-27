@@ -36,13 +36,13 @@ export function JournalEntryCard({ entry, compact = false }: JournalEntryCardPro
         <div className="flex items-start justify-between gap-4">
           <h3
             className={cn(
-              'font-serif text-oe-pure-light transition-colors group-hover:text-oe-aurora-violet',
+              'font-serif text-oe-pure-light transition-colors group-hover:text-oe-aurora-violet-ink',
               compact ? 'text-lg' : 'text-xl'
             )}
           >
             {entry.title}
           </h3>
-          <time className="shrink-0 text-xs text-oe-pure-light/40">
+          <time className="shrink-0 text-xs text-oe-pure-light/55">
             {formatDate(entry.createdAt)}
           </time>
         </div>
@@ -58,7 +58,7 @@ export function JournalEntryCard({ entry, compact = false }: JournalEntryCardPro
             {entry.moodTags.map((tag) => (
               <span
                 key={tag}
-                className="rounded-full bg-oe-aurora-violet/10 px-2 py-0.5 text-xs text-oe-aurora-violet/70"
+                className="rounded-full bg-oe-aurora-violet/10 px-2 py-0.5 text-xs text-oe-aurora-violet-ink"
               >
                 {tag}
               </span>

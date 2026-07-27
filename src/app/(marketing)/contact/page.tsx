@@ -46,7 +46,7 @@ function InputField({
       <label
         htmlFor={id}
         className={`block text-xs font-semibold uppercase tracking-widest mb-2 transition-colors duration-200 ${
-          focused ? "text-oe-spirit-cyan" : "text-oe-pure-light/40"
+          focused ? "text-oe-spirit-cyan" : "text-oe-pure-light/55"
         }`}
       >
         {label}
@@ -61,7 +61,7 @@ function InputField({
         onBlur={() => setFocused(false)}
         placeholder={placeholder}
         required={required}
-        className={`w-full bg-oe-aurora-violet/5 border rounded-xl px-5 py-3.5 text-sm text-oe-pure-light placeholder-oe-pure-light/25 outline-none transition-all duration-200 ${
+        className={`w-full bg-oe-aurora-violet/5 border rounded-xl px-5 py-3.5 text-sm text-oe-pure-light placeholder-oe-pure-light/55 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-aurora-violet transition-all duration-200 ${
           focused
             ? "border-oe-spirit-cyan/50 ring-1 ring-oe-spirit-cyan/20"
             : "border-oe-aurora-violet/20 hover:border-oe-aurora-violet/40"
@@ -91,7 +91,7 @@ function SelectField({
       <label
         htmlFor={id}
         className={`block text-xs font-semibold uppercase tracking-widest mb-2 transition-colors duration-200 ${
-          focused ? "text-oe-spirit-cyan" : "text-oe-pure-light/40"
+          focused ? "text-oe-spirit-cyan" : "text-oe-pure-light/55"
         }`}
       >
         {label}
@@ -102,20 +102,19 @@ function SelectField({
         onChange={(e) => onChange(e.target.value)}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
-        className={`w-full bg-oe-aurora-violet/5 border rounded-xl px-5 py-3.5 text-sm text-oe-pure-light outline-none transition-all duration-200 appearance-none cursor-pointer ${
+        className={`w-full bg-oe-aurora-violet/5 border rounded-xl px-5 py-3.5 text-sm text-oe-pure-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-aurora-violet transition-all duration-200 appearance-none cursor-pointer ${
           focused
             ? "border-oe-spirit-cyan/50 ring-1 ring-oe-spirit-cyan/20"
             : "border-oe-aurora-violet/20 hover:border-oe-aurora-violet/40"
         }`}
-        style={{ colorScheme: "dark" }}
       >
         {options.map((opt) => (
-          <option key={opt} value={opt} className="bg-[#0a0a12] text-oe-pure-light">
+          <option key={opt} value={opt} className="bg-oe-deep-space text-oe-pure-light">
             {opt}
           </option>
         ))}
       </select>
-      <div className="pointer-events-none absolute right-4 top-[2.85rem] text-oe-pure-light/30">
+      <div className="pointer-events-none absolute right-4 top-[2.85rem] text-oe-pure-light/55">
         ↓
       </div>
     </div>
@@ -144,7 +143,7 @@ function TextareaField({
       <label
         htmlFor={id}
         className={`block text-xs font-semibold uppercase tracking-widest mb-2 transition-colors duration-200 ${
-          focused ? "text-oe-spirit-cyan" : "text-oe-pure-light/40"
+          focused ? "text-oe-spirit-cyan" : "text-oe-pure-light/55"
         }`}
       >
         {label}
@@ -159,7 +158,7 @@ function TextareaField({
         placeholder={placeholder}
         required={required}
         rows={6}
-        className={`w-full bg-oe-aurora-violet/5 border rounded-xl px-5 py-3.5 text-sm text-oe-pure-light placeholder-oe-pure-light/25 outline-none transition-all duration-200 resize-none ${
+        className={`w-full bg-oe-aurora-violet/5 border rounded-xl px-5 py-3.5 text-sm text-oe-pure-light placeholder-oe-pure-light/55 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-aurora-violet transition-all duration-200 resize-none ${
           focused
             ? "border-oe-spirit-cyan/50 ring-1 ring-oe-spirit-cyan/20"
             : "border-oe-aurora-violet/20 hover:border-oe-aurora-violet/40"
@@ -199,7 +198,7 @@ export default function ContactPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
-          className="mb-4 text-xs font-semibold uppercase tracking-widest text-oe-aurora-violet"
+          className="mb-4 text-xs font-semibold uppercase tracking-widest text-oe-aurora-violet-ink"
         >
           Kontakt
         </motion.p>
@@ -305,7 +304,7 @@ export default function ContactPage() {
                 />
 
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-2">
-                  <p className="text-xs text-oe-pure-light/30">
+                  <p className="text-xs text-oe-pure-light/55">
                     Felder mit{" "}
                     <span className="text-oe-solar-gold">*</span> sind
                     Pflichtfelder.

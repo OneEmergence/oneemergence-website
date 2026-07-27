@@ -15,7 +15,7 @@ export async function PublicChrome({ children }: { children: React.ReactNode }) 
           <CustomCursor />
           <a
             href="#main-content"
-            className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-oe-aurora-violet focus:px-4 focus:py-2 focus:text-oe-pure-light focus:outline-none focus:ring-2 focus:ring-oe-solar-gold"
+            className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-oe-aurora-violet-deep focus:px-4 focus:py-2 focus:text-oe-pure-light focus:outline-none focus:ring-2 focus:ring-oe-solar-gold"
           >
             {t('skipToContent')}
           </a>

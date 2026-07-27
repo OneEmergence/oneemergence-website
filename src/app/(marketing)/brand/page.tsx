@@ -13,14 +13,14 @@ export const metadata: Metadata = {
     title: "Brand — OneEmergence",
     description:
       "The OneEmergence brand system: essence, three depths, logo, colors, typography, motion, voice, and imagery.",
-    url: "https://oneemergence.org/brand",
+    url: "/brand",
   },
   twitter: {
     title: "Brand — OneEmergence",
     description:
       "The OneEmergence brand system, rendered from the live design tokens.",
   },
-  alternates: { canonical: "https://oneemergence.org/brand" },
+  alternates: { canonical: "/brand" },
 };
 
 const CHAPTERS = [
@@ -51,8 +51,8 @@ function ChapterHeading({
 }) {
   return (
     <header className="mb-10 md:mb-14">
-      <p className="mb-3 flex items-center gap-3 text-xs font-semibold uppercase tracking-widest text-oe-aurora-violet">
-        <span className="font-mono text-oe-pure-light/30">{num}</span>
+      <p className="mb-3 flex items-center gap-3 text-xs font-semibold uppercase tracking-widest text-oe-aurora-violet-ink">
+        <span className="font-mono text-oe-pure-light/55">{num}</span>
         {kicker}
       </p>
       <h2 className="font-serif text-4xl leading-tight text-oe-solar-gold md:text-5xl lg:text-6xl">
@@ -91,7 +91,7 @@ const DEPTHS = [
     name: "Cosmic",
     depth: "Outer",
     surface: "bg-oe-depth-cosmic",
-    title: "text-oe-aurora-violet",
+    title: "text-oe-aurora-violet-ink",
     glow: "bg-[radial-gradient(circle_at_30%_20%,rgba(124,92,255,0.22),transparent_60%)]",
     accents: [
       { label: "Aurora Violet", dot: "bg-oe-aurora-violet" },
@@ -144,8 +144,24 @@ const SWATCHES = [
     hex: "#7C5CFF",
     swatch: "bg-oe-aurora-violet",
     specimen: "text-white",
-    usage: "Primary accent — mystery, consciousness. Cosmic layer, primary buttons, focus rings.",
-    wcag: "Mid-tone: white ≈ 4.1:1, deep-space ≈ 4.4:1 — both AA for large / bold text only. Use for headings, fills & UI, not body copy.",
+    usage: "Brand accent — mystery, consciousness. Glows, borders, tinted surfaces. Not for text or for fills under white text; use the two derivations below.",
+    wcag: "White on it ≈ 4.34:1, and as text on deep space ≈ 4.38:1 — both just under the 4.5:1 AA floor. Correct wherever contrast does not apply.",
+  },
+  {
+    name: "Aurora Violet Deep",
+    hex: "#7454F5",
+    swatch: "bg-oe-aurora-violet-deep",
+    specimen: "text-white",
+    usage: "Solid fills that carry white text — primary buttons, the nav CTA, the skip link.",
+    wcag: "White on it ≈ 4.85:1 — AA for body-size text.",
+  },
+  {
+    name: "Aurora Violet Ink",
+    hex: "#8A6DFF",
+    swatch: "bg-oe-aurora-violet-ink",
+    specimen: "text-oe-deep-space",
+    usage: "Violet as text on a dark surface — eyebrows, section kickers, inline accents.",
+    wcag: "On deep space ≈ 5.19:1 — AA for body-size text.",
   },
   {
     name: "Solar Gold",
@@ -215,7 +231,7 @@ const TYPE_SCALE = [
   { role: "Lead", cls: "font-sans text-lg md:text-xl text-oe-pure-light/80", sample: "A space to arrive as you are." },
   { role: "Body", cls: "font-sans text-base text-oe-pure-light/70", sample: "We hold the conditions; you meet the moment." },
   { role: "Small", cls: "font-sans text-sm text-oe-pure-light/60", sample: "Move inward at your own pace." },
-  { role: "Eyebrow", cls: "font-sans text-xs font-semibold uppercase tracking-widest text-oe-aurora-violet", sample: "Brand System" },
+  { role: "Eyebrow", cls: "font-sans text-xs font-semibold uppercase tracking-widest text-oe-aurora-violet-ink", sample: "Brand System" },
 ];
 
 const VOICE_PAIRS = [
@@ -306,7 +322,7 @@ export default function BrandPage() {
           <BreathingOrb color="violet" size={420} breathRate={10} className="-mt-24 opacity-60" />
         </div>
         <div className="relative mx-auto max-w-3xl">
-          <p className="mb-5 text-xs font-semibold uppercase tracking-widest text-oe-aurora-violet">
+          <p className="mb-5 text-xs font-semibold uppercase tracking-widest text-oe-aurora-violet-ink">
             Brand System · v1
           </p>
           <h1 className="font-serif text-4xl leading-[1.05] text-oe-pure-light sm:text-5xl md:text-6xl lg:text-7xl">
@@ -405,7 +421,7 @@ export default function BrandPage() {
             >
               <div className={cn("pointer-events-none absolute inset-0", d.glow)} />
               <div className="relative flex flex-1 flex-col">
-                <p className="text-xs font-semibold uppercase tracking-widest text-oe-pure-light/40">
+                <p className="text-xs font-semibold uppercase tracking-widest text-oe-pure-light/55">
                   {d.depth} depth
                 </p>
                 <h3 className={cn("mt-2 font-serif text-2xl", d.title)}>
@@ -426,13 +442,13 @@ export default function BrandPage() {
 
                 <dl className="mt-6 space-y-3 text-sm">
                   <div>
-                    <dt className="text-xs uppercase tracking-widest text-oe-pure-light/35">
+                    <dt className="text-xs uppercase tracking-widest text-oe-pure-light/55">
                       Feeling
                     </dt>
                     <dd className="mt-1 text-oe-pure-light/80">{d.feeling}</dd>
                   </div>
                   <div>
-                    <dt className="text-xs uppercase tracking-widest text-oe-pure-light/35">
+                    <dt className="text-xs uppercase tracking-widest text-oe-pure-light/55">
                       Where it lives
                     </dt>
                     <dd className="mt-1 text-oe-pure-light/70">{d.where}</dd>
@@ -442,7 +458,7 @@ export default function BrandPage() {
             </article>
           ))}
         </div>
-        <p className="mt-6 text-sm text-oe-pure-light/45">
+        <p className="mt-6 text-sm text-oe-pure-light/55">
           Surfaces: <span className="font-mono">oe-depth-cosmic</span> (alias of
           deep space), <span className="font-mono">oe-depth-solarpunk</span>,{" "}
           <span className="font-mono">oe-depth-warm</span>.
@@ -526,7 +542,7 @@ export default function BrandPage() {
                 />
               </div>
             </div>
-            <p className="mt-4 text-center text-xs text-oe-pure-light/40">
+            <p className="mt-4 text-center text-xs text-oe-pure-light/55">
               Dashed frame = ½ emblem width of protected space.
             </p>
           </div>
@@ -548,7 +564,7 @@ export default function BrandPage() {
                   height={48}
                   className="h-12 w-12"
                 />
-                <p className="mt-2 text-xs text-oe-pure-light/40">48px · min</p>
+                <p className="mt-2 text-xs text-oe-pure-light/55">48px · min</p>
               </div>
               <div className="text-center">
                 <Image
@@ -558,7 +574,7 @@ export default function BrandPage() {
                   height={80}
                   className="h-20 w-20"
                 />
-                <p className="mt-2 text-xs text-oe-pure-light/40">80px</p>
+                <p className="mt-2 text-xs text-oe-pure-light/55">80px</p>
               </div>
             </div>
           </div>
@@ -682,7 +698,7 @@ export default function BrandPage() {
               <div className="space-y-2 p-5">
                 <div className="flex items-baseline justify-between gap-3">
                   <h3 className="font-medium text-oe-pure-light">{s.name}</h3>
-                  <code className="font-mono text-xs text-oe-pure-light/40">
+                  <code className="font-mono text-xs text-oe-pure-light/55">
                     {s.hex}
                   </code>
                 </div>
@@ -711,7 +727,7 @@ export default function BrandPage() {
             <p className="font-serif text-8xl leading-none text-oe-solar-gold">
               Aa
             </p>
-            <p className="mt-6 text-xs font-semibold uppercase tracking-widest text-oe-aurora-violet">
+            <p className="mt-6 text-xs font-semibold uppercase tracking-widest text-oe-aurora-violet-ink">
               Cormorant · Serif
             </p>
             <p className="mt-2 text-sm text-oe-pure-light/60">
@@ -727,7 +743,7 @@ export default function BrandPage() {
             <p className="font-sans text-8xl font-medium leading-none text-oe-spirit-cyan">
               Aa
             </p>
-            <p className="mt-6 text-xs font-semibold uppercase tracking-widest text-oe-aurora-violet">
+            <p className="mt-6 text-xs font-semibold uppercase tracking-widest text-oe-aurora-violet-ink">
               Inter · Sans
             </p>
             <p className="mt-2 text-sm text-oe-pure-light/60">
@@ -750,7 +766,7 @@ export default function BrandPage() {
               key={row.role}
               className="flex flex-col gap-2 px-6 py-5 sm:flex-row sm:items-baseline sm:gap-8"
             >
-              <span className="w-24 flex-shrink-0 text-xs font-semibold uppercase tracking-widest text-oe-pure-light/35">
+              <span className="w-24 flex-shrink-0 text-xs font-semibold uppercase tracking-widest text-oe-pure-light/55">
                 {row.role}
               </span>
               <span className={cn("min-w-0 truncate", row.cls)}>
@@ -775,7 +791,7 @@ export default function BrandPage() {
             hold a thought, short enough that the eye returns without effort.
             Emergence is not rushed, and neither is reading.
           </p>
-          <p className="mt-3 font-mono text-xs text-oe-pure-light/40">
+          <p className="mt-3 font-mono text-xs text-oe-pure-light/55">
             max-width: ~70ch
           </p>
         </div>
@@ -825,18 +841,18 @@ export default function BrandPage() {
                 <p className="text-base leading-relaxed text-oe-pure-light/85">
                   {pair.good}
                 </p>
-                <p className="mt-3 text-xs text-oe-pure-light/40">
+                <p className="mt-3 text-xs text-oe-pure-light/55">
                   {pair.context}
                 </p>
               </div>
               <div className="rounded-xl border border-oe-pure-light/10 bg-white/[0.015] p-5">
-                <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-oe-pure-light/45">
+                <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-oe-pure-light/55">
                   We don&rsquo;t
                 </p>
-                <p className="text-base leading-relaxed text-oe-pure-light/45 line-through decoration-oe-pure-light/20">
+                <p className="text-base leading-relaxed text-oe-pure-light/55 line-through decoration-oe-pure-light/20">
                   {pair.bad}
                 </p>
-                <p className="mt-3 text-xs text-oe-pure-light/30">
+                <p className="mt-3 text-xs text-oe-pure-light/55">
                   {pair.context}
                 </p>
               </div>
@@ -939,7 +955,7 @@ export default function BrandPage() {
 
       {/* Footer note */}
       <section className="border-t border-oe-aurora-violet/10 px-4 py-16 text-center sm:px-6">
-        <p className="mx-auto max-w-xl text-sm leading-relaxed text-oe-pure-light/45">
+        <p className="mx-auto max-w-xl text-sm leading-relaxed text-oe-pure-light/55">
           This guide is rendered from the live design tokens in{" "}
           <span className="font-mono">globals.css</span>. When the system
           changes, the guide changes with it.

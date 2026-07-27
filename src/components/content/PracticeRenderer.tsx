@@ -30,7 +30,7 @@ export function PracticeRenderer({ meta, content }: PracticeRendererProps) {
             </span>
           )}
           {meta.difficulty && (
-            <span className="rounded-full bg-oe-aurora-violet/10 px-3 py-1 text-xs text-oe-aurora-violet/70">
+            <span className="rounded-full bg-oe-aurora-violet/10 px-3 py-1 text-xs text-oe-aurora-violet-ink">
               {meta.difficulty}
             </span>
           )}
@@ -40,7 +40,7 @@ export function PracticeRenderer({ meta, content }: PracticeRendererProps) {
       {/* Posture suggestion */}
       {meta.posture && (
         <div className="mb-10 rounded-xl border border-oe-pure-light/10 bg-oe-pure-light/[0.03] p-5 text-center">
-          <p className="text-xs font-medium uppercase tracking-[0.15em] text-oe-pure-light/40">
+          <p className="text-xs font-medium uppercase tracking-[0.15em] text-oe-pure-light/55">
             Empfohlene Haltung
           </p>
           <p className="mt-2 font-serif text-lg text-oe-pure-light/70">{meta.posture}</p>
@@ -55,13 +55,13 @@ export function PracticeRenderer({ meta, content }: PracticeRendererProps) {
               key={i}
               className="flex gap-4 rounded-xl border border-oe-pure-light/8 bg-oe-pure-light/[0.02] p-5"
             >
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-oe-aurora-violet/10 text-sm font-medium text-oe-aurora-violet/70">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-oe-aurora-violet/10 text-sm font-medium text-oe-aurora-violet-ink">
                 {i + 1}
               </span>
               <div>
                 <p className="text-oe-pure-light/70">{step.instruction}</p>
                 {step.duration && (
-                  <p className="mt-1 text-xs text-oe-pure-light/30">{step.duration}s</p>
+                  <p className="mt-1 text-xs text-oe-pure-light/55">{step.duration}s</p>
                 )}
               </div>
             </div>
@@ -75,7 +75,7 @@ export function PracticeRenderer({ meta, content }: PracticeRendererProps) {
       {/* Audio placeholder */}
       {meta.audio && (
         <div className="mt-10 rounded-xl border border-oe-pure-light/10 bg-oe-pure-light/[0.03] p-6 text-center">
-          <p className="text-sm text-oe-pure-light/40">
+          <p className="text-sm text-oe-pure-light/55">
             Audio-Player wird in einer zukünftigen Version verfügbar sein.
           </p>
         </div>

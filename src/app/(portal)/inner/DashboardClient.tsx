@@ -37,7 +37,7 @@ const quickActions = [
     label: 'Guide fragen',
     description: 'Dein KI-Begleiter für innere Arbeit',
     icon: Sparkles,
-    accentClass: 'text-oe-aurora-violet',
+    accentClass: 'text-oe-aurora-violet-ink',
     disabled: false,
   },
 ] as const
@@ -71,7 +71,7 @@ export function DashboardClient({
         <h1 className="font-serif text-2xl text-oe-pure-light md:text-3xl">
           {greeting}, {userName ?? 'Reisender'}
         </h1>
-        <p className="mt-1 text-sm text-oe-pure-light/40">
+        <p className="mt-1 text-sm text-oe-pure-light/55">
           {new Date().toLocaleDateString('de-DE', {
             weekday: 'long',
             day: 'numeric',
@@ -94,7 +94,7 @@ export function DashboardClient({
         <blockquote className="mt-4 font-serif text-lg leading-relaxed text-oe-pure-light/80 md:text-xl">
           &ldquo;{impulseText}&rdquo;
         </blockquote>
-        <p className="mt-3 text-xs text-oe-pure-light/30">— {impulseSource}</p>
+        <p className="mt-3 text-xs text-oe-pure-light/55">— {impulseSource}</p>
       </motion.div>
 
       {/* Quick Actions */}
@@ -120,7 +120,7 @@ export function DashboardClient({
               <p className="text-sm font-medium text-oe-pure-light/80">
                 {action.label}
               </p>
-              <p className="mt-1 text-xs text-oe-pure-light/40">
+              <p className="mt-1 text-xs text-oe-pure-light/55">
                 {action.description}
               </p>
             </div>
@@ -136,7 +136,7 @@ export function DashboardClient({
         transition={{ delay: 0.45, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
       >
         <div className="rounded-xl border border-oe-warm-sand/10 p-5">
-          <p className="text-xs uppercase tracking-widest text-oe-pure-light/30">
+          <p className="text-xs uppercase tracking-widest text-oe-pure-light/55">
             Journal
           </p>
           <p className="mt-3 text-sm text-oe-pure-light/50">
@@ -144,7 +144,7 @@ export function DashboardClient({
           </p>
         </div>
         <div className="rounded-xl border border-oe-warm-sand/10 p-5">
-          <p className="text-xs uppercase tracking-widest text-oe-pure-light/30">
+          <p className="text-xs uppercase tracking-widest text-oe-pure-light/55">
             Praxis
           </p>
           <p className="mt-3 text-sm text-oe-pure-light/50">

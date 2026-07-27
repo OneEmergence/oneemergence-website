@@ -30,7 +30,7 @@ export function SoundJourneyRenderer({ meta, content }: SoundJourneyRendererProp
             </span>
           )}
           {meta.visualMode && (
-            <span className="rounded-full bg-oe-aurora-violet/10 px-3 py-1 text-xs text-oe-aurora-violet/70">
+            <span className="rounded-full bg-oe-aurora-violet/10 px-3 py-1 text-xs text-oe-aurora-violet-ink">
               {meta.visualMode}
             </span>
           )}
@@ -40,7 +40,7 @@ export function SoundJourneyRenderer({ meta, content }: SoundJourneyRendererProp
       {/* Suggested posture */}
       {meta.suggestedPosture && (
         <div className="mb-10 rounded-xl border border-oe-pure-light/10 bg-oe-pure-light/[0.03] p-5">
-          <p className="text-xs font-medium uppercase tracking-[0.15em] text-oe-pure-light/40">
+          <p className="text-xs font-medium uppercase tracking-[0.15em] text-oe-pure-light/55">
             Empfohlene Haltung
           </p>
           <p className="mt-2 font-serif text-lg text-oe-pure-light/70">{meta.suggestedPosture}</p>
@@ -52,7 +52,7 @@ export function SoundJourneyRenderer({ meta, content }: SoundJourneyRendererProp
         <div className="mx-auto h-16 w-16 rounded-full border-2 border-oe-solar-gold/30 flex items-center justify-center">
           <div className="ml-1 h-0 w-0 border-t-8 border-b-8 border-l-12 border-transparent border-l-oe-solar-gold/50" />
         </div>
-        <p className="mt-4 text-sm text-oe-pure-light/40">
+        <p className="mt-4 text-sm text-oe-pure-light/55">
           Audio-Player wird in einer zukünftigen Version verfügbar sein.
         </p>
       </div>

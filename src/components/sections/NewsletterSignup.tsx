@@ -50,7 +50,7 @@ export function NewsletterSignup() {
         onChange={(e) => setEmail(e.target.value)}
         placeholder="deine@email.de"
         disabled={status === 'submitting'}
-        className="w-full max-w-sm rounded-full border border-oe-aurora-violet/30 bg-oe-pure-light/5 px-5 py-3 text-sm text-oe-pure-light placeholder:text-oe-pure-light/30 focus:border-oe-aurora-violet/60 focus:outline-none focus:ring-1 focus:ring-oe-aurora-violet/40 transition-colors disabled:opacity-50"
+        className="w-full max-w-sm rounded-full border border-oe-aurora-violet/30 bg-oe-pure-light/5 px-5 py-3 text-sm text-oe-pure-light placeholder:text-oe-pure-light/55 focus:border-oe-aurora-violet/60 focus:outline-none focus:ring-1 focus:ring-oe-aurora-violet/40 transition-colors disabled:opacity-50"
       />
       <Button
         variant="primary"

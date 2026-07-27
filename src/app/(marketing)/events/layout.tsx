@@ -8,14 +8,14 @@ export const metadata: Metadata = {
     title: "Events | OneEmergence",
     description:
       "Gatherings, Readings und digitale Sessions — komm in Kontakt und erlebe OneEmergence live.",
-    url: "https://oneemergence.org/events",
+    url: "/events",
   },
   twitter: {
     title: "Events | OneEmergence",
     description:
       "Gatherings, Readings und digitale Sessions — komm in Kontakt und erlebe OneEmergence live.",
   },
-  alternates: { canonical: "https://oneemergence.org/events" },
+  alternates: { canonical: "/events" },
 };
 
 export default function EventsLayout({

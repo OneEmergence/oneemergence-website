@@ -84,12 +84,12 @@ export function DangerZone() {
         <h2 id="danger-zone-title" className="font-serif text-xl text-oe-pure-light">
           {t('title')}
         </h2>
-        <p className="mt-1 text-sm text-oe-pure-light/45">{t('description')}</p>
+        <p className="mt-1 text-sm text-oe-pure-light/55">{t('description')}</p>
       </div>
 
       <div className="rounded-xl border border-oe-warm-sand/10 p-5">
         <h3 className="text-sm font-medium text-oe-pure-light">{t('exportTitle')}</h3>
-        <p className="mt-1 text-xs leading-relaxed text-oe-pure-light/45">
+        <p className="mt-1 text-xs leading-relaxed text-oe-pure-light/55">
           {t('exportDescription')}
         </p>
         <button
@@ -142,7 +142,7 @@ export function DangerZone() {
             aria-describedby={deleteError ? 'delete-account-error' : undefined}
             className={cn(
               'w-full max-w-xs rounded-lg border border-red-300/35 bg-transparent px-4 py-3',
-              'text-sm text-oe-pure-light placeholder:text-oe-pure-light/30',
+              'text-sm text-oe-pure-light placeholder:text-oe-pure-light/55',
               'focus:border-red-200 focus:outline-none focus:ring-2 focus:ring-red-200/30'
             )}
           />

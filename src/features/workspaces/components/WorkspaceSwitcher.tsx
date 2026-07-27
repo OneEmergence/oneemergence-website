@@ -40,7 +40,7 @@ export function WorkspaceSwitcher({
   }
 
   if (workspaces.length === 0) {
-    return <p className="px-3 text-xs text-oe-pure-light/45">{t('noActive')}</p>
+    return <p className="px-3 text-xs text-oe-pure-light/55">{t('noActive')}</p>
   }
 
   return (

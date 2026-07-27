@@ -42,13 +42,13 @@ export function SavedCardsView({ cards: initialCards }: SavedCardsViewProps) {
   if (cards.length === 0) {
     return (
       <div className="flex flex-col items-center py-16 text-center">
-        <BookOpen className="mb-4 h-10 w-10 text-oe-pure-light/20" />
-        <p className="text-sm text-oe-pure-light/40">
+        <BookOpen className="mb-4 h-10 w-10 text-oe-pure-light/55" />
+        <p className="text-sm text-oe-pure-light/55">
           Noch keine Karten gespeichert.
         </p>
         <Link
           href="/inner/guide"
-          className="mt-4 text-sm text-oe-aurora-violet/60 hover:text-oe-aurora-violet/80"
+          className="mt-4 text-sm text-oe-aurora-violet-ink hover:text-oe-aurora-violet-ink"
         >
           Zum Guide →
         </Link>
@@ -72,11 +72,11 @@ export function SavedCardsView({ cards: initialCards }: SavedCardsViewProps) {
             )}
           >
             <div className="mb-3 flex items-center justify-between">
-              <span className="text-[10px] font-medium uppercase tracking-wider text-oe-pure-light/40">
+              <span className="text-[10px] font-medium uppercase tracking-wider text-oe-pure-light/55">
                 {typeLabels[card.type] ?? card.type}
               </span>
               <div className="flex items-center gap-2">
-                <span className="text-[10px] text-oe-pure-light/20">
+                <span className="text-[10px] text-oe-pure-light/55">
                   {new Date(card.savedAt).toLocaleDateString('de-DE', {
                     day: 'numeric',
                     month: 'short',
@@ -86,7 +86,7 @@ export function SavedCardsView({ cards: initialCards }: SavedCardsViewProps) {
                 <button
                   onClick={() => handleDelete(card.id)}
                   disabled={deleting === card.id}
-                  className="text-oe-pure-light/20 transition-colors hover:text-red-400/60 disabled:opacity-40"
+                  className="text-oe-pure-light/55 transition-colors hover:text-red-400/60 disabled:opacity-40"
                   title="Karte löschen"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
@@ -99,7 +99,7 @@ export function SavedCardsView({ cards: initialCards }: SavedCardsViewProps) {
             </p>
 
             {card.context && (
-              <p className="mt-2 text-sm text-oe-pure-light/40">
+              <p className="mt-2 text-sm text-oe-pure-light/55">
                 {card.context}
               </p>
             )}

@@ -20,23 +20,46 @@ export async function expectNoConsoleErrors(page: Page) {
 
 /**
  * Run axe-core accessibility scan on the current page.
- * Asserts no critical or serious violations.
+ *
+ * The stated target is WCAG 2.2 AA, but this used to scan only the `wcag2a` /
+ * `wcag2aa` tags — the WCAG **2.0** sets. Every 2.1 and 2.2 rule, including
+ * `target-size` (SC 2.5.8), was therefore never run. It also dropped every
+ * `moderate` violation, which is the impact axe assigns to `heading-order`,
+ * `landmark-unique` and `region` — the reason the h1→h3 skips on the home page
+ * never failed CI.
  */
 export async function expectAccessible(page: Page) {
   const results = await new AxeBuilder({ page })
-    .withTags(["wcag2a", "wcag2aa"])
+    .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
     .analyze();
 
-  const serious = results.violations.filter(
-    (v) => v.impact === "critical" || v.impact === "serious"
+  const violations = results.violations.filter(
+    (v) => v.impact === "critical" || v.impact === "serious" || v.impact === "moderate"
   );
 
-  if (serious.length > 0) {
-    const details = serious
+  if (violations.length > 0) {
+    const details = violations
       .map((v) => `[${v.impact}] ${v.id}: ${v.description} (${v.nodes.length} instances)`)
       .join("\n");
-    expect(serious, `Accessibility violations:\n${details}`).toHaveLength(0);
+    expect(violations, `Accessibility violations:\n${details}`).toHaveLength(0);
   }
+}
+
+/**
+ * Seed the persisted intensity preference before navigation.
+ *
+ * The suite only ever exercised the default Balanced mode, so Still and
+ * Immersive — the two the motion contract is written for — went untested.
+ * Mirrors the shape written by the Zustand `persist` middleware
+ * (`src/stores/intensity.ts`) and read by the pre-paint script.
+ */
+export async function seedIntensity(page: Page, mode: "still" | "balanced" | "immersive") {
+  await page.addInitScript(
+    ([key, value]) => {
+      window.localStorage.setItem(key, JSON.stringify({ state: { mode: value }, version: 0 }));
+    },
+    ["oe-intensity-mode", mode] as const
+  );
 }
 
 /**

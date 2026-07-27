@@ -14,7 +14,7 @@ export function ReflectionRenderer({ meta, content }: ReflectionRendererProps) {
     <div className="mx-auto max-w-2xl">
       {/* Header */}
       <header className="mb-12 text-center">
-        <p className="mb-3 font-mono text-xs uppercase tracking-[0.3em] text-oe-aurora-violet/70">
+        <p className="mb-3 font-mono text-xs uppercase tracking-[0.3em] text-oe-aurora-violet-ink">
           Reflexion
         </p>
         <h1 className="font-serif text-3xl leading-tight text-oe-pure-light md:text-4xl">
@@ -31,7 +31,7 @@ export function ReflectionRenderer({ meta, content }: ReflectionRendererProps) {
       {/* Journal Prompts */}
       {meta.prompts.length > 0 && (
         <div className="mt-14 space-y-4">
-          <h3 className="text-center text-xs font-medium uppercase tracking-[0.2em] text-oe-aurora-violet/50">
+          <h3 className="text-center text-xs font-medium uppercase tracking-[0.2em] text-oe-aurora-violet-ink">
             Journal-Impulse
           </h3>
           <div className="space-y-3">

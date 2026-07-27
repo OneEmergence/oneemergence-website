@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useId } from 'react'
+import { useTranslations } from 'next-intl'
 import { Send } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { RoleSelector } from './RoleSelector'
@@ -21,6 +22,10 @@ export function GuideInput({
 }: GuideInputProps) {
   const [message, setMessage] = useState('')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const t = useTranslations('guide')
+  // A placeholder is not an accessible name — it disappears on input and is
+  // not reliably announced. The composer needs a real label.
+  const composerId = useId()
 
   const handleSubmit = useCallback(() => {
     const trimmed = message.trim()
@@ -58,17 +63,21 @@ export function GuideInput({
       </div>
 
       <div className="flex items-end gap-2">
+        <label htmlFor={composerId} className="sr-only">
+          {t('composerLabel')}
+        </label>
         <textarea
+          id={composerId}
           ref={textareaRef}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyDown}
           onInput={handleInput}
           disabled={disabled}
-          placeholder="Schreibe dem Guide..."
+          placeholder={t('composerPlaceholder')}
           rows={1}
           className={cn(
-            'max-h-[200px] min-h-[44px] flex-1 resize-none rounded-xl border border-oe-pure-light/10 bg-oe-pure-light/5 px-4 py-3 text-sm text-oe-pure-light/90 placeholder-oe-pure-light/30 outline-none transition-colors',
+            'max-h-[200px] min-h-[44px] flex-1 resize-none rounded-xl border border-oe-pure-light/10 bg-oe-pure-light/5 px-4 py-3 text-sm text-oe-pure-light/90 placeholder-oe-pure-light/55 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-aurora-violet transition-colors',
             'focus:border-oe-aurora-violet/30 focus:bg-oe-pure-light/[0.07]',
             'disabled:opacity-50'
           )}
@@ -79,11 +88,11 @@ export function GuideInput({
           className={cn(
             'flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-all',
             message.trim() && !disabled
-              ? 'bg-oe-aurora-violet/20 text-oe-aurora-violet hover:bg-oe-aurora-violet/30'
-              : 'bg-oe-pure-light/5 text-oe-pure-light/20'
+              ? 'bg-oe-aurora-violet/20 text-oe-aurora-violet-ink hover:bg-oe-aurora-violet/30'
+              : 'bg-oe-pure-light/5 text-oe-pure-light/55'
           )}
         >
-          <Send className="h-4 w-4" />
+          <Send className="h-4 w-4" aria-hidden="true" />
         </button>
       </div>
     </div>

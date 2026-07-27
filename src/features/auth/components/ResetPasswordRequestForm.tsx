@@ -7,7 +7,7 @@ import { initialAuthState, type AuthActionState } from '../types'
 
 const inputClasses = cn(
   'w-full rounded-lg border border-oe-warm-sand/20 bg-oe-warm-sand/[0.04] px-4 py-2.5',
-  'text-sm text-oe-pure-light placeholder:text-oe-pure-light/30',
+  'text-sm text-oe-pure-light placeholder:text-oe-pure-light/55',
   'transition-colors focus:border-oe-solar-gold/60 focus:outline-none focus:ring-1 focus:ring-oe-solar-gold/40'
 )
 

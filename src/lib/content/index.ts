@@ -1,6 +1,8 @@
+import { cache } from 'react'
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
+import { z } from 'zod'
 import {
   JournalMeta,
   StoryMeta,
@@ -39,6 +41,30 @@ function slugFromFilename(filename: string): string {
   return filename.replace(/\.mdx?$/, '')
 }
 
+/**
+ * Parse frontmatter, and on failure say WHICH file is wrong.
+ *
+ * A missing `excerpt` used to fail `next build` with a bare
+ * `ZodError: excerpt Required` thrown from inside sitemap generation or
+ * `generateStaticParams` — no filename anywhere, so the author had to bisect
+ * the content tree by hand.
+ */
+function parseFrontmatter<T>(
+  schema: { parse: (value: unknown) => T },
+  data: unknown,
+  relativePath: string
+): T {
+  try {
+    return schema.parse(data)
+  } catch (err) {
+    const issues =
+      err instanceof z.ZodError
+        ? err.issues.map((i) => `${i.path.join('.') || '(root)'}: ${i.message}`).join('; ')
+        : String(err)
+    throw new Error(`Invalid frontmatter in src/content/${relativePath} — ${issues}`)
+  }
+}
+
 // ─── Legacy Post type (for backward compat with ContentGrid etc.) ───────────
 
 export type Post = {
@@ -50,6 +76,7 @@ export type Post = {
   tags?: string[]
   readingTime: number
   content: string
+  published: boolean
 }
 
 // ─── Journal Content ────────────────────────────────────────────────────────
@@ -63,7 +90,7 @@ export function getPosts(): Omit<Post, 'content'>[] {
       const raw = fs.readFileSync(path.join(JOURNAL_DIR, file), 'utf-8')
       const { data, content } = matter(raw)
 
-      const meta = JournalMeta.parse({ ...data, slug })
+      const meta = parseFrontmatter(JournalMeta, { ...data, slug }, `journal/${file}`)
 
       return {
         slug: meta.slug,
@@ -73,12 +100,23 @@ export function getPosts(): Omit<Post, 'content'>[] {
         cover: meta.cover,
         tags: meta.tags.length > 0 ? meta.tags : undefined,
         readingTime: calcReadingTime(content),
+        published: meta.published,
       }
     })
+    // The draft switch used to be inert for journal content: `published: false`
+    // validated, then did nothing. An unpublished article still appeared on the
+    // journal index, in the library, on the home page and in the sitemap — the
+    // worst kind of failure, because the author believes they are safe.
+    .filter((post) => post.published)
     .sort((a, b) => (a.date < b.date ? 1 : -1))
 }
 
-export async function getPostBySlug(
+/**
+ * `cache()` because `generateMetadata` and the page body both call this, so
+ * every content page ran the full unified/remark/rehype pipeline twice per
+ * request. Same for the other two `*BySlug` readers below.
+ */
+export const getPostBySlug = cache(async function getPostBySlug(
   slug: string,
 ): Promise<{ meta: JournalMeta; content: React.ReactElement; readingTime: number } | null> {
   // Try .mdx first, fall back to .md
@@ -90,14 +128,21 @@ export async function getPostBySlug(
   const raw = fs.readFileSync(filePath, 'utf-8')
   const { content: rawContent } = matter(raw)
   const { content, frontmatter } = await compileMdx<Record<string, unknown>>(raw)
-  const meta = JournalMeta.parse({ ...frontmatter, slug })
+  const meta = parseFrontmatter(
+    JournalMeta,
+    { ...frontmatter, slug },
+    `journal/${path.basename(filePath)}`
+  )
+  // Same rule as stories and sacred content: `published: false` ⇒ the route
+  // 404s. All three systems previously disagreed about what the flag meant.
+  if (!meta.published) return null
 
   return {
     meta,
     content,
     readingTime: calcReadingTime(rawContent),
   }
-}
+})
 
 export function getAllJournalArticles(): JournalMeta[] {
   const files = listContentFiles(JOURNAL_DIR)
@@ -107,8 +152,9 @@ export function getAllJournalArticles(): JournalMeta[] {
       const slug = slugFromFilename(file)
       const raw = fs.readFileSync(path.join(JOURNAL_DIR, file), 'utf-8')
       const { data } = matter(raw)
-      return JournalMeta.parse({ ...data, slug })
+      return parseFrontmatter(JournalMeta, { ...data, slug }, `journal/${file}`)
     })
+    .filter((meta) => meta.published)
     .sort((a, b) => (a.date < b.date ? 1 : -1))
 }
 
@@ -137,7 +183,7 @@ function readStory(file: string): StoryEntry {
   const raw = fs.readFileSync(path.join(STORIES_DIR, file), 'utf-8')
   const { data, content } = matter(raw)
   return {
-    meta: StoryMeta.parse({ ...data, slug }),
+    meta: parseFrontmatter(StoryMeta, { ...data, slug }, `stories/${file}`),
     readingTime: calcReadingTime(content),
   }
 }
@@ -156,7 +202,7 @@ export function getStories(): StoryEntry[] {
     .sort((a, b) => (a.meta.date < b.meta.date ? 1 : -1))
 }
 
-export async function getStoryBySlug(
+export const getStoryBySlug = cache(async function getStoryBySlug(
   slug: string,
 ): Promise<{ meta: StoryMeta; content: React.ReactElement; readingTime: number } | null> {
   const mdxPath = path.join(STORIES_DIR, `${slug}.mdx`)
@@ -167,11 +213,11 @@ export async function getStoryBySlug(
   const raw = fs.readFileSync(filePath, 'utf-8')
   const { content: rawContent } = matter(raw)
   const { content, frontmatter } = await compileMdx<Record<string, unknown>>(raw)
-  const meta = StoryMeta.parse({ ...frontmatter, slug })
+  const meta = parseFrontmatter(StoryMeta, { ...frontmatter, slug }, `stories/${path.basename(filePath)}`)
   if (!meta.published) return null
 
   return { meta, content, readingTime: calcReadingTime(rawContent) }
-}
+})
 
 // ─── Sacred Content ─────────────────────────────────────────────────────────
 
@@ -190,20 +236,16 @@ export function getAllContent(type?: ContentType): ContentMeta[] {
       const raw = fs.readFileSync(path.join(dir, file), 'utf-8')
       const { data } = matter(raw)
 
-      try {
-        const meta = schema.parse({ ...data, slug, type: t })
-        all.push(meta)
-      } catch (err) {
-        console.error(`[content] Invalid frontmatter in ${t}/${file}:`, err)
-        throw err // fail fast
-      }
+      // parseFrontmatter already names the file in the thrown message, so the
+      // log-and-rethrow wrapper only duplicated it.
+      all.push(parseFrontmatter(schema, { ...data, slug, type: t }, `${CONTENT_TYPE_DIRS[t]}/${file}`))
     }
   }
 
   return all.sort((a, b) => (a.date < b.date ? 1 : -1))
 }
 
-export async function getContentBySlug(
+export const getContentBySlug = cache(async function getContentBySlug(
   type: ContentType,
   slug: string,
 ): Promise<{ meta: AnyContentMeta; content: React.ReactElement } | null> {
@@ -216,10 +258,19 @@ export async function getContentBySlug(
   const raw = fs.readFileSync(filePath, 'utf-8')
   const schema = getSchemaForType(type)
   const { content, frontmatter } = await compileMdx<Record<string, unknown>>(raw)
-  const meta = schema.parse({ ...frontmatter, slug, type })
+  const meta = parseFrontmatter(
+    schema,
+    { ...frontmatter, slug, type },
+    `${CONTENT_TYPE_DIRS[type]}/${path.basename(filePath)}`
+  )
+  // `ContentMeta.published` defaults to **false**, so an author who simply
+  // forgets the flag was invisible in /library yet fully readable and
+  // indexable at /library/<type>/<slug> — accidental exposure was the likely
+  // path, not deliberate drafting.
+  if (!meta.published) return null
 
   return { meta, content }
-}
+})
 
 export function getContentByTheme(theme: string): ContentMeta[] {
   return getAllContent().filter((c) => c.themes.includes(theme))
@@ -276,22 +327,26 @@ export function getLibraryItems(): LibraryItem[] {
       const raw = fs.readFileSync(path.join(dir, file), 'utf-8')
       const { data, content: rawContent } = matter(raw)
 
-      try {
-        const meta = schema.parse({ ...data, slug, type })
-        if (!meta.published) continue
-        items.push({
-          slug: meta.slug,
-          title: meta.title,
-          date: meta.date,
-          excerpt: meta.excerpt,
-          cover: meta.cover,
-          tags: meta.tags,
-          readingTime: meta.duration ?? calcReadingTime(rawContent),
-          libraryType: type,
-        })
-      } catch (err) {
-        console.error(`[library] Invalid frontmatter in ${type}/${file}:`, err)
-      }
+      // No try/catch: this used to swallow what `getAllContent` treats as
+      // fatal, so the same bad file failed the build on one path and vanished
+      // silently on the other — a page could still be generated for content
+      // that had disappeared from /library. One policy: fail the build.
+      const meta = parseFrontmatter(
+        schema,
+        { ...data, slug, type },
+        `${CONTENT_TYPE_DIRS[type]}/${file}`
+      )
+      if (!meta.published) continue
+      items.push({
+        slug: meta.slug,
+        title: meta.title,
+        date: meta.date,
+        excerpt: meta.excerpt,
+        cover: meta.cover,
+        tags: meta.tags,
+        readingTime: meta.duration ?? calcReadingTime(rawContent),
+        libraryType: type,
+      })
     }
   }
 

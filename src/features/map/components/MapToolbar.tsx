@@ -69,7 +69,7 @@ export function MapToolbar({
           animate={{ opacity: 1, y: 0 }}
           className="rounded-xl border border-oe-pure-light/5 bg-oe-deep-space/90 p-3 backdrop-blur-sm"
         >
-          <p className="mb-2 text-[10px] uppercase tracking-widest text-oe-pure-light/30">
+          <p className="mb-2 text-[10px] uppercase tracking-widest text-oe-pure-light/55">
             Knotentypen
           </p>
           <div className="space-y-1">
@@ -84,7 +84,7 @@ export function MapToolbar({
                     'flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-xs transition-colors',
                     visible
                       ? 'text-oe-pure-light/70'
-                      : 'text-oe-pure-light/25'
+                      : 'text-oe-pure-light/55'
                   )}
                 >
                   {visible ? (
@@ -127,8 +127,8 @@ function ToolbarButton({
       className={cn(
         'flex items-center justify-center rounded-lg p-2 transition-colors',
         active
-          ? 'bg-oe-aurora-violet/20 text-oe-aurora-violet'
-          : 'text-oe-pure-light/40 hover:bg-oe-pure-light/5 hover:text-oe-pure-light/70'
+          ? 'bg-oe-aurora-violet/20 text-oe-aurora-violet-ink'
+          : 'text-oe-pure-light/55 hover:bg-oe-pure-light/5 hover:text-oe-pure-light/70'
       )}
       title={label}
       aria-label={label}

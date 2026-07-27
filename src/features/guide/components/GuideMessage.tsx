@@ -53,7 +53,7 @@ export function GuideMessage({
       >
         {/* Role label for assistant */}
         {!isUser && roleMeta && (
-          <span className="text-[10px] font-medium uppercase tracking-wider text-oe-pure-light/30">
+          <span className="text-[10px] font-medium uppercase tracking-wider text-oe-pure-light/55">
             {roleMeta.label}
           </span>
         )}

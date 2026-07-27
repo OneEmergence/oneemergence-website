@@ -19,7 +19,7 @@ export default async function ImprintPage() {
           Impressum
         </h1>
         <div
-          className="prose prose-invert prose-headings:font-serif prose-headings:text-oe-spirit-cyan prose-p:text-oe-pure-light/80 prose-p:leading-relaxed prose-a:text-oe-aurora-violet prose-strong:text-oe-pure-light max-w-none"
+          className="prose prose-invert prose-headings:font-serif prose-headings:text-oe-spirit-cyan prose-p:text-oe-pure-light/80 prose-p:leading-relaxed prose-a:text-oe-aurora-violet-ink prose-strong:text-oe-pure-light max-w-none"
         >
           {page.content}
         </div>

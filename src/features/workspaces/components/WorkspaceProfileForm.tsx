@@ -17,7 +17,7 @@ const intensityModes: IntensityMode[] = ['still', 'balanced', 'immersive']
 
 const inputClasses = cn(
   'w-full rounded-lg border border-oe-warm-sand/20 bg-oe-warm-sand/[0.04] px-4 py-3',
-  'text-sm text-oe-pure-light placeholder:text-oe-pure-light/35',
+  'text-sm text-oe-pure-light placeholder:text-oe-pure-light/55',
   'focus:border-oe-solar-gold focus:outline-none focus:ring-2 focus:ring-oe-solar-gold/30'
 )
 
@@ -82,7 +82,7 @@ export function WorkspaceProfileForm({
         <h2 id="workspace-profile-title" className="font-serif text-xl text-oe-pure-light">
           {t('title')}
         </h2>
-        <p className="mt-1 text-sm leading-relaxed text-oe-pure-light/45">
+        <p className="mt-1 text-sm leading-relaxed text-oe-pure-light/55">
           {t('description', { workspace: workspaceName })}
         </p>
       </div>
@@ -152,7 +152,7 @@ export function WorkspaceProfileForm({
             aria-describedby="workspace-focus-themes-help"
             className={inputClasses}
           />
-          <p id="workspace-focus-themes-help" className="text-xs text-oe-pure-light/40">
+          <p id="workspace-focus-themes-help" className="text-xs text-oe-pure-light/55">
             {t('focusThemesHelp')}
           </p>
         </div>
@@ -179,7 +179,7 @@ export function WorkspaceProfileForm({
                 <span className="block text-sm font-medium text-oe-pure-light">
                   {intensity(mode)}
                 </span>
-                <span className="mt-1 block text-xs leading-relaxed text-oe-pure-light/45">
+                <span className="mt-1 block text-xs leading-relaxed text-oe-pure-light/55">
                   {intensity(`${mode}Description`)}
                 </span>
               </button>

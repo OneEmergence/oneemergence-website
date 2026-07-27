@@ -60,7 +60,7 @@ export function CreateEdgeDialog({
               </h2>
               <button
                 onClick={handleClose}
-                className="rounded-full p-1 text-oe-pure-light/40 hover:text-oe-pure-light/70"
+                className="rounded-full p-1 text-oe-pure-light/55 hover:text-oe-pure-light/70"
                 aria-label="Schließen"
               >
                 <X className="h-4 w-4" />
@@ -69,10 +69,10 @@ export function CreateEdgeDialog({
 
             {/* Node labels */}
             <div className="mt-4 flex items-center gap-2">
-              <span className="rounded-md border border-oe-aurora-violet/20 bg-oe-aurora-violet/10 px-2 py-0.5 text-xs text-oe-aurora-violet">
+              <span className="rounded-md border border-oe-aurora-violet/20 bg-oe-aurora-violet/10 px-2 py-0.5 text-xs text-oe-aurora-violet-ink">
                 {sourceLabel}
               </span>
-              <span className="text-xs text-oe-pure-light/30">→</span>
+              <span className="text-xs text-oe-pure-light/55">→</span>
               <span className="rounded-md border border-oe-spirit-cyan/20 bg-oe-spirit-cyan/10 px-2 py-0.5 text-xs text-oe-spirit-cyan">
                 {targetLabel}
               </span>
@@ -83,7 +83,7 @@ export function CreateEdgeDialog({
               <div>
                 <label
                   htmlFor="edge-label"
-                  className="mb-1.5 block text-xs uppercase tracking-wider text-oe-pure-light/30"
+                  className="mb-1.5 block text-xs uppercase tracking-wider text-oe-pure-light/55"
                 >
                   Bezeichnung (optional)
                 </label>
@@ -93,7 +93,7 @@ export function CreateEdgeDialog({
                   value={label}
                   onChange={(e) => setLabel(e.target.value)}
                   placeholder="Warum sind diese verbunden?"
-                  className="w-full rounded-lg border border-oe-pure-light/10 bg-oe-pure-light/[0.03] px-3 py-2 text-sm text-oe-pure-light placeholder-oe-pure-light/20 outline-none focus:border-oe-aurora-violet/30"
+                  className="w-full rounded-lg border border-oe-pure-light/10 bg-oe-pure-light/[0.03] px-3 py-2 text-sm text-oe-pure-light placeholder-oe-pure-light/55 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-aurora-violet focus:border-oe-aurora-violet/30"
                   autoFocus
                 />
               </div>
@@ -103,13 +103,13 @@ export function CreateEdgeDialog({
                 <button
                   type="button"
                   onClick={handleClose}
-                  className="text-sm text-oe-pure-light/40 hover:text-oe-pure-light/70"
+                  className="text-sm text-oe-pure-light/55 hover:text-oe-pure-light/70"
                 >
                   Abbrechen
                 </button>
                 <button
                   type="submit"
-                  className="rounded-lg bg-oe-aurora-violet/20 px-4 py-2 text-sm font-medium text-oe-aurora-violet transition-colors hover:bg-oe-aurora-violet/30"
+                  className="rounded-lg bg-oe-aurora-violet/20 px-4 py-2 text-sm font-medium text-oe-aurora-violet-ink transition-colors hover:bg-oe-aurora-violet/30"
                 >
                   Verbinden
                 </button>

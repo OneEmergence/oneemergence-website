@@ -5,6 +5,7 @@ import { ResetPasswordRequestForm, UpdatePasswordForm } from '@/features/auth'
 export const metadata: Metadata = {
   title: 'Passwort zurücksetzen',
   description: 'Setze dein Passwort zurück oder wähle ein neues.',
+  robots: { index: false, follow: false },
 }
 
 /**
@@ -41,7 +42,7 @@ export default async function ResetPasswordPage() {
 
         <a
           href="/portal"
-          className="inline-block text-xs text-oe-pure-light/30 transition-colors hover:text-oe-pure-light/50"
+          className="inline-block text-xs text-oe-pure-light/55 transition-colors hover:text-oe-pure-light/50"
         >
           Zurück zum Portal
         </a>

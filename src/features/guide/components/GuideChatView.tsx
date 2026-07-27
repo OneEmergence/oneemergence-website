@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useTranslations } from 'next-intl'
 import { Loader2 } from 'lucide-react'
 import { GuideMessage } from './GuideMessage'
 import { GuideInput } from './GuideInput'
@@ -27,6 +28,7 @@ export function GuideChatView({
   initialRole,
   conversationId: initialConversationId,
 }: GuideChatViewProps) {
+  const t = useTranslations('guide')
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages)
   const [activeRole, setActiveRole] = useState<GuideRole>(initialRole ?? 'mirror')
   const [conversationId, setConversationId] = useState<string | undefined>(
@@ -122,7 +124,19 @@ export function GuideChatView({
         {!hasStarted ? (
           <GuideWelcome onRoleSelect={handleRoleSelect} />
         ) : (
-          <div className="space-y-4 px-4 py-6">
+          <div
+            // On the list, not the scroll container, so scroll position
+            // changes are not announced. SC 4.1.3: focus stays in the composer
+            // after send, so without this nothing announced that the request
+            // started, that the guide replied, or that it failed.
+            // Phase 2 token streaming must buffer and promote finished
+            // sentences here, otherwise this fires once per token.
+            role="log"
+            aria-live="polite"
+            aria-relevant="additions text"
+            aria-label={t('conversation')}
+            className="space-y-4 px-4 py-6"
+          >
             {messages.map((msg) => (
               <GuideMessage
                 key={msg.id}
@@ -138,15 +152,16 @@ export function GuideChatView({
             <AnimatePresence>
               {isLoading && (
                 <motion.div
+                  role="status"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="flex items-center gap-2 text-oe-pure-light/30"
+                  className="flex items-center gap-2 text-oe-pure-light/55"
                 >
                   <div className="flex h-8 w-8 items-center justify-center rounded-full bg-oe-aurora-violet/10">
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
                   </div>
-                  <span className="text-xs">Der Guide reflektiert...</span>
+                  <span className="text-xs">{t('thinking')}</span>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -154,9 +169,10 @@ export function GuideChatView({
             {/* Error display */}
             {error && (
               <motion.div
+                role="alert"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="mx-auto max-w-md rounded-xl border border-red-500/20 bg-red-500/5 px-4 py-3 text-center text-sm text-red-400/80"
+                className="mx-auto max-w-md rounded-xl border border-red-500/25 bg-red-500/5 px-4 py-3 text-center text-sm text-red-300"
               >
                 {error}
               </motion.div>

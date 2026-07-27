@@ -16,11 +16,28 @@ Sentry.init({
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1.0,
 
-  integrations: [
-    Sentry.replayIntegration(),
-    Sentry.browserTracingIntegration(),
-  ],
+  // Session Replay is NOT listed here on purpose. `replayIntegration()` pulls
+  // the rrweb recorder (~150 KB gzipped) into the root bundle and parses it
+  // before anything else — on every visit, while only 10% of sessions are
+  // sampled. Tracing is small and stays eager.
+  integrations: [Sentry.browserTracingIntegration()],
 })
+
+// Load the replay recorder after the page is interactive, so it never competes
+// with hydration on the LCP/INP path. `lazyLoadIntegration` fetches it from the
+// Sentry CDN bundle rather than the app bundle.
+if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_SENTRY_DSN) {
+  const loadReplay = () => {
+    void Sentry.lazyLoadIntegration('replayIntegration')
+      .then((replayIntegration) => Sentry.addIntegration(replayIntegration()))
+      // A blocked CDN must never surface as a user-visible error.
+      .catch(() => {})
+  }
+
+  const idle = (window as Window).requestIdleCallback
+  if (typeof idle === 'function') idle(loadReplay, { timeout: 5000 })
+  else setTimeout(loadReplay, 3000)
+}
 
 // Records App Router client-side navigations as Sentry spans.
 export const onRouterTransitionStart = Sentry.captureRouterTransitionStart

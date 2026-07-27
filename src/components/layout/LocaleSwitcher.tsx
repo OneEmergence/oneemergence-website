@@ -42,7 +42,7 @@ export function LocaleSwitcher() {
     >
       {locales.map((loc, index) => (
         <span key={loc} className="flex items-center gap-1.5">
-          {index > 0 && <span className="text-oe-pure-light/20">/</span>}
+          {index > 0 && <span className="text-oe-pure-light/55">/</span>}
           <button
             type="button"
             onClick={() => switchTo(loc)}

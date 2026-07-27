@@ -50,7 +50,11 @@ export function Navbar() {
       />
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         {/* Logo */}
-        <Link href="/" onClick={closeMenu} className="group flex items-center gap-2">
+        <Link
+          href="/"
+          onClick={closeMenu}
+          className="group flex min-h-11 items-center gap-2"
+        >
           <motion.span
             className="font-serif text-lg sm:text-xl text-oe-solar-gold"
             whileHover={{ opacity: 0.85 }}
@@ -61,7 +65,7 @@ export function Navbar() {
         </Link>
 
         {/* Desktop Nav */}
-        <ul className="hidden items-center gap-6 md:flex">
+        <ul className="hidden items-center gap-6 lg:flex">
           {navLinks.map(({ href, key }) => {
             const isActive = pathname === href;
             return (
@@ -70,7 +74,9 @@ export function Navbar() {
                   <Link
                     href={href}
                     className={cn(
-                      "relative text-sm font-medium transition-colors duration-200",
+                      // min-h-11 enlarges the hit area to the WCAG 2.2 target
+                      // size without changing the visual row height.
+                      "relative inline-flex min-h-11 items-center text-sm font-medium transition-colors duration-200",
                       isActive
                         ? "text-oe-solar-gold"
                         : "text-oe-pure-light/70 hover:text-oe-pure-light"
@@ -92,7 +98,7 @@ export function Navbar() {
         </ul>
 
         {/* Intensity + Audio toggle + CTA (desktop) */}
-        <div className="hidden items-center gap-3 md:flex">
+        <div className="hidden items-center gap-3 lg:flex">
           <IntensityToggle />
           <motion.button
             onClick={toggle}
@@ -101,7 +107,7 @@ export function Navbar() {
               "relative flex h-8 w-8 items-center justify-center rounded-full border transition-colors duration-500",
               isPlaying
                 ? "border-oe-spirit-cyan/60 text-oe-spirit-cyan"
-                : "border-oe-pure-light/20 text-oe-pure-light/40 hover:border-oe-pure-light/40 hover:text-oe-pure-light/70"
+                : "border-oe-pure-light/20 text-oe-pure-light/55 hover:border-oe-pure-light/40 hover:text-oe-pure-light/70"
             )}
             whileTap={{ scale: 0.9 }}
           >
@@ -118,7 +124,7 @@ export function Navbar() {
           <MagneticButton as="span" strength={0.3}>
             <Link
               href="/community"
-              className="rounded-full bg-oe-aurora-violet px-5 py-2 text-sm font-medium text-white transition-opacity duration-200 hover:opacity-85"
+              className="rounded-full bg-oe-aurora-violet-deep px-5 py-2 text-sm font-medium text-white transition-opacity duration-200 hover:opacity-85"
             >
               {t("joinCta")}
             </Link>
@@ -130,7 +136,7 @@ export function Navbar() {
           onClick={() => setMenuOpen((o) => !o)}
           aria-label={menuOpen ? t("menuCloseAria") : t("menuOpenAria")}
           aria-expanded={menuOpen}
-          className="flex flex-col gap-1.5 p-2.5 -m-1 min-h-[44px] min-w-[44px] items-center justify-center md:hidden"
+          className="flex flex-col gap-1.5 p-2.5 -m-1 min-h-[44px] min-w-[44px] items-center justify-center lg:hidden"
         >
           <span
             className={cn(
@@ -162,7 +168,7 @@ export function Navbar() {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.28, ease: "easeInOut" }}
-            className="overflow-hidden border-t border-oe-aurora-violet/20 md:hidden"
+            className="overflow-hidden border-t border-oe-aurora-violet/20 lg:hidden"
             style={{ backgroundColor: "rgba(10, 15, 31, 0.97)", backdropFilter: "blur(12px)" }}
           >
             <div className="flex flex-col px-6 py-5 gap-1 max-h-[calc(100dvh-64px)] overflow-y-auto">
@@ -191,7 +197,7 @@ export function Navbar() {
               <Link
                 href="/community"
                 onClick={closeMenu}
-                className="mt-3 rounded-full bg-oe-aurora-violet px-5 py-3 text-sm font-medium text-white text-center transition-opacity duration-200 hover:opacity-85"
+                className="mt-3 rounded-full bg-oe-aurora-violet-deep px-5 py-3 text-sm font-medium text-white text-center transition-opacity duration-200 hover:opacity-85"
               >
                 {t("joinCta")}
               </Link>

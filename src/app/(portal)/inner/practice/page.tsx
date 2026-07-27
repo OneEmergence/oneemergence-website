@@ -46,7 +46,7 @@ export default function PracticePage() {
       <div className="mt-6">
         <Link
           href="/inner/practice/history"
-          className="inline-flex items-center gap-2 text-sm text-oe-pure-light/40 transition-colors hover:text-oe-pure-light/70"
+          className="inline-flex items-center gap-2 text-sm text-oe-pure-light/55 transition-colors hover:text-oe-pure-light/70"
         >
           <History className="h-4 w-4" />
           Verlauf ansehen
@@ -71,7 +71,7 @@ export default function PracticePage() {
                 {practice.description}
               </p>
               {practice.disabled && (
-                <span className="mt-3 inline-block text-xs text-oe-pure-light/30">
+                <span className="mt-3 inline-block text-xs text-oe-pure-light/55">
                   Bald verfügbar
                 </span>
               )}

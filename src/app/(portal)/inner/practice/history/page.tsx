@@ -60,7 +60,7 @@ export default async function PracticeHistoryPage() {
       {/* Back link */}
       <Link
         href="/inner/practice"
-        className="mb-6 inline-flex items-center gap-2 text-sm text-oe-pure-light/40 transition-colors hover:text-oe-pure-light/70"
+        className="mb-6 inline-flex items-center gap-2 text-sm text-oe-pure-light/55 transition-colors hover:text-oe-pure-light/70"
       >
         <ArrowLeft className="h-4 w-4" />
         Zurück zur Praxis
@@ -75,12 +75,12 @@ export default async function PracticeHistoryPage() {
 
       <div className="mt-8">
         {!result.success ? (
-          <p className="text-sm text-oe-pure-light/40">
+          <p className="text-sm text-oe-pure-light/55">
             Verlauf konnte nicht geladen werden.
           </p>
         ) : result.data.length === 0 ? (
           <div className="rounded-xl border border-oe-warm-sand/10 p-6 text-center">
-            <p className="text-sm text-oe-pure-light/40">
+            <p className="text-sm text-oe-pure-light/55">
               Noch keine Praxis-Sitzungen. Starte deine erste Meditation.
             </p>
             <Link
@@ -94,7 +94,7 @@ export default async function PracticeHistoryPage() {
           <div className="space-y-8">
             {Array.from(groupByDate(result.data).entries()).map(([dateLabel, sessions]) => (
               <section key={dateLabel}>
-                <p className="mb-3 text-xs uppercase tracking-widest text-oe-pure-light/30">
+                <p className="mb-3 text-xs uppercase tracking-widest text-oe-pure-light/55">
                   {formatDate(sessions[0].completedAt)}
                 </p>
                 <div className="space-y-2">
@@ -108,12 +108,12 @@ export default async function PracticeHistoryPage() {
                           {TYPE_LABELS[session.type] ?? session.type}
                         </p>
                         {session.notes && (
-                          <p className="mt-1 text-xs text-oe-pure-light/40">
+                          <p className="mt-1 text-xs text-oe-pure-light/55">
                             {session.notes}
                           </p>
                         )}
                       </div>
-                      <span className="ml-4 shrink-0 text-sm tabular-nums text-oe-pure-light/40">
+                      <span className="ml-4 shrink-0 text-sm tabular-nums text-oe-pure-light/55">
                         {formatDuration(session.duration)}
                       </span>
                     </div>
@@ -124,7 +124,7 @@ export default async function PracticeHistoryPage() {
 
             {/* Summary */}
             <div className="rounded-xl border border-oe-warm-sand/10 bg-oe-warm-sand/[0.02] px-5 py-4">
-              <p className="text-xs uppercase tracking-widest text-oe-pure-light/30">
+              <p className="text-xs uppercase tracking-widest text-oe-pure-light/55">
                 Gesamt
               </p>
               <p className="mt-2 text-sm text-oe-pure-light/60">

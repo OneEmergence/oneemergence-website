@@ -3,7 +3,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 import {
   getPostBySlug,
-  getPosts,
   getContentBySlug,
   getAllContent,
   getLibraryItems,
@@ -14,51 +13,8 @@ import {
   type AtmosphereVariant,
 } from '@/components/motion/LayerAtmosphere'
 import { CONTENT_TYPE_DIRS, type ContentType, type AnyContentMeta } from '@/lib/schemas/content'
+import { VALID_LIBRARY_TYPES, libraryTypeMeta } from '@/lib/content/library-types'
 
-// ─── Type labels & colors (German-first) ───────────────────────────────────
-
-const TYPE_META: Record<
-  string,
-  { label: string; color: string; dotColor: string }
-> = {
-  journal: {
-    label: 'Journal',
-    color: 'text-oe-aurora-violet',
-    dotColor: 'bg-oe-aurora-violet',
-  },
-  teaching: {
-    label: 'Lehre',
-    color: 'text-oe-solar-gold',
-    dotColor: 'bg-oe-solar-gold',
-  },
-  reflection: {
-    label: 'Reflexion',
-    color: 'text-oe-spirit-cyan',
-    dotColor: 'bg-oe-spirit-cyan',
-  },
-  practice: {
-    label: 'Praxis',
-    color: 'text-oe-solar-gold',
-    dotColor: 'bg-oe-solar-gold',
-  },
-  transmission: {
-    label: 'Transmission',
-    color: 'text-oe-aurora-violet',
-    dotColor: 'bg-oe-aurora-violet',
-  },
-  'visual-essay': {
-    label: 'Visueller Essay',
-    color: 'text-oe-spirit-cyan',
-    dotColor: 'bg-oe-spirit-cyan',
-  },
-  'sound-journey': {
-    label: 'Klangreise',
-    color: 'text-oe-aurora-violet',
-    dotColor: 'bg-oe-aurora-violet',
-  },
-}
-
-const VALID_TYPES = new Set(['journal', ...Object.keys(CONTENT_TYPE_DIRS)])
 
 const ATMOSPHERE_BY_TYPE: Record<string, AtmosphereVariant> = {
   journal: 'transitional',
@@ -89,10 +45,9 @@ const COVER_FADE: Record<AtmosphereVariant, string> = {
 export function generateStaticParams() {
   const params: { type: string; slug: string }[] = []
 
-  // Journal posts
-  for (const post of getPosts()) {
-    params.push({ type: 'journal', slug: post.slug })
-  }
+  // Journal posts are NOT emitted here: /library/journal/:slug permanently
+  // redirects to /journal/:slug (next.config.ts). Prebuilding them would
+  // resurrect the duplicate URL pair the redirect exists to remove.
 
   // Sacred content types
   for (const type of Object.keys(CONTENT_TYPE_DIRS) as ContentType[]) {
@@ -114,22 +69,43 @@ export async function generateMetadata({
   params: Promise<{ type: string; slug: string }>
 }) {
   const { type, slug } = await params
-  if (!VALID_TYPES.has(type)) return {}
+  if (!VALID_LIBRARY_TYPES.has(type)) return {}
 
+  // No " | OneEmergence" suffix in either branch — the root title template
+  // adds it, and both branches used to double it.
   if (type === 'journal') {
     const post = await getPostBySlug(slug)
     if (!post) return {}
     return {
-      title: `${post.meta.title} | OneEmergence`,
+      title: post.meta.title,
       description: post.meta.excerpt,
+      // This URL permanently redirects to /journal/<slug>; point there rather
+      // than self-canonicalising a route that should not be indexed.
+      alternates: { canonical: `/journal/${slug}` },
     }
   }
 
   const result = await getContentBySlug(type as ContentType, slug)
   if (!result) return {}
+
+  const url = `/library/${type}/${slug}`
   return {
-    title: `${result.meta.title} | OneEmergence`,
+    title: result.meta.title,
     description: result.meta.excerpt,
+    alternates: { canonical: url },
+    openGraph: {
+      type: 'article',
+      url,
+      title: result.meta.title,
+      description: result.meta.excerpt,
+      publishedTime: result.meta.date,
+      images: result.meta.cover ? [result.meta.cover] : undefined,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: result.meta.title,
+      description: result.meta.excerpt,
+    },
   }
 }
 
@@ -142,7 +118,7 @@ export default async function LibraryDetailPage({
 }) {
   const { type, slug } = await params
 
-  if (!VALID_TYPES.has(type)) notFound()
+  if (!VALID_LIBRARY_TYPES.has(type)) notFound()
 
   // ── Resolve content ────────────────────────────────────────────────────
   let title: string
@@ -189,7 +165,7 @@ export default async function LibraryDetailPage({
     }
   }
 
-  const typeMeta = TYPE_META[type] ?? TYPE_META.journal
+  const typeMeta = libraryTypeMeta(type)
   const atmosphere = ATMOSPHERE_BY_TYPE[type] ?? 'transitional'
 
   // ── Adjacent items for navigation ──────────────────────────────────────
@@ -231,7 +207,7 @@ export default async function LibraryDetailPage({
         {/* Back link */}
         <Link
           href="/library"
-          className="mb-10 inline-flex items-center gap-2 text-sm text-oe-pure-light/40 transition-colors hover:text-oe-pure-light/70"
+          className="mb-10 inline-flex items-center gap-2 text-sm text-oe-pure-light/55 transition-colors hover:text-oe-pure-light/70"
         >
           &larr; Zurück zur Bibliothek
         </Link>
@@ -245,7 +221,7 @@ export default async function LibraryDetailPage({
             {typeMeta.label}
           </span>
           {difficulty && (
-            <span className="rounded-full bg-oe-pure-light/5 px-2.5 py-0.5 text-[10px] uppercase tracking-wider text-oe-pure-light/30">
+            <span className="rounded-full bg-oe-pure-light/5 px-2.5 py-0.5 text-[10px] uppercase tracking-wider text-oe-pure-light/55">
               {difficulty === 'beginner'
                 ? 'Einsteiger'
                 : difficulty === 'intermediate'
@@ -259,7 +235,7 @@ export default async function LibraryDetailPage({
           {title}
         </h1>
 
-        <div className="mt-5 flex flex-wrap items-center gap-4 text-sm text-oe-pure-light/40">
+        <div className="mt-5 flex flex-wrap items-center gap-4 text-sm text-oe-pure-light/55">
           <time>
             {new Date(date).toLocaleDateString('de-DE', {
               day: 'numeric',
@@ -276,7 +252,7 @@ export default async function LibraryDetailPage({
                 {tags.map((tag) => (
                   <span
                     key={tag}
-                    className="rounded-full bg-oe-aurora-violet/10 px-2.5 py-0.5 text-xs text-oe-aurora-violet/70"
+                    className="rounded-full bg-oe-aurora-violet/10 px-2.5 py-0.5 text-xs text-oe-aurora-violet-ink"
                   >
                     {tag}
                   </span>
@@ -350,7 +326,7 @@ export default async function LibraryDetailPage({
                 href={`/library/${prev.libraryType}/${prev.slug}`}
                 className="group rounded-2xl border border-oe-pure-light/8 bg-oe-pure-light/[0.03] p-6 transition-all duration-300 hover:border-oe-aurora-violet/40 hover:bg-oe-aurora-violet/5"
               >
-                <span className="text-xs uppercase tracking-wider text-oe-pure-light/30">
+                <span className="text-xs uppercase tracking-wider text-oe-pure-light/55">
                   &larr; Vorheriger
                 </span>
                 <p className="mt-2 font-serif text-lg leading-snug text-oe-pure-light transition-colors duration-200 group-hover:text-oe-solar-gold">
@@ -365,7 +341,7 @@ export default async function LibraryDetailPage({
                 href={`/library/${next.libraryType}/${next.slug}`}
                 className="group rounded-2xl border border-oe-pure-light/8 bg-oe-pure-light/[0.03] p-6 text-right transition-all duration-300 hover:border-oe-aurora-violet/40 hover:bg-oe-aurora-violet/5"
               >
-                <span className="text-xs uppercase tracking-wider text-oe-pure-light/30">
+                <span className="text-xs uppercase tracking-wider text-oe-pure-light/55">
                   N&auml;chster &rarr;
                 </span>
                 <p className="mt-2 font-serif text-lg leading-snug text-oe-pure-light transition-colors duration-200 group-hover:text-oe-solar-gold">
@@ -389,7 +365,7 @@ export default async function LibraryDetailPage({
           <Link
             href="/community"
             data-cursor-hover
-            className="mt-5 inline-block rounded-full bg-oe-aurora-violet px-6 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-85"
+            className="mt-5 inline-block rounded-full bg-oe-aurora-violet-deep px-6 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-85"
           >
             Community beitreten
           </Link>

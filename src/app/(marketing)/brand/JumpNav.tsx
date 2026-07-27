@@ -62,7 +62,7 @@ export function JumpNav({ sections }: { sections: NavSection[] }) {
                 <span
                   className={cn(
                     "font-mono text-[0.65rem]",
-                    isActive ? "text-oe-aurora-violet" : "text-oe-pure-light/30"
+                    isActive ? "text-oe-aurora-violet-ink" : "text-oe-pure-light/55"
                   )}
                 >
                   {s.num}

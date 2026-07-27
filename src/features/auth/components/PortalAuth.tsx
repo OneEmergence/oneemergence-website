@@ -12,7 +12,7 @@ type Pending = 'password' | 'magic' | 'google' | 'signup' | null
 
 const inputClasses = cn(
   'w-full rounded-lg border border-oe-warm-sand/25 bg-oe-warm-sand/[0.05] px-4 py-3',
-  'text-sm text-oe-pure-light placeholder:text-oe-pure-light/35',
+  'text-sm text-oe-pure-light placeholder:text-oe-pure-light/55',
   'transition-colors focus:border-oe-solar-gold focus:outline-none focus:ring-2 focus:ring-oe-solar-gold/35',
   'aria-[invalid=true]:border-red-300 aria-[invalid=true]:ring-red-300/30'
 )
@@ -173,7 +173,7 @@ export function PortalAuth() {
               className="block text-xs font-medium text-oe-pure-light/70"
             >
               {t('fields.displayName')}{' '}
-              <span className="text-oe-pure-light/40">{t('fields.optional')}</span>
+              <span className="text-oe-pure-light/55">{t('fields.optional')}</span>
             </label>
             <input
               id="signup-name"
@@ -229,7 +229,7 @@ export function PortalAuth() {
               aria-describedby={hasError ? 'auth-feedback' : 'password-help'}
               className={inputClasses}
             />
-            <p id="password-help" className="text-xs text-oe-pure-light/45">
+            <p id="password-help" className="text-xs text-oe-pure-light/55">
               {t('fields.passwordHelp')}
             </p>
           </div>
@@ -261,7 +261,7 @@ export function PortalAuth() {
 
       <div className="my-5 flex items-center gap-3" aria-hidden="true">
         <span className="h-px flex-1 bg-oe-warm-sand/15" />
-        <span className="text-xs text-oe-pure-light/40">{t('or')}</span>
+        <span className="text-xs text-oe-pure-light/55">{t('or')}</span>
         <span className="h-px flex-1 bg-oe-warm-sand/15" />
       </div>
 

@@ -38,7 +38,7 @@ export function MoodTagSelector({ selectedTags, onChange }: MoodTagSelectorProps
                 'rounded-full px-3 py-1.5 text-sm transition-colors',
                 'border border-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-aurora-violet',
                 isSelected
-                  ? 'border-oe-aurora-violet bg-oe-aurora-violet/20 text-oe-aurora-violet'
+                  ? 'border-oe-aurora-violet bg-oe-aurora-violet/20 text-oe-aurora-violet-ink'
                   : 'bg-white/5 text-oe-pure-light/60 hover:bg-white/10 hover:text-oe-pure-light'
               )}
             >

@@ -14,7 +14,7 @@ type PrincipleAccent = 'oe-spirit-cyan' | 'oe-aurora-violet' | 'oe-solar-gold'
 
 const PRINCIPLE_ACCENT_CLASSES: Record<PrincipleAccent, { number: string; label: string }> = {
   'oe-spirit-cyan': { number: 'text-oe-spirit-cyan/15', label: 'text-oe-spirit-cyan/70' },
-  'oe-aurora-violet': { number: 'text-oe-aurora-violet/15', label: 'text-oe-aurora-violet/70' },
+  'oe-aurora-violet': { number: 'text-oe-aurora-violet-ink', label: 'text-oe-aurora-violet-ink' },
   'oe-solar-gold': { number: 'text-oe-solar-gold/15', label: 'text-oe-solar-gold/70' },
 }
 
@@ -157,7 +157,7 @@ export default function ManifestoPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6 }}
-            className="mb-4 text-xs font-semibold uppercase tracking-[0.4em] text-oe-aurora-violet/80"
+            className="mb-4 text-xs font-semibold uppercase tracking-[0.4em] text-oe-aurora-violet-ink"
           >
             Unser Manifest
           </motion.p>
@@ -204,7 +204,7 @@ export default function ManifestoPage() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="text-xs font-semibold uppercase tracking-[0.3em] text-oe-aurora-violet/70"
+            className="text-xs font-semibold uppercase tracking-[0.3em] text-oe-aurora-violet-ink"
           >
             Sechs Prinzipien
           </motion.p>
@@ -282,7 +282,7 @@ export default function ManifestoPage() {
             transition={{ delay: 0.5, duration: 0.5 }}
             className="mt-16"
           >
-            <p className="mb-4 text-sm text-oe-pure-light/40">
+            <p className="mb-4 text-sm text-oe-pure-light/55">
               Oder erhalte unsere Impulse direkt:
             </p>
             <NewsletterSignup />

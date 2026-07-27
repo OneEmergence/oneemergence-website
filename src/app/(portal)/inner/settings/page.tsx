@@ -36,7 +36,7 @@ export default async function SettingsPage() {
     <div className="mx-auto max-w-2xl space-y-12 pb-16">
       <header className="space-y-2">
         <h1 className="font-serif text-3xl text-oe-pure-light">{t('title')}</h1>
-        <p className="text-sm leading-relaxed text-oe-pure-light/45">{t('description')}</p>
+        <p className="text-sm leading-relaxed text-oe-pure-light/55">{t('description')}</p>
       </header>
 
       <ProfileSettingsForm userId={access.user.id} profile={resolvedProfile} />

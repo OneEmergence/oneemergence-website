@@ -119,7 +119,7 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
           </p>
         )}
 
-        <div className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-oe-pure-light/40">
+        <div className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-oe-pure-light/55">
           <span>{meta.author}</span>
           <span aria-hidden="true">·</span>
           <time dateTime={meta.date}>{dateFmt.format(new Date(meta.date))}</time>
@@ -142,11 +142,11 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
           'prose-headings:font-serif prose-headings:text-oe-pure-light prose-headings:text-balance',
           'prose-h2:mt-16 prose-h2:text-3xl sm:prose-h2:text-4xl prose-h3:mt-12 prose-h3:text-xl',
           'prose-p:mt-6 prose-p:text-oe-pure-light/70 prose-p:leading-relaxed prose-p:text-pretty',
-          'prose-a:text-oe-aurora-violet prose-a:underline prose-a:underline-offset-4 prose-a:decoration-oe-aurora-violet/40 hover:prose-a:text-oe-solar-gold',
+          'prose-a:text-oe-aurora-violet-ink prose-a:underline prose-a:underline-offset-4 prose-a:decoration-oe-aurora-violet/40 hover:prose-a:text-oe-solar-gold',
           'prose-strong:text-oe-pure-light prose-blockquote:border-oe-pure-light/15 prose-blockquote:text-oe-pure-light/60',
           'prose-hr:border-oe-pure-light/10',
           'prose-ul:mt-6 prose-ol:mt-6 prose-ul:text-oe-pure-light/70 prose-ol:text-oe-pure-light/70',
-          'prose-li:marker:text-oe-aurora-violet prose-img:rounded-2xl',
+          'prose-li:marker:text-oe-aurora-violet-ink prose-img:rounded-2xl',
         )}
       >
         {content}
@@ -181,7 +181,7 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
             {meta.tags.map((tag) => (
               <li
                 key={tag}
-                className="rounded-full border border-oe-pure-light/10 px-3 py-1 text-xs text-oe-pure-light/45"
+                className="rounded-full border border-oe-pure-light/10 px-3 py-1 text-xs text-oe-pure-light/55"
               >
                 {tag}
               </li>
@@ -192,7 +192,7 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
         {meta.listed && (
           <Link
             href="/s"
-            className="mt-12 inline-flex min-h-11 items-center gap-2 text-sm text-oe-pure-light/40 transition-colors hover:text-oe-pure-light/70"
+            className="mt-12 inline-flex min-h-11 items-center gap-2 text-sm text-oe-pure-light/55 transition-colors hover:text-oe-pure-light/70"
           >
             ← {t('backToIndex')}
           </Link>

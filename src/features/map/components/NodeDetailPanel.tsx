@@ -45,21 +45,21 @@ export function NodeDetailPanel({
               className="h-3 w-3 rounded-full"
               style={{ backgroundColor: color }}
             />
-            <span className="text-xs uppercase tracking-wider text-oe-pure-light/40">
+            <span className="text-xs uppercase tracking-wider text-oe-pure-light/55">
               {typeLabel}
             </span>
           </div>
           <div className="flex items-center gap-1">
             <button
               onClick={() => onEdit(node.id)}
-              className="rounded-full p-1 text-oe-pure-light/40 transition-colors hover:bg-oe-pure-light/5 hover:text-oe-pure-light/70"
+              className="rounded-full p-1 text-oe-pure-light/55 transition-colors hover:bg-oe-pure-light/5 hover:text-oe-pure-light/70"
               aria-label="Knoten bearbeiten"
             >
               <Pencil className="h-4 w-4" />
             </button>
             <button
               onClick={onClose}
-              className="rounded-full p-1 text-oe-pure-light/40 transition-colors hover:bg-oe-pure-light/5 hover:text-oe-pure-light/70"
+              className="rounded-full p-1 text-oe-pure-light/55 transition-colors hover:bg-oe-pure-light/5 hover:text-oe-pure-light/70"
               aria-label="Panel schließen"
             >
               <X className="h-4 w-4" />
@@ -79,7 +79,7 @@ export function NodeDetailPanel({
 
           {/* Metadata */}
           <div className="mt-5 space-y-2">
-            <div className="flex items-center gap-2 text-xs text-oe-pure-light/30">
+            <div className="flex items-center gap-2 text-xs text-oe-pure-light/55">
               <Calendar className="h-3.5 w-3.5" />
               <span>
                 {node.createdAt.toLocaleDateString('de-DE', {
@@ -89,7 +89,7 @@ export function NodeDetailPanel({
                 })}
               </span>
             </div>
-            <div className="flex items-center gap-2 text-xs text-oe-pure-light/30">
+            <div className="flex items-center gap-2 text-xs text-oe-pure-light/55">
               <span className="inline-flex h-4 w-4 items-center justify-center rounded-full text-[10px]" style={{ backgroundColor: color + '20', color }}>
                 {node.size}
               </span>
@@ -111,7 +111,7 @@ export function NodeDetailPanel({
           {/* Connected nodes */}
           {connectedNodes.length > 0 && (
             <div className="mt-6">
-              <p className="text-xs uppercase tracking-wider text-oe-pure-light/30">
+              <p className="text-xs uppercase tracking-wider text-oe-pure-light/55">
                 Verbunden mit
               </p>
               <div className="mt-2 space-y-1.5">

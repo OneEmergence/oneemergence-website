@@ -107,7 +107,7 @@ export function MeditationTimer() {
             className={cn(
               'rounded-full px-4 py-2 text-sm font-medium transition-colors',
               selectedDuration === mins
-                ? 'bg-oe-aurora-violet/20 text-oe-aurora-violet'
+                ? 'bg-oe-aurora-violet/20 text-oe-aurora-violet-ink'
                 : 'text-oe-pure-light/50 hover:text-oe-pure-light/80',
               isRunning && 'cursor-not-allowed opacity-50'
             )}
@@ -145,7 +145,7 @@ export function MeditationTimer() {
             stroke="currentColor"
             strokeWidth="4"
             strokeLinecap="round"
-            className="text-oe-aurora-violet"
+            className="text-oe-aurora-violet-ink"
             strokeDasharray={CIRCLE_CIRCUMFERENCE}
             animate={{ strokeDashoffset }}
             transition={{ duration: 0.5, ease: 'linear' }}
@@ -175,7 +175,7 @@ export function MeditationTimer() {
               exit={{ opacity: 0 }}
               onClick={handleStart}
               aria-label="Meditation starten"
-              className="rounded-full bg-oe-aurora-violet/20 px-8 py-3 text-sm font-medium text-oe-aurora-violet transition-colors hover:bg-oe-aurora-violet/30"
+              className="rounded-full bg-oe-aurora-violet/20 px-8 py-3 text-sm font-medium text-oe-aurora-violet-ink transition-colors hover:bg-oe-aurora-violet/30"
             >
               {timeRemaining < totalSeconds ? 'Fortsetzen' : 'Starten'}
             </motion.button>
@@ -206,7 +206,7 @@ export function MeditationTimer() {
       </div>
 
       {/* Guidance text */}
-      <p className="max-w-xs text-center text-sm text-oe-pure-light/40">
+      <p className="max-w-xs text-center text-sm text-oe-pure-light/55">
         Finde eine bequeme Position. Schließe die Augen. Lass den Atem
         natürlich fließen.
       </p>

@@ -8,14 +8,14 @@ export const metadata: Metadata = {
     title: "Manifest | OneEmergence",
     description:
       "Das Fundament von OneEmergence — Einheit, Freiheit, Liebe. Unsere Werte und Prinzipien.",
-    url: "https://oneemergence.org/manifesto",
+    url: "/manifesto",
   },
   twitter: {
     title: "Manifest | OneEmergence",
     description:
       "Das Fundament von OneEmergence — Einheit, Freiheit, Liebe. Unsere Werte und Prinzipien.",
   },
-  alternates: { canonical: "https://oneemergence.org/manifesto" },
+  alternates: { canonical: "/manifesto" },
 };
 
 export default function ManifestoLayout({

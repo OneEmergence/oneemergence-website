@@ -20,7 +20,7 @@ const cardVariants: Variants = {
 export function ContentGrid({ posts }: { posts: PostPreview[] }) {
   if (posts.length === 0) {
     return (
-      <p className="text-center text-oe-pure-light/40">
+      <p className="text-center text-oe-pure-light/55">
         Noch keine Beiträge vorhanden.
       </p>
     );
@@ -53,6 +53,14 @@ export function ContentGrid({ posts }: { posts: PostPreview[] }) {
                   src={post.cover}
                   alt={post.title}
                   fill
+                  // Without `sizes` the browser assumes 100vw and picks the
+                  // 1920w candidate for a ~440px slot — on the home page,
+                  // inside the LCP window. The first card is md:col-span-2.
+                  sizes={
+                    index === 0
+                      ? '(min-width: 768px) 66vw, 100vw'
+                      : '(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw'
+                  }
                   className="object-cover"
                 />
                 <div className="absolute inset-0 bg-oe-deep-space/50" />
@@ -65,7 +73,7 @@ export function ContentGrid({ posts }: { posts: PostPreview[] }) {
             </div>
 
             <div className="relative p-5 sm:p-7">
-              <time className="font-mono text-xs text-oe-pure-light/30 tracking-wider">
+              <time className="font-mono text-xs text-oe-pure-light/55 tracking-wider">
                 {new Date(post.date).toLocaleDateString("de-DE", {
                   day: "numeric",
                   month: "long",

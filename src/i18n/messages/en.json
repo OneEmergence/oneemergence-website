@@ -26,7 +26,8 @@
     "next": "Next",
     "joinCommunity": "Join community",
     "noContent": "No content available yet.",
-    "skipToContent": "Skip to content"
+    "skipToContent": "Skip to content",
+    "discover": "Discover"
   },
   "content": {
     "teaching": "Teaching",
@@ -40,7 +41,9 @@
   "intensity": {
     "still": "Still",
     "balanced": "Balanced",
-    "immersive": "Immersive"
+    "immersive": "Immersive",
+    "groupLabel": "Intensity mode",
+    "overridden": "Set to Still by your system settings."
   },
   "footer": {
     "tagline": "Unity, Freedom, Love",
@@ -283,5 +286,19 @@
     "backToIndex": "All stories",
     "updated": "Updated {date}",
     "ctaFallbackTitle": "Let's talk."
+  },
+  "notFound": {
+    "eyebrow": "404",
+    "title": "This page does not exist.",
+    "body": "It may have moved, or the link may have been cut short. Either is fixable.",
+    "home": "Back home",
+    "library": "To the library"
+  },
+  "guide": {
+    "composerLabel": "Message to the guide",
+    "composerPlaceholder": "Write to the guide…",
+    "send": "Send message",
+    "conversation": "Conversation with the guide",
+    "thinking": "The guide is responding…"
   }
 }

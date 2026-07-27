@@ -98,7 +98,7 @@ export function AvatarUpload({ userId, initialUrl, displayName }: AvatarUploadPr
         >
           {isPending ? 'Lädt hoch …' : 'Profilbild ändern'}
         </button>
-        <p className="text-[11px] text-oe-pure-light/30">JPG, PNG, WebP · max. 2 MB</p>
+        <p className="text-[11px] text-oe-pure-light/55">JPG, PNG, WebP · max. 2 MB</p>
         {error && <p className="text-[11px] text-red-300">{error}</p>}
       </div>
 

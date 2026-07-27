@@ -31,7 +31,7 @@ export function ExerciseDisplay({ exercise }: ExerciseDisplayProps) {
           </span>
         </div>
         {exercise.duration && (
-          <div className="flex items-center gap-1 text-oe-pure-light/30">
+          <div className="flex items-center gap-1 text-oe-pure-light/55">
             <Clock className="h-3 w-3" />
             <span className="text-xs">{exercise.duration} Min.</span>
           </div>

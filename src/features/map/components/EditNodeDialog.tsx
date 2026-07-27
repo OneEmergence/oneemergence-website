@@ -49,7 +49,7 @@ function EditNodeForm({
         </h2>
         <button
           onClick={onClose}
-          className="rounded-full p-1 text-oe-pure-light/40 hover:text-oe-pure-light/70"
+          className="rounded-full p-1 text-oe-pure-light/55 hover:text-oe-pure-light/70"
           aria-label="Schließen"
         >
           <X className="h-4 w-4" />
@@ -61,7 +61,7 @@ function EditNodeForm({
         <div>
           <label
             htmlFor="edit-node-label"
-            className="mb-1.5 block text-xs uppercase tracking-wider text-oe-pure-light/30"
+            className="mb-1.5 block text-xs uppercase tracking-wider text-oe-pure-light/55"
           >
             Bezeichnung
           </label>
@@ -72,7 +72,7 @@ function EditNodeForm({
             onChange={(e) => setLabel(e.target.value)}
             placeholder="z.B. Innerer Frieden"
             required
-            className="w-full rounded-lg border border-oe-pure-light/10 bg-oe-pure-light/[0.03] px-3 py-2 text-sm text-oe-pure-light placeholder-oe-pure-light/20 outline-none focus:border-oe-aurora-violet/30"
+            className="w-full rounded-lg border border-oe-pure-light/10 bg-oe-pure-light/[0.03] px-3 py-2 text-sm text-oe-pure-light placeholder-oe-pure-light/55 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-aurora-violet focus:border-oe-aurora-violet/30"
             autoFocus
           />
         </div>
@@ -81,7 +81,7 @@ function EditNodeForm({
         <div>
           <label
             htmlFor="edit-node-description"
-            className="mb-1.5 block text-xs uppercase tracking-wider text-oe-pure-light/30"
+            className="mb-1.5 block text-xs uppercase tracking-wider text-oe-pure-light/55"
           >
             Beschreibung (optional)
           </label>
@@ -91,7 +91,7 @@ function EditNodeForm({
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Was bedeutet dieser Knoten für dich?"
             rows={3}
-            className="w-full resize-none rounded-lg border border-oe-pure-light/10 bg-oe-pure-light/[0.03] px-3 py-2 text-sm text-oe-pure-light placeholder-oe-pure-light/20 outline-none focus:border-oe-aurora-violet/30"
+            className="w-full resize-none rounded-lg border border-oe-pure-light/10 bg-oe-pure-light/[0.03] px-3 py-2 text-sm text-oe-pure-light placeholder-oe-pure-light/55 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-aurora-violet focus:border-oe-aurora-violet/30"
           />
         </div>
 
@@ -100,7 +100,7 @@ function EditNodeForm({
           <button
             type="button"
             onClick={onClose}
-            className="text-sm text-oe-pure-light/40 hover:text-oe-pure-light/70"
+            className="text-sm text-oe-pure-light/55 hover:text-oe-pure-light/70"
           >
             Abbrechen
           </button>
@@ -110,8 +110,8 @@ function EditNodeForm({
             className={cn(
               'rounded-lg px-4 py-2 text-sm font-medium transition-colors',
               label.trim()
-                ? 'bg-oe-aurora-violet/20 text-oe-aurora-violet hover:bg-oe-aurora-violet/30'
-                : 'cursor-not-allowed bg-oe-pure-light/5 text-oe-pure-light/20'
+                ? 'bg-oe-aurora-violet/20 text-oe-aurora-violet-ink hover:bg-oe-aurora-violet/30'
+                : 'cursor-not-allowed bg-oe-pure-light/5 text-oe-pure-light/55'
             )}
           >
             Änderungen speichern

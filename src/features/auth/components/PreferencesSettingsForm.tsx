@@ -51,7 +51,7 @@ export function PreferencesSettingsForm({
     <section className="space-y-6">
       <div>
         <h2 className="font-serif text-xl text-oe-pure-light">Erlebnis</h2>
-        <p className="mt-1 text-sm text-oe-pure-light/40">
+        <p className="mt-1 text-sm text-oe-pure-light/55">
           Wie sich dein innerer Raum anfühlt — Bewegung und Klang.
         </p>
       </div>
@@ -73,7 +73,7 @@ export function PreferencesSettingsForm({
               )}
             >
               <p className="text-sm font-medium text-oe-pure-light">{opt.label}</p>
-              <p className="mt-0.5 text-xs text-oe-pure-light/40">{opt.desc}</p>
+              <p className="mt-0.5 text-xs text-oe-pure-light/55">{opt.desc}</p>
             </button>
           ))}
         </fieldset>
@@ -81,7 +81,7 @@ export function PreferencesSettingsForm({
         <label className="flex items-center justify-between rounded-xl border border-oe-warm-sand/10 px-4 py-3">
           <span>
             <span className="block text-sm text-oe-pure-light">Ambient-Klang</span>
-            <span className="block text-xs text-oe-pure-light/40">
+            <span className="block text-xs text-oe-pure-light/55">
               Sanfte Klanglandschaft standardmäßig aktivieren
             </span>
           </span>

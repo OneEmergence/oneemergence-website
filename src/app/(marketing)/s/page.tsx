@@ -26,7 +26,7 @@ export default async function StoriesIndex() {
       <LayerAtmosphere variant="cosmic" />
 
       <div className="mx-auto w-full max-w-5xl px-4 pt-28 pb-28 sm:px-6">
-        <p className="font-mono text-xs tracking-[0.3em] text-oe-aurora-violet uppercase">
+        <p className="font-mono text-xs tracking-[0.3em] text-oe-aurora-violet-ink uppercase">
           {t('eyebrow')}
         </p>
         <h1 className="mt-4 font-serif text-4xl leading-tight text-balance text-oe-pure-light md:text-6xl">
@@ -39,7 +39,7 @@ export default async function StoriesIndex() {
         <div className="mt-8 h-px bg-gradient-to-r from-oe-aurora-violet/40 via-oe-spirit-cyan/20 to-transparent" />
 
         {stories.length === 0 ? (
-          <p className="mt-16 text-oe-pure-light/40">{tc('noContent')}</p>
+          <p className="mt-16 text-oe-pure-light/55">{tc('noContent')}</p>
         ) : (
           <ul className="mt-14 grid gap-5 md:grid-cols-2">
             {stories.map(({ meta, readingTime }) => {
@@ -65,7 +65,7 @@ export default async function StoriesIndex() {
                     <span className="mt-3 text-sm leading-relaxed text-oe-pure-light/55">
                       {meta.description}
                     </span>
-                    <span className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-oe-pure-light/35">
+                    <span className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-oe-pure-light/55">
                       <time dateTime={meta.date}>
                         {new Intl.DateTimeFormat(meta.locale === 'en' ? 'en-GB' : 'de-DE', {
                           day: 'numeric',

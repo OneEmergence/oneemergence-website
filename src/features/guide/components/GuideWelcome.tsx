@@ -41,7 +41,7 @@ export function GuideWelcome({ onRoleSelect }: GuideWelcomeProps) {
               <h3 className="mb-1 text-sm font-medium text-oe-pure-light/80">
                 {role.label}
               </h3>
-              <p className="text-xs text-oe-pure-light/40">
+              <p className="text-xs text-oe-pure-light/55">
                 {role.description}
               </p>
             </motion.button>

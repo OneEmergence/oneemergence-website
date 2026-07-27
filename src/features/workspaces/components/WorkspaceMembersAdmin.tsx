@@ -107,7 +107,7 @@ export function WorkspaceMembersAdmin({
               inputMode="email"
               required
               placeholder={t('emailPlaceholder')}
-              className="w-full rounded-lg border border-oe-warm-sand/20 bg-oe-warm-sand/[0.04] px-4 py-3 text-sm text-oe-pure-light placeholder:text-oe-pure-light/35 focus:border-oe-solar-gold focus:outline-none focus:ring-2 focus:ring-oe-solar-gold/30"
+              className="w-full rounded-lg border border-oe-warm-sand/20 bg-oe-warm-sand/[0.04] px-4 py-3 text-sm text-oe-pure-light placeholder:text-oe-pure-light/55 focus:border-oe-solar-gold focus:outline-none focus:ring-2 focus:ring-oe-solar-gold/30"
             />
           </div>
           <button
@@ -186,7 +186,7 @@ export function WorkspaceMembersAdmin({
                         <span className="min-w-0">
                           <span className="block max-w-48 truncate">{name}</span>
                           {member.email ? (
-                            <span className="mt-0.5 block max-w-56 truncate text-xs font-normal text-oe-pure-light/45">
+                            <span className="mt-0.5 block max-w-56 truncate text-xs font-normal text-oe-pure-light/55">
                               {member.email}
                             </span>
                           ) : null}

@@ -1,6 +1,11 @@
 # Design-, UX- und Performance-Backlog
 
-Date: 2026-07-27 · Status: Brainstorm / Backlog
+Date: 2026-07-27 · Status: **Umgesetzt** — siehe „Umsetzungsstand" unten
+
+> **Stand nach der Umsetzungsrunde:** Alle Top-10-Punkte und der Großteil der
+> Themen A–G sind erledigt. Was offen bleibt und warum, steht am Ende unter
+> [Bewusst offen](#bewusst-offen). Die Abschnitte darunter sind das
+> ursprüngliche Audit und bleiben als Begründung stehen.
 
 Ergebnis eines 7-dimensionalen Audits (Visual, UX/IA, Performance, Motion,
 Accessibility, Publishing-System, SEO/Shareability) über den gesamten Code-Stand.
@@ -180,3 +185,49 @@ selbst dokumentiert. Für Buttons mit weißem Text braucht es ein tieferes Viole
 
 Die drei Verify-Durchläufe für Visual, Performance und Publishing wurden vom
 Abbruch getroffen — Befunde dieser Dimensionen sind als 🔍 markiert, nicht ✅.
+
+---
+
+## Umsetzungsstand (2026-07-27)
+
+Verifiziert mit `pnpm build`, `pnpm typecheck`, `pnpm lint` und der vollen
+Playwright-Suite (53 passed / 0 failed, chromium **und** mobile), plus
+Browser-Prüfung der betroffenen Seiten.
+
+### Die Top 10
+
+| # | Punkt | Ergebnis |
+|---|---|---|
+| 1 | `/journal` war ein 404 | [journal/page.tsx](src/app/(marketing)/journal/page.tsx) angelegt; index-förmige Metadata aus dem Layout entfernt; jeder Artikel hat jetzt eigenen Canonical + vollständige OG-Karte |
+| 2 | Root-Canonical | Aus [layout.tsx](src/app/layout.tsx) entfernt; `/`, `/library`, `/experiences` und beide Detail-Routen setzen ihren eigenen |
+| 3 | Reduced-Motion-Nuke | `*`-Block ersetzt durch eine gezielte Regel auf die deklarierten Motion-Ebenen; Micro-Feedback und beide Ladespinner leben wieder |
+| 4 | framer-motion ignorierte Still | `<MotionConfig reducedMotion>` in [IntensityProvider](src/components/providers/IntensityProvider.tsx) — wirkt auf alle 42 Komponenten |
+| 5 | Lenis ohne Gate | [SmoothScroll](src/components/layout/SmoothScroll.tsx) liest `useMotionLevel('flow')`, importiert die Library erst im Effect und baut die Instanz beim Umschalten ab. Zusätzlich `stopInertiaOnNavigate` |
+| 6 | Nichts statisch vorgerendert | **Alle** öffentlichen Routen sind jetzt `○`/`●`. Root-Layout intl-frei, [PublicIntlProvider](src/i18n/PublicIntlProvider.tsx) pinnt die Locale, das Portal liest weiter den Cookie |
+| 7 | Kein robots.txt | [robots.ts](src/app/robots.ts) + `noindex` am Portal-Layout (einmal statt 18×) |
+| 8 | Sentry Replay eager | Auf `lazyLoadIntegration` hinter `requestIdleCallback` umgestellt |
+| 9 | `published: false` wirkungslos | Journal, Sacred Content und Stories folgen jetzt einer Regel: 404 |
+| 10 | Kein `not-found.tsx` | Zwei: [(marketing)/not-found.tsx](src/app/(marketing)/not-found.tsx) mit Chrome und Übersetzung, [app/not-found.tsx](src/app/not-found.tsx) für Pfade ohne Route-Group |
+
+### Themen A–G
+
+- **A · Korrektheit** — `/content` → `/library` und `/library/journal/:slug` → `/journal/:slug` als permanente Redirects, eine URL pro Artikel; drei tote `href="#"` auf `/community` verdrahtet (der dritte ehrlich als „bald verfügbar"); Events nach ISO-Datum gefiltert mit echtem Empty State; doppelter Title-Suffix an allen vier Stellen weg; `TYPE_META` in [library-types.ts](src/lib/content/library-types.ts) vereinheitlicht, Filter zeigen nur Typen mit Inhalten; `tailwind.config.ts` gelöscht (wurde nie geladen); Deep Space ist Default statt Dark-Mode-Override.
+- **B · Visual** — `color-scheme: dark` global statt Inline-Hack auf `/contact`; zwei zugängliche Violett-Ableitungen (`-deep` für Flächen mit weißem Text, `-ink` für Text auf Dunkel), beide auf der Brand-Page dokumentiert; `AmbientOrb` und `ParallaxLayer` gelöscht; Navigation hält den Burger bis `lg` (zwischen 768 und ~1100px kollidierten Wortmarke und erster Link).
+- **C · Motion** — `data-intensity` per Pre-Paint-Script; Hero ohne `opacity: 0` (LCP); `StarField` liest `scrollHeight` nicht mehr pro Frame; `CustomCursor` animiert nur noch `scale`/`opacity`/`borderColor` (behebt auch den 2,25×-Bug); `ScrollIndicator`, `MagneticButton` und `template.tsx` gegatet; `ParallaxImage` über `useFinePointer` ohne Hydration-Mismatch.
+- **D · A11y** — 179 Textstellen von sub-AA auf `/55` (5,91:1 auf Deep Space, 5,82:1 auf Warm); Guide-Composer und Senden-Button benannt, Verlauf mit `role="log"`; neun blanke `outline-none` durch sichtbare Fokus-Ringe ersetzt; `IntensityToggle` als echte APG-Radiogroup mit Pfeiltasten, `aria-checked` auf `effectiveMode`, übersetzt; `cursor: none` nimmt Formularfelder aus, respektiert `forced-colors` und greift erst, wenn der Ersatz sichtbar ist; axe-Scan auf WCAG 2.1/2.2 erweitert und `moderate` eingeschlossen; Touch-Targets in der Navigation auf 44px.
+- **E · Performance** — `cache()` um die drei `*BySlug`-Loader (MDX wurde pro Request zweimal kompiliert); `sizes` an den ContentGrid-Covern; `images.formats` mit AVIF + Supabase-`remotePatterns`; `d3`-Barrel durch `d3-zoom`/`d3-selection` ersetzt; Consciousness Map über `next/dynamic`.
+- **F · SEO** — Sitemap ohne die beiden `noindex`-Legal-Seiten, mit `/library`, `/experiences` und Sacred Content, ohne erfundenes `lastModified` und ohne Journal-Doppelung; alle Metadata-URLs relativ gegen `metadataBase`; `siteUrl` mit produktionssicherem Fallback.
+- **G · Publishing** — `parseFrontmatter` nennt bei ungültigem Frontmatter die Datei; der schluckende `catch` in `getLibraryItems` ist weg (eine Policy: Build bricht).
+
+### Bewusst offen
+
+| Punkt | Warum |
+|---|---|
+| Kontakt- und Newsletter-Formular liefern nichts aus | Braucht eine Transport-Entscheidung (ESP/SMTP). **Der rechtlich relevante Teil bleibt: das Formular zeigt weiterhin Erfolg, ohne zuzustellen, und der Newsletter sammelt eine E-Mail ohne Consent-Checkbox.** Nächster Schritt vor jedem Launch. |
+| Marketing-Texte nur auf Deutsch | Bewusste Entscheidung: der öffentliche Baum ist auf `defaultLocale` gepinnt, damit er statisch rendert. Echte Zweisprachigkeit braucht `/de`- und `/en`-Segmente. |
+| `<PageHero>`, `.oe-eyebrow`, ein Container-Maßstab | Reine Konsistenzarbeit über neun Seiten mit sichtbarem Risiko — gehört in eine eigene Runde mit visueller Abnahme. |
+| Fünf lokale Accent-Maps auf `ACCENTS` zusammenführen | Dito. `ACCENTS` liegt weiterhin in `mdx-kit.tsx`. |
+| Favicon, `apple-icon`, Manifest | Braucht heruntergerechnete Assets aus dem 1,27 MB großen Logo — Bildarbeit, kein Code. |
+| Sechs ungenutzte Sacred-Content-Renderer | Vor dem Löschen gegen die Inline-Blöcke der Route diffen, sonst geht Markup verloren. |
+| JSON-LD, RSS, Preview-Route, `<Table>`-Wrapper, `prefers-contrast` | Sinnvoll, aber keine Defekte. Reihenfolge wie oben im Backlog. |
+| Message-Bundle pro Route zuschneiden | ~10 KB, geringster Ertrag im Set. |

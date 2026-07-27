@@ -44,7 +44,22 @@ if (!parsed.success) {
 }
 
 export const env = parsed.data
-export const siteUrl = env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'
+
+/**
+ * Canonical origin used for `metadataBase`, canonicals, OG urls and the sitemap.
+ *
+ * The fallback is production-aware on purpose. Metadata is baked at build
+ * time, and the REQUIRED_IN_PROD check below is deliberately skipped during
+ * `next build` — so a production image built without NEXT_PUBLIC_SITE_URL
+ * would otherwise bake `http://localhost:3000` into every canonical and
+ * og:url. Falling back to the real origin keeps that failure mode harmless,
+ * while a preview deploy that *does* set the var still gets its own origin.
+ */
+const PRODUCTION_ORIGIN = 'https://oneemergence.org'
+
+export const siteUrl =
+  env.NEXT_PUBLIC_SITE_URL ??
+  (env.NODE_ENV === 'production' ? PRODUCTION_ORIGIN : 'http://localhost:3000')
 
 // Skip during `next build` — this guards runtime boot, not build-time page-data
 // collection (which has no runtime secrets and shouldn't need them).

@@ -31,7 +31,7 @@ export function VisualEssayRenderer({ meta, content }: VisualEssayRendererProps)
           {meta.scenes.map((scene) => (
             <span
               key={scene.id}
-              className="rounded-full border border-oe-pure-light/10 px-3 py-1 text-xs text-oe-pure-light/30"
+              className="rounded-full border border-oe-pure-light/10 px-3 py-1 text-xs text-oe-pure-light/55"
             >
               {scene.label ?? scene.id}
             </span>

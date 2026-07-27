@@ -85,7 +85,7 @@ export function VisualActivation({ mode }: VisualActivationProps) {
         </div>
       )}
 
-      <span className="relative z-10 text-xs uppercase tracking-[0.2em] text-oe-pure-light/20">
+      <span className="relative z-10 text-xs uppercase tracking-[0.2em] text-oe-pure-light/55">
         {config.label}
       </span>
     </motion.div>

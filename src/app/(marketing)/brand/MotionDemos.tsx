@@ -12,7 +12,7 @@ type Level = "Micro" | "Flow" | "Sacred" | "Event";
 
 const LEVEL_ACCENT: Record<Level, string> = {
   Micro: "text-oe-spirit-cyan",
-  Flow: "text-oe-aurora-violet",
+  Flow: "text-oe-aurora-violet-ink",
   Sacred: "text-oe-solar-gold",
   Event: "text-oe-living-green",
 };
@@ -59,7 +59,7 @@ function DemoCard({
 
       <div className="space-y-1 border-t border-oe-aurora-violet/10 px-5 py-4">
         <p className="font-mono text-[0.7rem] text-oe-spirit-cyan/80">{token}</p>
-        <p className="font-mono text-[0.7rem] text-oe-pure-light/40">{timing}</p>
+        <p className="font-mono text-[0.7rem] text-oe-pure-light/55">{timing}</p>
         <p className="mt-2 text-xs leading-relaxed text-oe-pure-light/55">
           {behavior}
         </p>
@@ -181,7 +181,7 @@ export function MotionDemos() {
               You have crossed a threshold.
             </motion.div>
           ) : (
-            <p className="text-center text-sm text-oe-pure-light/45">
+            <p className="text-center text-sm text-oe-pure-light/55">
               Plays only in Immersive mode.
             </p>
           )}

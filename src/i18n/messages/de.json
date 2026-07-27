@@ -26,7 +26,8 @@
     "next": "Nächster",
     "joinCommunity": "Community beitreten",
     "noContent": "Noch keine Beiträge vorhanden.",
-    "skipToContent": "Zum Inhalt springen"
+    "skipToContent": "Zum Inhalt springen",
+    "discover": "Entdecken"
   },
   "content": {
     "teaching": "Lehre",
@@ -40,7 +41,9 @@
   "intensity": {
     "still": "Still",
     "balanced": "Balanciert",
-    "immersive": "Immersiv"
+    "immersive": "Immersiv",
+    "groupLabel": "Intensitätsmodus",
+    "overridden": "Von den Systemeinstellungen auf Still gesetzt."
   },
   "footer": {
     "tagline": "Einheit, Freiheit, Liebe",
@@ -283,5 +286,19 @@
     "backToIndex": "Alle Stories",
     "updated": "Aktualisiert am {date}",
     "ctaFallbackTitle": "Lass uns sprechen."
+  },
+  "notFound": {
+    "eyebrow": "404",
+    "title": "Diese Seite existiert nicht.",
+    "body": "Vielleicht wurde sie verschoben, vielleicht war der Link unvollständig. Beides lässt sich beheben.",
+    "home": "Zur Startseite",
+    "library": "Zur Bibliothek"
+  },
+  "guide": {
+    "composerLabel": "Nachricht an den Guide",
+    "composerPlaceholder": "Schreibe dem Guide…",
+    "send": "Nachricht senden",
+    "conversation": "Gespräch mit dem Guide",
+    "thinking": "Der Guide antwortet…"
   }
 }

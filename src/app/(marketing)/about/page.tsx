@@ -59,7 +59,7 @@ export default function AboutPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
-          className="mb-4 text-xs font-semibold uppercase tracking-widest text-oe-aurora-violet"
+          className="mb-4 text-xs font-semibold uppercase tracking-widest text-oe-aurora-violet-ink"
         >
           Über uns
         </motion.p>
@@ -139,7 +139,7 @@ export default function AboutPage() {
             transition={{ duration: 0.6 }}
             className="mb-16 text-center"
           >
-            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-oe-aurora-violet">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-oe-aurora-violet-ink">
               Menschen
             </p>
             <h2 className="font-serif text-4xl text-oe-solar-gold md:text-5xl">

@@ -16,7 +16,7 @@ const PHASE_LABELS: Record<string, string> = {
 const PHASE_COLORS: Record<string, string> = {
   inhale: 'text-oe-spirit-cyan',
   hold: 'text-oe-solar-gold',
-  exhale: 'text-oe-aurora-violet',
+  exhale: 'text-oe-aurora-violet-ink',
   rest: 'text-oe-pure-light/50',
 }
 
@@ -215,12 +215,12 @@ export function BreathworkGuide() {
               >
                 {PHASE_LABELS[phaseAction]}
               </motion.span>
-              <span className="text-xs text-oe-pure-light/40">
+              <span className="text-xs text-oe-pure-light/55">
                 Zyklus {cycleCount + 1}
               </span>
             </>
           ) : (
-            <span className="text-sm text-oe-pure-light/40">Bereit</span>
+            <span className="text-sm text-oe-pure-light/55">Bereit</span>
           )}
         </div>
       </div>
@@ -239,7 +239,7 @@ export function BreathworkGuide() {
           <button
             onClick={handleStop}
             aria-label="Atemübung beenden"
-            className="rounded-full bg-oe-aurora-violet/20 px-8 py-3 text-sm font-medium text-oe-aurora-violet transition-colors hover:bg-oe-aurora-violet/30"
+            className="rounded-full bg-oe-aurora-violet/20 px-8 py-3 text-sm font-medium text-oe-aurora-violet-ink transition-colors hover:bg-oe-aurora-violet/30"
           >
             Beenden
           </button>
@@ -253,7 +253,7 @@ export function BreathworkGuide() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="text-xs text-oe-pure-light/30"
+            className="text-xs text-oe-pure-light/55"
           >
             {Math.floor(elapsed / 60)}:{String(elapsed % 60).padStart(2, '0')}{' '}
             vergangen

@@ -126,7 +126,7 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
                 Dieser Raum gehört dir — ein Ort für Reflexion, Praxis und
                 Wachstum. Lass uns kurz einrichten, was dir wichtig ist.
               </p>
-              <p className="text-sm text-oe-pure-light/30">
+              <p className="text-sm text-oe-pure-light/55">
                 Drei kurze Schritte. Du kannst alles jederzeit ändern.
               </p>
             </motion.div>
@@ -163,7 +163,7 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
                     <p className="text-sm font-medium text-oe-pure-light">
                       {opt.label}
                     </p>
-                    <p className="mt-0.5 text-xs text-oe-pure-light/40">
+                    <p className="mt-0.5 text-xs text-oe-pure-light/55">
                       {opt.desc}
                     </p>
                   </button>
@@ -213,7 +213,7 @@ export function OnboardingFlow({ onComplete }: OnboardingFlowProps) {
           <button
             type="button"
             onClick={handleSkip}
-            className="text-xs text-oe-pure-light/25 transition-colors hover:text-oe-pure-light/50"
+            className="text-xs text-oe-pure-light/55 transition-colors hover:text-oe-pure-light/50"
           >
             Überspringen
           </button>

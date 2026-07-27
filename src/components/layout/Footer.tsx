@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { LocaleSwitcher } from "@/components/layout/LocaleSwitcher";
 
 const footerColumns = [
   {
@@ -74,12 +73,13 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-6 md:gap-12 md:grid-cols-4">
           {/* Brand */}
           <div className="flex flex-col gap-4 md:col-span-1">
-            <div className="flex items-center gap-4">
-              <Link href="/" className="font-serif text-xl sm:text-2xl text-oe-solar-gold">
-                OneEmergence
-              </Link>
-              <LocaleSwitcher />
-            </div>
+            {/* No LocaleSwitcher here: the public tree pins its locale so it
+                can prerender (see src/i18n/PublicIntlProvider.tsx), and public
+                copy is German-only. The switch lives in the portal until
+                /de + /en URL segments exist. */}
+            <Link href="/" className="font-serif text-xl sm:text-2xl text-oe-solar-gold">
+              OneEmergence
+            </Link>
             <p className="max-w-xs text-sm leading-relaxed text-oe-pure-light/50">
               {t("footer.description")}
             </p>

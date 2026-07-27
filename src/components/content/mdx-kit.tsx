@@ -35,11 +35,11 @@ type AccentStyle = {
 
 export const ACCENTS: Record<Accent, AccentStyle> = {
   violet: {
-    text: 'text-oe-aurora-violet',
+    text: 'text-oe-aurora-violet-ink',
     border: 'border-oe-aurora-violet/25',
     bg: 'bg-oe-aurora-violet/[0.06]',
     hover: 'hover:border-oe-aurora-violet/40 hover:bg-oe-aurora-violet/[0.07]',
-    solid: 'bg-oe-aurora-violet text-white',
+    solid: 'bg-oe-aurora-violet-deep text-white',
     rule: 'from-oe-aurora-violet/50 via-oe-spirit-cyan/25',
     glow: 'text-glow-violet',
   },
@@ -223,7 +223,7 @@ export function PullQuote({
         {children}
       </blockquote>
       {author && (
-        <figcaption className="mt-6 text-sm text-oe-pure-light/45">
+        <figcaption className="mt-6 text-sm text-oe-pure-light/55">
           <span className={accent(a).text}>{author}</span>
           {role && <span> — {role}</span>}
         </figcaption>
@@ -257,7 +257,7 @@ export function Stat({
     <div className={cn('rounded-2xl border p-6', s.border, s.bg)}>
       <p className={cn('font-serif text-4xl leading-none sm:text-5xl', s.text)}>{value}</p>
       <p className="mt-3 text-sm text-oe-pure-light/70">{label}</p>
-      {note && <p className="mt-1 text-xs text-oe-pure-light/40">{note}</p>}
+      {note && <p className="mt-1 text-xs text-oe-pure-light/55">{note}</p>}
     </div>
   )
 }
@@ -337,7 +337,7 @@ export function Figure({
         />
       </div>
       {caption && (
-        <figcaption className="mx-auto mt-3 max-w-2xl px-4 text-center text-sm text-oe-pure-light/40">
+        <figcaption className="mx-auto mt-3 max-w-2xl px-4 text-center text-sm text-oe-pure-light/55">
           {caption}
         </figcaption>
       )}

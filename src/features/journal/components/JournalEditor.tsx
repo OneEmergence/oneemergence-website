@@ -154,7 +154,7 @@ export function JournalEditor({ initialData }: JournalEditorProps) {
 
   const inputClasses = cn(
     'w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3',
-    'text-oe-pure-light placeholder:text-oe-pure-light/30',
+    'text-oe-pure-light placeholder:text-oe-pure-light/55',
     'focus:border-oe-aurora-violet focus:outline-none focus:ring-1 focus:ring-oe-aurora-violet',
     'transition-colors'
   )
@@ -171,7 +171,7 @@ export function JournalEditor({ initialData }: JournalEditorProps) {
             autoSaveStatus === 'saved' && 'text-green-400/70',
             autoSaveStatus === 'error' && 'text-red-400/70',
             autoSaveStatus === 'saving' && 'text-oe-pure-light/50',
-            autoSaveStatus === 'idle' && 'text-oe-pure-light/30'
+            autoSaveStatus === 'idle' && 'text-oe-pure-light/55'
           )}
         >
           {getStatusLabel()}
@@ -231,7 +231,7 @@ export function JournalEditor({ initialData }: JournalEditorProps) {
           type="submit"
           disabled={isPending}
           className={cn(
-            'rounded-lg bg-oe-aurora-violet px-6 py-3 text-sm font-medium text-white',
+            'rounded-lg bg-oe-aurora-violet-deep px-6 py-3 text-sm font-medium text-white',
             'transition-all hover:bg-oe-aurora-violet/80',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-aurora-violet focus-visible:ring-offset-2 focus-visible:ring-offset-oe-deep-space',
             'disabled:cursor-not-allowed disabled:opacity-50'

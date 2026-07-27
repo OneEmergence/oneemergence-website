@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { LayerAtmosphere } from "@/components/motion/LayerAtmosphere";
@@ -13,7 +14,9 @@ const steps = [
     description:
       "Der erste Schritt ist der einfachste: Tritt unserem offenen Circle-Space bei. Kein Bewerbungsprozess, keine Hürden. Nur du und ein Raum, der wartet.",
     cta: "Circle beitreten",
-    href: "#",
+    // All three CTAs used to be href="#", i.e. a jump to the top of the page:
+    // the site's main conversion path promised a join flow that did not exist.
+    href: "/portal",
     accent: "oe-spirit-cyan",
   },
   {
@@ -23,7 +26,9 @@ const steps = [
     description:
       "In unserem Telegram-Channel und den wöchentlichen Check-In-Runden lernst du Menschen kennen, die ähnliche Fragen tragen wie du — ohne Smalltalk-Zwang.",
     cta: "Telegram öffnen",
-    href: "#",
+    // No destination yet. Rendered as a disabled "coming soon" chip rather
+    // than a dead link — put the real Telegram/Circle URL here when it exists.
+    href: undefined as string | undefined,
     accent: "oe-living-green",
   },
   {
@@ -33,7 +38,7 @@ const steps = [
     description:
       "Community bedeutet Mitgestaltung. Du kannst Themen vorschlagen, eigene Circles moderieren oder einfach regelmäßig präsent sein — jede Form zählt.",
     cta: "Mitmachen",
-    href: "#",
+    href: "/contact",
     accent: "oe-solar-gold",
   },
 ];
@@ -155,7 +160,7 @@ export default function CommunityPage() {
                   >
                     {step.number}
                   </span>
-                  <p className="text-xs font-semibold uppercase tracking-widest text-oe-pure-light/40 mb-2">
+                  <p className="text-xs font-semibold uppercase tracking-widest text-oe-pure-light/55 mb-2">
                     {step.subtitle}
                   </p>
                   <h3 className="font-serif text-2xl text-oe-pure-light mb-4">
@@ -164,12 +169,22 @@ export default function CommunityPage() {
                   <p className="text-sm leading-relaxed text-oe-pure-light/60 mb-8">
                     {step.description}
                   </p>
-                  <a
-                    href={step.href}
-                    className="inline-block px-5 py-2.5 rounded-xl border border-oe-living-green/30 text-sm text-oe-pure-light/80 hover:border-oe-living-green/60 hover:text-oe-pure-light transition-colors duration-200"
-                  >
-                    {step.cta}
-                  </a>
+                  {step.href ? (
+                    <Link
+                      href={step.href}
+                      data-cursor-hover
+                      className="inline-flex min-h-11 items-center rounded-xl border border-oe-living-green/30 px-5 text-sm text-oe-pure-light/80 transition-colors duration-200 hover:border-oe-living-green/60 hover:text-oe-pure-light focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-oe-solar-gold"
+                    >
+                      {step.cta}
+                    </Link>
+                  ) : (
+                    <span
+                      aria-disabled="true"
+                      className="inline-flex min-h-11 items-center rounded-xl border border-oe-pure-light/10 px-5 text-sm text-oe-pure-light/55"
+                    >
+                      {step.cta} · bald verfügbar
+                    </span>
+                  )}
                 </div>
               </motion.div>
             ))}

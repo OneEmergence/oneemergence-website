@@ -66,12 +66,24 @@ export function StarField({ className }: StarFieldProps) {
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
+    // Cached so the scroll handler never reads layout. `scrollHeight` is a
+    // layout-forcing read, and because Lenis drives the page with a per-frame
+    // `scrollTo`, a native scroll event fires roughly every frame — on the
+    // same frames framer-motion is writing new inline transforms, so layout is
+    // dirty and the read becomes a genuine forced synchronous reflow.
+    let maxScroll = 0
+
+    const measureScrollRange = () => {
+      maxScroll = document.documentElement.scrollHeight - window.innerHeight
+    }
+
     const handleResize = () => {
       const dpr = Math.min(window.devicePixelRatio, 2)
       canvas.width = canvas.offsetWidth * dpr
       canvas.height = canvas.offsetHeight * dpr
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
       initStars(canvas.offsetWidth, canvas.offsetHeight)
+      measureScrollRange()
     }
 
     const handleMouse = (e: MouseEvent) => {
@@ -82,9 +94,13 @@ export function StarField({ className }: StarFieldProps) {
     }
 
     const handleScroll = () => {
-      const maxScroll = document.documentElement.scrollHeight - window.innerHeight
       scrollRef.current = maxScroll > 0 ? window.scrollY / maxScroll : 0
     }
+
+    // Document height can change after mount (images, MDX, font swap), so
+    // refresh the cached range from a ResizeObserver rather than per scroll.
+    const docObserver = new ResizeObserver(measureScrollRange)
+    docObserver.observe(document.documentElement)
 
     handleResize()
     handleScroll()
@@ -186,6 +202,7 @@ export function StarField({ className }: StarFieldProps) {
     return () => {
       stop()
       observer.disconnect()
+      docObserver.disconnect()
       window.removeEventListener('resize', handleResize)
       window.removeEventListener('mousemove', handleMouse)
       window.removeEventListener('scroll', handleScroll)

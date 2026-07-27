@@ -8,14 +8,14 @@ export const metadata: Metadata = {
     title: "Über uns | OneEmergence",
     description:
       "Wer steckt hinter OneEmergence? Ursprung, Team und die Haltung, die uns antreibt.",
-    url: "https://oneemergence.org/about",
+    url: "/about",
   },
   twitter: {
     title: "Über uns | OneEmergence",
     description:
       "Wer steckt hinter OneEmergence? Ursprung, Team und die Haltung, die uns antreibt.",
   },
-  alternates: { canonical: "https://oneemergence.org/about" },
+  alternates: { canonical: "/about" },
 };
 
 export default function AboutLayout({

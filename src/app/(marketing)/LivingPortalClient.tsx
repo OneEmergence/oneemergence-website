@@ -15,7 +15,7 @@ import type { Post } from '@/lib/content'
 
 const EXP_ACCENT_CLASSES: Record<string, string> = {
   'oe-spirit-cyan': 'text-oe-spirit-cyan/70',
-  'oe-aurora-violet': 'text-oe-aurora-violet/70',
+  'oe-aurora-violet': 'text-oe-aurora-violet-ink',
   'oe-solar-gold': 'text-oe-solar-gold/70',
 }
 
@@ -54,14 +54,19 @@ export function LivingPortalClient({ posts }: { posts: PostPreview[] }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.2 }}
-            className="mb-4 text-xs font-semibold uppercase tracking-[0.4em] text-oe-aurora-violet/80"
+            className="mb-4 text-xs font-semibold uppercase tracking-[0.4em] text-oe-aurora-violet-ink"
           >
             Ein lebendiges Portal
           </motion.p>
 
+          {/* No `opacity: 0` in `initial`: this headline is the LCP candidate,
+              and shipping it invisible meant it could not paint until React
+              had hydrated AND a further 400ms delay had elapsed — past the
+              2.5s budget by construction on a mid-tier phone, and permanently
+              blank if the JS ever fails. It animates `y` only. */}
           <motion.h1
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ y: 24 }}
+            animate={{ y: 0 }}
             transition={{ duration: 0.9, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
             className="font-serif text-4xl leading-tight text-oe-solar-gold sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl"
           >
@@ -93,14 +98,14 @@ export function LivingPortalClient({ posts }: { posts: PostPreview[] }) {
             className="mt-10 flex flex-wrap justify-center gap-4"
           >
             <MagneticButton strength={0.3}>
-              <Link href="/manifesto">
+              <Link href="/manifesto" className="inline-flex">
                 <Button variant="primary" size="lg">
                   Manifesto entdecken
                 </Button>
               </Link>
             </MagneticButton>
             <MagneticButton strength={0.3}>
-              <Link href="/experiences">
+              <Link href="/experiences" className="inline-flex">
                 <Button variant="outline" size="lg">
                   Erfahrungen erkunden
                 </Button>
@@ -149,7 +154,7 @@ export function LivingPortalClient({ posts }: { posts: PostPreview[] }) {
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-oe-aurora-violet/70"
+              className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-oe-aurora-violet-ink"
             >
               Aus der Bibliothek
             </motion.p>
@@ -175,7 +180,7 @@ export function LivingPortalClient({ posts }: { posts: PostPreview[] }) {
                   data-cursor-hover
                   className="group block rounded-2xl border border-oe-pure-light/8 bg-oe-pure-light/[0.03] p-6 transition-all duration-300 hover:border-oe-aurora-violet/40 hover:bg-oe-aurora-violet/5"
                 >
-                  <time className="font-mono text-xs text-oe-pure-light/30 tracking-wider">
+                  <time className="font-mono text-xs text-oe-pure-light/55 tracking-wider">
                     {new Date(post.date).toLocaleDateString('de-DE', {
                       day: 'numeric',
                       month: 'long',
@@ -193,14 +198,14 @@ export function LivingPortalClient({ posts }: { posts: PostPreview[] }) {
                       {post.tags.map((tag) => (
                         <span
                           key={tag}
-                          className="rounded-full bg-oe-aurora-violet/10 px-2.5 py-0.5 text-[11px] text-oe-aurora-violet/70"
+                          className="rounded-full bg-oe-aurora-violet/10 px-2.5 py-0.5 text-[11px] text-oe-aurora-violet-ink"
                         >
                           {tag}
                         </span>
                       ))}
                     </div>
                   )}
-                  <div className="mt-5 flex items-center gap-2 text-xs text-oe-aurora-violet/70">
+                  <div className="mt-5 flex items-center gap-2 text-xs text-oe-aurora-violet-ink">
                     <span>{post.readingTime} Min. Lesezeit</span>
                     <ArrowRight
                       size={12}
@@ -298,7 +303,7 @@ export function LivingPortalClient({ posts }: { posts: PostPreview[] }) {
                   <h3 className="mt-2 font-serif text-lg text-oe-pure-light transition-colors group-hover:text-oe-solar-gold">
                     {exp.title}
                   </h3>
-                  <p className="mt-3 text-xs text-oe-pure-light/40">{exp.duration}</p>
+                  <p className="mt-3 text-xs text-oe-pure-light/55">{exp.duration}</p>
                 </Link>
               </motion.div>
             ))}

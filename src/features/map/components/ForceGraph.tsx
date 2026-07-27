@@ -11,7 +11,11 @@ import {
   type SimulationNodeDatum,
   type SimulationLinkDatum,
 } from 'd3-force'
-import { zoom as d3Zoom, select, type ZoomBehavior } from 'd3'
+// Granular imports: the `d3` umbrella re-exports ~30 sibling packages and
+// tree-shaking that chain is unreliable, so the whole barrel ended up in the
+// /inner/map chunk.
+import { zoom as d3Zoom, type ZoomBehavior } from 'd3-zoom'
+import { select } from 'd3-selection'
 import { cn } from '@/lib/utils'
 import { NODE_TYPE_COLORS } from '../schemas'
 import type { MapNodeType } from '../schemas'

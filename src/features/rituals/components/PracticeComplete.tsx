@@ -94,7 +94,7 @@ export function PracticeComplete({
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Notizen zu deiner Praxis (optional)..."
             rows={3}
-            className="w-full resize-none rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm text-oe-pure-light placeholder:text-oe-pure-light/30 focus:border-oe-aurora-violet/50 focus:outline-none"
+            className="w-full resize-none rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm text-oe-pure-light placeholder:text-oe-pure-light/55 focus:border-oe-aurora-violet/50 focus:outline-none"
           />
 
           {error && <p className="text-sm text-red-400">{error}</p>}
@@ -104,7 +104,7 @@ export function PracticeComplete({
               onClick={handleSave}
               disabled={isPending}
               className={cn(
-                'flex-1 rounded-lg bg-oe-aurora-violet/20 px-4 py-2.5 text-sm font-medium text-oe-aurora-violet transition-colors',
+                'flex-1 rounded-lg bg-oe-aurora-violet/20 px-4 py-2.5 text-sm font-medium text-oe-aurora-violet-ink transition-colors',
                 'hover:bg-oe-aurora-violet/30 disabled:opacity-50'
               )}
             >

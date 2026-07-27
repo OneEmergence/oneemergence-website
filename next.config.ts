@@ -23,6 +23,35 @@ const nextConfig: NextConfig = {
   // container runtime to supply env). Gating it keeps `pnpm start` honest
   // while Docker still gets the slim self-contained server.
   output: process.env.NEXT_OUTPUT === "standalone" ? "standalone" : undefined,
+
+  images: {
+    // AVIF first — typically 20–35% smaller than WebP, including the priority
+    // emblem on the LCP path.
+    formats: ["image/avif", "image/webp"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "*.supabase.co",
+        pathname: "/storage/v1/object/public/**",
+      },
+    ],
+  },
+
+  async redirects() {
+    return [
+      // Every article used to live at two URLs with no canonical relationship,
+      // and the site linked both from different places. One article, one URL:
+      // /journal/<slug>. /library stays the unified discovery index.
+      {
+        source: "/library/journal/:slug",
+        destination: "/journal/:slug",
+        permanent: true,
+      },
+      // /content was an orphaned duplicate of the journal index that the
+      // sitemap nonetheless advertised at priority 0.8.
+      { source: "/content", destination: "/library", permanent: true },
+    ];
+  },
 };
 
 const configWithIntl = withNextIntl(nextConfig);

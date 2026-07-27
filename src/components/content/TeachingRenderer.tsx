@@ -21,7 +21,7 @@ export function TeachingRenderer({ meta, content, readingTime }: TeachingRendere
         <h1 className="font-serif text-4xl leading-tight text-oe-pure-light md:text-5xl">
           {meta.title}
         </h1>
-        <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-oe-pure-light/40">
+        <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-oe-pure-light/55">
           <time>{meta.date}</time>
           {readingTime && (
             <>
@@ -32,7 +32,7 @@ export function TeachingRenderer({ meta, content, readingTime }: TeachingRendere
           {meta.difficulty && (
             <>
               <span>·</span>
-              <span className="rounded-full bg-oe-aurora-violet/10 px-2.5 py-0.5 text-xs text-oe-aurora-violet/70">
+              <span className="rounded-full bg-oe-aurora-violet/10 px-2.5 py-0.5 text-xs text-oe-aurora-violet-ink">
                 {meta.difficulty}
               </span>
             </>
@@ -46,14 +46,14 @@ export function TeachingRenderer({ meta, content, readingTime }: TeachingRendere
       {/* Related Concepts */}
       {meta.relatedConcepts.length > 0 && (
         <div className="mt-12 border-t border-oe-pure-light/10 pt-8">
-          <h3 className="mb-4 text-xs font-medium uppercase tracking-[0.2em] text-oe-pure-light/40">
+          <h3 className="mb-4 text-xs font-medium uppercase tracking-[0.2em] text-oe-pure-light/55">
             Verwandte Konzepte
           </h3>
           <div className="flex flex-wrap gap-2">
             {meta.relatedConcepts.map((concept) => (
               <span
                 key={concept}
-                className="rounded-full border border-oe-aurora-violet/20 px-3 py-1 text-sm text-oe-aurora-violet/70"
+                className="rounded-full border border-oe-aurora-violet/20 px-3 py-1 text-sm text-oe-aurora-violet-ink"
               >
                 {concept}
               </span>
@@ -65,7 +65,7 @@ export function TeachingRenderer({ meta, content, readingTime }: TeachingRendere
       {/* References */}
       {meta.references.length > 0 && (
         <div className="mt-8 border-t border-oe-pure-light/10 pt-8">
-          <h3 className="mb-4 text-xs font-medium uppercase tracking-[0.2em] text-oe-pure-light/40">
+          <h3 className="mb-4 text-xs font-medium uppercase tracking-[0.2em] text-oe-pure-light/55">
             Referenzen
           </h3>
           <ul className="space-y-2 text-sm text-oe-pure-light/50">

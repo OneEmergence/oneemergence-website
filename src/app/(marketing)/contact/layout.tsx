@@ -8,14 +8,14 @@ export const metadata: Metadata = {
     title: "Kontakt | OneEmergence",
     description:
       "Schreib uns — Anfragen, Kooperationen, Presse. Wir lesen jede Nachricht persönlich.",
-    url: "https://oneemergence.org/contact",
+    url: "/contact",
   },
   twitter: {
     title: "Kontakt | OneEmergence",
     description:
       "Schreib uns — Anfragen, Kooperationen, Presse. Wir lesen jede Nachricht persönlich.",
   },
-  alternates: { canonical: "https://oneemergence.org/contact" },
+  alternates: { canonical: "/contact" },
 };
 
 export default function ContactLayout({

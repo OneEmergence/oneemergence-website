@@ -1,96 +1,61 @@
 import { MetadataRoute } from "next";
-import { getPosts, getStories } from "@/lib/content";
+import { getPosts, getStories, getLibraryItems } from "@/lib/content";
+import { siteUrl } from "@/lib/env";
 
+/**
+ * Rules this file follows, each one a defect it used to have:
+ *
+ * - Never submit a `noindex` page. The two /legal/* routes set
+ *   `robots: noindex`; Search Console reports a submitted-but-noindex URL as
+ *   an error and distrusts the whole sitemap for it.
+ * - No fabricated `lastModified`. Static routes used to stamp the build time,
+ *   telling crawlers all eleven pages changed on every deploy — after which
+ *   the field is simply ignored. Content routes carry real dates instead.
+ * - One URL per article. Journal posts appear only as /journal/<slug>;
+ *   /library/journal/<slug> permanently redirects there, so `getLibraryItems`
+ *   is filtered to avoid submitting each post twice.
+ * - Nothing unlisted. `listed: false` stories are private links.
+ */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://oneemergence.org";
-
   const staticRoutes: MetadataRoute.Sitemap = [
-    {
-      url: baseUrl,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 1,
-    },
-    {
-      url: `${baseUrl}/manifesto`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/about`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/content`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/events`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/community`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/brand`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/s`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/contact`,
-      lastModified: new Date(),
-      changeFrequency: "yearly",
-      priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/legal/imprint`,
-      lastModified: new Date(),
-      changeFrequency: "yearly",
-      priority: 0.3,
-    },
-    {
-      url: `${baseUrl}/legal/privacy`,
-      lastModified: new Date(),
-      changeFrequency: "yearly",
-      priority: 0.3,
-    },
+    { url: siteUrl, changeFrequency: "monthly", priority: 1 },
+    { url: `${siteUrl}/manifesto`, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${siteUrl}/about`, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${siteUrl}/library`, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${siteUrl}/journal`, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${siteUrl}/s`, changeFrequency: "weekly", priority: 0.7 },
+    { url: `${siteUrl}/experiences`, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${siteUrl}/events`, changeFrequency: "weekly", priority: 0.7 },
+    { url: `${siteUrl}/community`, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${siteUrl}/contact`, changeFrequency: "yearly", priority: 0.5 },
+    { url: `${siteUrl}/brand`, changeFrequency: "monthly", priority: 0.3 },
   ];
 
-  const posts = getPosts();
-  const postRoutes: MetadataRoute.Sitemap = posts.map((post) => ({
-    url: `${baseUrl}/journal/${post.slug}`,
-    lastModified: post.date ? new Date(post.date) : new Date(),
+  const journalRoutes: MetadataRoute.Sitemap = getPosts().map((post) => ({
+    url: `${siteUrl}/journal/${post.slug}`,
+    lastModified: new Date(post.date),
     changeFrequency: "monthly",
     priority: 0.6,
   }));
 
-  // `listed: false` stories are deliberately absent: a private link sent to
-  // one recipient must not show up in the sitemap.
+  // Sacred content only — journal entries are already covered above.
+  const libraryRoutes: MetadataRoute.Sitemap = getLibraryItems()
+    .filter((item) => item.libraryType !== "journal")
+    .map((item) => ({
+      url: `${siteUrl}/library/${item.libraryType}/${item.slug}`,
+      lastModified: new Date(item.date),
+      changeFrequency: "monthly",
+      priority: 0.6,
+    }));
+
   const storyRoutes: MetadataRoute.Sitemap = getStories()
     .filter((s) => s.meta.listed)
     .map(({ meta }) => ({
-      url: `${baseUrl}/s/${meta.slug}`,
+      url: `${siteUrl}/s/${meta.slug}`,
       lastModified: new Date(meta.updated ?? meta.date),
       changeFrequency: "monthly",
       priority: 0.7,
     }));
 
-  return [...staticRoutes, ...postRoutes, ...storyRoutes];
+  return [...staticRoutes, ...journalRoutes, ...libraryRoutes, ...storyRoutes];
 }

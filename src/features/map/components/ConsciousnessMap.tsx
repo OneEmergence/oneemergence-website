@@ -2,7 +2,27 @@
 
 import { useCallback, useMemo, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { ForceGraph } from './ForceGraph'
+import dynamic from 'next/dynamic'
+
+// The d3 force simulation and zoom machinery blocked hydration of /inner/map
+// even though the graph is a below-the-chrome viewport that cannot be
+// interacted with until the simulation settles. `ssr: false` because it needs
+// real element dimensions anyway.
+const ForceGraph = dynamic(
+  () => import('./ForceGraph').then((m) => m.ForceGraph),
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        role="status"
+        aria-live="polite"
+        className="flex h-full w-full items-center justify-center text-sm text-oe-pure-light/55"
+      >
+        Karte wird geladen…
+      </div>
+    ),
+  }
+)
 import { NodeDetailPanel } from './NodeDetailPanel'
 import { MapToolbar } from './MapToolbar'
 import { CreateNodeDialog } from './CreateNodeDialog'
@@ -216,7 +236,7 @@ export function ConsciousnessMap({ initialData }: ConsciousnessMapProps) {
     <div className="relative h-full w-full">
       {/* Connection mode indicator */}
       {connectionMode && (
-        <div className="absolute left-1/2 top-4 z-20 -translate-x-1/2 rounded-full border border-oe-aurora-violet/30 bg-oe-deep-space/90 px-4 py-1.5 text-xs text-oe-aurora-violet backdrop-blur-sm">
+        <div className="absolute left-1/2 top-4 z-20 -translate-x-1/2 rounded-full border border-oe-aurora-violet/30 bg-oe-deep-space/90 px-4 py-1.5 text-xs text-oe-aurora-violet-ink backdrop-blur-sm">
           {connectionSource
             ? 'Wähle den zweiten Knoten'
             : 'Wähle den ersten Knoten'}
@@ -225,7 +245,7 @@ export function ConsciousnessMap({ initialData }: ConsciousnessMapProps) {
 
       {/* Loading indicator */}
       {isPending && (
-        <div className="absolute right-4 top-4 z-20 rounded-full bg-oe-deep-space/80 px-3 py-1 text-xs text-oe-pure-light/40">
+        <div className="absolute right-4 top-4 z-20 rounded-full bg-oe-deep-space/80 px-3 py-1 text-xs text-oe-pure-light/55">
           Speichern…
         </div>
       )}
@@ -296,13 +316,13 @@ export function ConsciousnessMap({ initialData }: ConsciousnessMapProps) {
             <p className="font-serif text-lg text-oe-pure-light/60">
               Deine Konstellation
             </p>
-            <p className="mt-2 text-sm text-oe-pure-light/30">
+            <p className="mt-2 text-sm text-oe-pure-light/55">
               Schreibe Journal-Einträge, um Themen zu entdecken, oder erstelle
               manuell Knoten für Einsichten und Themen.
             </p>
             <button
               onClick={() => setCreateDialogOpen(true)}
-              className="mt-4 rounded-lg bg-oe-aurora-violet/15 px-4 py-2 text-sm text-oe-aurora-violet transition-colors hover:bg-oe-aurora-violet/25"
+              className="mt-4 rounded-lg bg-oe-aurora-violet/15 px-4 py-2 text-sm text-oe-aurora-violet-ink transition-colors hover:bg-oe-aurora-violet/25"
             >
               Ersten Knoten erstellen
             </button>

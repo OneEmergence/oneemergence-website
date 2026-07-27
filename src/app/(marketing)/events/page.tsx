@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,12 @@ interface Event {
   id: string;
   title: string;
   subtitle: string;
+  /**
+   * ISO start date, used for filtering. `date` stays the display string —
+   * `new Date("12. April 2025")` is Invalid Date, so filtering on the display
+   * value would drop everything or nothing, non-deterministically.
+   */
+  startsAt: string;
   date: string;
   time: string;
   location: string;
@@ -25,6 +32,7 @@ const events: Event[] = [
     id: "1",
     title: "Feld-Gespräch: Stille & Sprache",
     subtitle: "Ein geführter Kreis über das, was zwischen den Worten lebt",
+    startsAt: "2025-04-12",
     date: "12. April 2025",
     time: "19:00 – 21:00 Uhr",
     location: "Online via Circle",
@@ -38,6 +46,7 @@ const events: Event[] = [
     id: "2",
     title: "Embodiment Morning",
     subtitle: "Körperarbeit, Atemübungen & stilles Essen",
+    startsAt: "2025-05-03",
     date: "3. Mai 2025",
     time: "09:00 – 13:00 Uhr",
     location: "München, Schwabing",
@@ -50,6 +59,7 @@ const events: Event[] = [
     id: "3",
     title: "Lesezirkel: Kapitel der Verbindung",
     subtitle: "Gemeinsames Lesen & Reflektieren",
+    startsAt: "2025-04-28",
     date: "28. April 2025",
     time: "18:30 – 20:00 Uhr",
     location: "Online via Circle",
@@ -62,6 +72,7 @@ const events: Event[] = [
     id: "4",
     title: "Retreat: In die Stille gehen",
     subtitle: "3 Tage Wald, Schweigen und Begegnung",
+    startsAt: "2025-06-20",
     date: "20. – 22. Juni 2025",
     time: "Anreise Fr. 16:00 Uhr",
     location: "Bayerischer Wald",
@@ -75,6 +86,7 @@ const events: Event[] = [
     id: "5",
     title: "Q&A mit Mia: Psychedelik & Integration",
     subtitle: "Offene Fragen, ehrliche Antworten",
+    startsAt: "2025-05-15",
     date: "15. Mai 2025",
     time: "20:00 – 21:30 Uhr",
     location: "Online via Circle",
@@ -87,6 +99,7 @@ const events: Event[] = [
     id: "6",
     title: "Workshop: Grenzen & Kontakt",
     subtitle: "Theorie & Praxis in kleiner Gruppe",
+    startsAt: "2025-06-07",
     date: "7. Juni 2025",
     time: "10:00 – 16:00 Uhr",
     location: "Berlin, Mitte",
@@ -139,7 +152,7 @@ function EventCard({ event, index }: { event: Event; index: number }) {
         {event.spots !== null && (
           <div className="text-right flex-shrink-0">
             <p className="text-2xl font-serif text-oe-pure-light">{event.spots}</p>
-            <p className="text-xs text-oe-pure-light/40 uppercase tracking-widest">Plätze</p>
+            <p className="text-xs text-oe-pure-light/55 uppercase tracking-widest">Plätze</p>
           </div>
         )}
       </div>
@@ -151,17 +164,19 @@ function EventCard({ event, index }: { event: Event; index: number }) {
       <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
         <div className="space-y-1">
           <p className="text-xs font-semibold text-oe-pure-light/80">{event.date}</p>
-          <p className="text-xs text-oe-pure-light/40">{event.time}</p>
-          <p className="text-xs text-oe-pure-light/40">{event.location}</p>
+          <p className="text-xs text-oe-pure-light/55">{event.time}</p>
+          <p className="text-xs text-oe-pure-light/55">{event.location}</p>
         </div>
-        <div className="flex gap-3">
-          <button className="flex-1 sm:flex-none px-4 py-2.5 rounded-lg border border-oe-living-green/25 text-xs text-oe-pure-light/70 hover:border-oe-living-green/55 hover:text-oe-pure-light transition-colors duration-200">
-            Kalender
-          </button>
-          <button className="flex-1 sm:flex-none px-4 py-2.5 rounded-lg bg-oe-living-green/15 border border-oe-living-green/40 text-xs text-oe-pure-light hover:bg-oe-living-green/25 transition-colors duration-200">
-            Anmelden
-          </button>
-        </div>
+        {/* Registration runs over the contact form until a booking flow
+            exists. Both buttons were inert <button>s with no handler — the
+            card's entire purpose did nothing when clicked. */}
+        <Link
+          href={`/contact?event=${encodeURIComponent(event.title)}`}
+          data-cursor-hover
+          className="inline-flex min-h-11 items-center rounded-full border border-oe-living-green/40 bg-oe-living-green/15 px-5 text-xs text-oe-pure-light transition-colors duration-200 hover:bg-oe-living-green/25 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-oe-solar-gold"
+        >
+          Platz anfragen
+        </Link>
       </div>
     </motion.div>
   );
@@ -169,6 +184,10 @@ function EventCard({ event, index }: { event: Event; index: number }) {
 
 export default function EventsPage() {
   const router = useRouter();
+
+  // Compare date-only so an event does not vanish partway through its own day.
+  const today = new Date().toISOString().slice(0, 10);
+  const upcoming = events.filter((event) => event.startsAt >= today);
 
   return (
     <div className="relative isolate overflow-hidden bg-oe-deep-space text-oe-pure-light">
@@ -207,9 +226,24 @@ export default function EventsPage() {
       {/* Events Grid */}
       <section className="px-4 sm:px-6 py-12 md:py-16">
         <div className="mx-auto max-w-4xl space-y-8">
-          {events.map((event, i) => (
-            <EventCard key={event.id} event={event} index={i} />
-          ))}
+          {upcoming.length > 0 ? (
+            upcoming.map((event, i) => (
+              <EventCard key={event.id} event={event} index={i} />
+            ))
+          ) : (
+            /* The page used to advertise events that were over a year past,
+               still offering "18 Plätze". No upcoming events is a real state
+               and needs to look like one. */
+            <div className="rounded-2xl border border-oe-pure-light/10 bg-oe-pure-light/[0.03] px-6 py-14 text-center">
+              <p className="font-serif text-2xl text-oe-pure-light">
+                Gerade ist kein Gathering ausgeschrieben.
+              </p>
+              <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-oe-pure-light/60">
+                Die nächsten Termine entstehen. Trag dich unten ein, dann
+                erfährst du davon, bevor sie öffentlich werden.
+              </p>
+            </div>
+          )}
         </div>
       </section>
 

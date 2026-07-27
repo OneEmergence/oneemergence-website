@@ -8,7 +8,7 @@ import { AvatarUpload } from './AvatarUpload'
 
 const inputClasses = cn(
   'w-full rounded-lg border border-oe-warm-sand/20 bg-oe-warm-sand/[0.04] px-4 py-2.5',
-  'text-sm text-oe-pure-light placeholder:text-oe-pure-light/30',
+  'text-sm text-oe-pure-light placeholder:text-oe-pure-light/55',
   'transition-colors focus:border-oe-solar-gold/60 focus:outline-none focus:ring-1 focus:ring-oe-solar-gold/40'
 )
 
@@ -38,7 +38,7 @@ export function ProfileSettingsForm({ userId, profile }: ProfileSettingsFormProp
     <section className="space-y-6">
       <div>
         <h2 className="font-serif text-xl text-oe-pure-light">Profil</h2>
-        <p className="mt-1 text-sm text-oe-pure-light/40">
+        <p className="mt-1 text-sm text-oe-pure-light/55">
           Wie du im inneren Raum erscheinst.
         </p>
       </div>
@@ -67,7 +67,7 @@ export function ProfileSettingsForm({ userId, profile }: ProfileSettingsFormProp
 
         <div className="space-y-1.5">
           <label htmlFor="bio" className="block text-xs text-oe-pure-light/50">
-            Über dich <span className="text-oe-pure-light/25">(optional)</span>
+            Über dich <span className="text-oe-pure-light/55">(optional)</span>
           </label>
           <textarea
             id="bio"
