@@ -15,8 +15,13 @@
   --color-oe-depth-solarpunk: #101B2E;
   --color-oe-depth-warm: #1A1610;
 
-  --font-family-sans: var(--font-inter), "Inter", system-ui, sans-serif;
-  --font-family-serif: var(--font-cormorant), "Cormorant", Georgia, serif;
+  /* Tailwind v4's font namespace is `--font-*`, NOT `--font-family-*`. Under
+     the old names these produced `font-family-serif` utilities nobody uses,
+     while `font-serif` silently kept Tailwind's ui-serif/Georgia default — so
+     every serif heading on the site rendered in Georgia while Cormorant was
+     still being preloaded on every page. Verified in-browser before/after. */
+  --font-sans: var(--font-inter), "Inter", system-ui, sans-serif;
+  --font-serif: var(--font-cormorant), "Cormorant", Georgia, serif;
 }
 
 :root {
@@ -89,7 +94,7 @@ body {
 }
 
 /* ─── Three-depth page atmosphere ─── */
-.oe-atmosphere {
+:is(.oe-atmosphere, .oe-stage) {
   --oe-atmosphere-base: 10 15 31;
   --oe-atmosphere-primary: 124 92 255;
   --oe-atmosphere-secondary: 84 226 233;
@@ -97,17 +102,20 @@ body {
   --oe-atmosphere-artwork: none;
   --oe-atmosphere-artwork-echo: var(--oe-atmosphere-artwork);
   --oe-atmosphere-artwork-opacity: 0.5;
+}
+
+.oe-atmosphere {
   contain: paint;
 }
 
-.oe-atmosphere[data-atmosphere="cosmic"] {
+:is(.oe-atmosphere, .oe-stage)[data-atmosphere="cosmic"] {
   --oe-atmosphere-base: 10 15 31;
   --oe-atmosphere-primary: 124 92 255;
   --oe-atmosphere-secondary: 84 226 233;
   --oe-atmosphere-seed: 246 196 83;
 }
 
-.oe-atmosphere[data-atmosphere="solarpunk"] {
+:is(.oe-atmosphere, .oe-stage)[data-atmosphere="solarpunk"] {
   --oe-atmosphere-base: 16 27 46;
   --oe-atmosphere-primary: 110 219 143;
   --oe-atmosphere-secondary: 246 196 83;
@@ -115,7 +123,7 @@ body {
   --oe-atmosphere-artwork-opacity: 0.56;
 }
 
-.oe-atmosphere[data-atmosphere="transitional"] {
+:is(.oe-atmosphere, .oe-stage)[data-atmosphere="transitional"] {
   --oe-atmosphere-base: 10 15 31;
   --oe-atmosphere-primary: 124 92 255;
   --oe-atmosphere-secondary: 232 201 168;
@@ -123,7 +131,7 @@ body {
   --oe-atmosphere-artwork-opacity: 0.42;
 }
 
-.oe-atmosphere[data-atmosphere="warm"] {
+:is(.oe-atmosphere, .oe-stage)[data-atmosphere="warm"] {
   --oe-atmosphere-base: 26 22 16;
   --oe-atmosphere-primary: 232 201 168;
   --oe-atmosphere-secondary: 246 196 83;
@@ -383,6 +391,232 @@ html[data-intensity="still"] .oe-atmosphere__artwork {
   .oe-atmosphere__spine--halo {
     stroke-width: 10;
   }
+}
+
+/* ─── Story layout ───────────────────────────────────────────────────────────
+ *
+ * `.oe-prose` is a full-bleed grid with three named columns. Body copy sits in
+ * `text` by default; `.oe-wide` and `.oe-full` break out without negative
+ * margins or wrapper gymnastics. Used by /s/[slug]; see
+ * `src/components/content/mdx-kit.tsx`.
+ */
+/* The single source of truth for the reading measure. The hero, the article
+   grid and every stage body resolve to the same column, so nothing on the
+   page is off by a gutter. */
+.oe-measure {
+  width: min(100% - 2rem, 44rem);
+}
+
+.oe-prose {
+  display: grid;
+  grid-template-columns:
+    [full-start] minmax(1rem, 1fr)
+    [wide-start] minmax(0, 7rem)
+    [text-start] min(100% - 2rem, 44rem) [text-end]
+    minmax(0, 7rem) [wide-end]
+    minmax(1rem, 1fr) [full-end];
+}
+
+.oe-prose > * {
+  grid-column: text;
+  /* Grid items do not margin-collapse. Spacing is driven by margin-top alone
+     so the typography plugin's rhythm is not doubled between siblings. */
+  margin-bottom: 0;
+}
+
+.oe-prose > .oe-wide {
+  grid-column: wide;
+}
+
+.oe-prose > .oe-full {
+  grid-column: full;
+}
+
+/* ─── Stage: the scroll background ───────────────────────────────────────────
+ *
+ * A chapter that carries its own background. The background layer is sticky
+ * inside the stage, so it holds still while the copy scrolls past, then hands
+ * off to the next stage. Fade and drift are scroll-driven CSS animations —
+ * compositor-only, no scroll listener, no client component.
+ */
+.oe-stage {
+  position: relative;
+  /* Two atmospheres must not butt up against each other. */
+  padding-block: clamp(4rem, 12vh, 9rem);
+}
+
+.oe-stage__bg {
+  position: absolute;
+  inset: 0;
+  /* `clip` (not `hidden`) so the sticky child still resolves against the
+     viewport instead of a new scroll container. */
+  overflow: clip;
+  pointer-events: none;
+  /* Feathered against the stage box — a fixed length, so short and long
+     stages dissolve into their neighbours identically instead of cutting a
+     hard horizontal line across the page. Masking is paint-only and does not
+     disturb the sticky child's layout. */
+  --oe-stage-feather: clamp(3rem, 9vh, 7rem);
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    #000 var(--oe-stage-feather),
+    #000 calc(100% - var(--oe-stage-feather)),
+    transparent
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    #000 var(--oe-stage-feather),
+    #000 calc(100% - var(--oe-stage-feather)),
+    transparent
+  );
+}
+
+.oe-stage__layer {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  /* Default state: fully visible. Any browser without view timelines, and
+     Still mode, get a plain static background rather than a blank panel. */
+  opacity: 1;
+}
+
+/* `rehype-autolink-headings` runs with behavior: "wrap", so every heading in
+   every MDX route is wrapped in an <a>. Without this it inherits the prose
+   link colour and underline and reads as a link, not a heading. Applies to
+   journal, library and stories alike. */
+.prose :is(h1, h2, h3, h4, h5, h6) > a {
+  color: inherit;
+  text-decoration: none;
+  font-weight: inherit;
+}
+
+.prose :is(h1, h2, h3, h4, h5, h6) > a:hover {
+  text-decoration: underline;
+  text-decoration-color: rgb(124 92 255 / 0.35);
+  text-underline-offset: 0.2em;
+}
+
+.oe-stage__wash {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      ellipse 90% 60% at 50% 0%,
+      rgb(var(--oe-atmosphere-primary) / 0.16),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 70% 50% at 12% 90%,
+      rgb(var(--oe-atmosphere-secondary) / 0.1),
+      transparent 72%
+    ),
+    linear-gradient(to bottom, rgb(var(--oe-atmosphere-base) / 0.75), rgb(var(--oe-atmosphere-base) / 0.92));
+}
+
+.oe-stage__image {
+  position: absolute;
+  inset: 0;
+  background-image: var(--oe-stage-image);
+  background-position: center;
+  background-size: cover;
+  opacity: 0.3;
+  mix-blend-mode: screen;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent);
+  will-change: transform;
+}
+
+.oe-stage__body {
+  position: relative;
+  margin-inline: auto;
+  width: min(100% - 2rem, 44rem); /* keep in sync with .oe-measure */
+}
+
+.oe-stage__body--wide {
+  width: min(100% - 2rem, 58rem);
+}
+
+@keyframes oe-stage-fade {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  16%,
+  84% {
+    opacity: 1;
+  }
+}
+
+@keyframes oe-stage-image-drift {
+  from {
+    transform: scale(1.1) translateY(-2.5%);
+  }
+  to {
+    transform: scale(1.1) translateY(2.5%);
+  }
+}
+
+@keyframes oe-reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(1.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.oe-reveal {
+  /* Visible by default — the animation only ever *replaces* this state, so a
+     missing timeline can never hide content. */
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    html:is([data-intensity="balanced"], [data-intensity="immersive"]) .oe-stage__layer {
+      animation: oe-stage-fade linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+    }
+
+    html:is([data-intensity="balanced"], [data-intensity="immersive"]) .oe-reveal {
+      animation: oe-reveal-in linear both;
+      animation-timeline: view();
+      animation-range: entry 10% entry 65%;
+    }
+
+    html[data-intensity="immersive"] .oe-stage__image {
+      animation: oe-stage-image-drift linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+    }
+  }
+}
+
+/* Coarse pointers scroll with momentum; scroll-linked drift reads as lag. */
+@media (pointer: coarse) {
+  .oe-stage__image {
+    animation: none !important;
+  }
+}
+
+/* Still mode: the stage keeps its colour field, loses the photograph and all
+   scroll linkage. A quieter page, not a broken one. */
+html[data-intensity="still"] .oe-stage__image {
+  display: none;
+}
+
+/* `<Steps>` numbering — CSS counters, so authors never hand-number a list. */
+.oe-step {
+  counter-increment: oe-step;
+}
+
+.oe-step__num::before {
+  content: counter(oe-step);
 }
 
 /* ─── Intensity mode CSS gates ─── */

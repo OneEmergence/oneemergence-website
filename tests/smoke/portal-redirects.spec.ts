@@ -9,9 +9,15 @@ import { test, expect } from "@playwright/test";
  * The tests are skipped when NEXT_PUBLIC_SUPABASE_URL is not configured
  * (e.g. CI without Supabase credentials) to avoid false failures caused
  * by the proxy throwing when credentials are absent.
+ *
+ * CI *does* set the var — `next start` refuses to boot without it — but to a
+ * deliberately non-resolving placeholder (see .github/workflows/ci.yml).
+ * Treat that as "not configured": pointing these tests at a host that never
+ * answers buys nothing but supabase-js retry flake.
  */
 
-const supabaseConfigured = !!process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseConfigured = !!supabaseUrl && !supabaseUrl.includes("placeholder");
 
 const protectedRoutes = [
   { path: "/inner", name: "Dashboard" },

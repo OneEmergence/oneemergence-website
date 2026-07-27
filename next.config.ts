@@ -16,8 +16,13 @@ const withAnalyzer = withBundleAnalyzer({
 });
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  output: "standalone",
+  // Standalone output is opt-in, set by the Dockerfile's builder stage.
+  // Unconditionally on, it breaks the normal local production loop twice:
+  // `next start` refuses to serve a standalone build, and
+  // `.next/standalone/server.js` does not load `.env*` files (it expects the
+  // container runtime to supply env). Gating it keeps `pnpm start` honest
+  // while Docker still gets the slim self-contained server.
+  output: process.env.NEXT_OUTPUT === "standalone" ? "standalone" : undefined,
 };
 
 const configWithIntl = withNextIntl(nextConfig);

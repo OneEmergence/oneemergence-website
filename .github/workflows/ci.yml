@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, dev]
   pull_request:
-    branches: [main]
+    branches: [main, dev]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -39,6 +39,17 @@ jobs:
     name: Playwright Tests
     needs: quality
     runs-on: ubuntu-latest
+    # Playwright's webServer runs `pnpm build && pnpm start`, and `next start`
+    # boots with NODE_ENV=production — so src/lib/env.ts enforces
+    # REQUIRED_IN_PROD at boot and the server never comes up without these.
+    # Same placeholder convention as the Dockerfile: non-empty (Zod uses
+    # .min(1)) but deliberately non-resolving, so nothing real is reachable
+    # from CI. Tests needing genuine credentials detect "placeholder" and skip.
+    env:
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-anon-key
+      DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
     steps:
       - uses: actions/checkout@v4
 

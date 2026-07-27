@@ -3,6 +3,7 @@ import path from 'path'
 import matter from 'gray-matter'
 import {
   JournalMeta,
+  StoryMeta,
   ContentType,
   CONTENT_TYPE_DIRS,
   getSchemaForType,
@@ -16,6 +17,7 @@ import { compileMdx } from './mdx'
 const CONTENT_ROOT = path.join(process.cwd(), 'src/content')
 const JOURNAL_DIR = path.join(CONTENT_ROOT, 'journal')
 const PAGES_DIR = path.join(CONTENT_ROOT, 'pages')
+const STORIES_DIR = path.join(CONTENT_ROOT, 'stories')
 
 function contentDir(type: ContentType): string {
   return path.join(CONTENT_ROOT, CONTENT_TYPE_DIRS[type])
@@ -120,6 +122,55 @@ export function getAdjacentPosts(
     prev: index < posts.length - 1 ? posts[index + 1] : null,
     next: index > 0 ? posts[index - 1] : null,
   }
+}
+
+// ─── Stories ────────────────────────────────────────────────────────────────
+//
+// One `.mdx` file in src/content/stories/ ⇒ one shareable page at /s/<slug>.
+// Everything about presentation (atmosphere, accent, hero, CTA) is frontmatter;
+// the body is MDX using the kit in components/content/mdx-kit.
+
+export type StoryEntry = { meta: StoryMeta; readingTime: number }
+
+function readStory(file: string): StoryEntry {
+  const slug = slugFromFilename(file)
+  const raw = fs.readFileSync(path.join(STORIES_DIR, file), 'utf-8')
+  const { data, content } = matter(raw)
+  return {
+    meta: StoryMeta.parse({ ...data, slug }),
+    readingTime: calcReadingTime(content),
+  }
+}
+
+/**
+ * All published stories, newest first.
+ *
+ * `listed: false` stories are still returned — they are real pages that must
+ * be statically generated. Filter with `.filter(s => s.meta.listed)` for the
+ * index and the sitemap; a direct link keeps working either way.
+ */
+export function getStories(): StoryEntry[] {
+  return listContentFiles(STORIES_DIR)
+    .map(readStory)
+    .filter((s) => s.meta.published)
+    .sort((a, b) => (a.meta.date < b.meta.date ? 1 : -1))
+}
+
+export async function getStoryBySlug(
+  slug: string,
+): Promise<{ meta: StoryMeta; content: React.ReactElement; readingTime: number } | null> {
+  const mdxPath = path.join(STORIES_DIR, `${slug}.mdx`)
+  const mdPath = path.join(STORIES_DIR, `${slug}.md`)
+  const filePath = fs.existsSync(mdxPath) ? mdxPath : fs.existsSync(mdPath) ? mdPath : null
+  if (!filePath) return null
+
+  const raw = fs.readFileSync(filePath, 'utf-8')
+  const { content: rawContent } = matter(raw)
+  const { content, frontmatter } = await compileMdx<Record<string, unknown>>(raw)
+  const meta = StoryMeta.parse({ ...frontmatter, slug })
+  if (!meta.published) return null
+
+  return { meta, content, readingTime: calcReadingTime(rawContent) }
 }
 
 // ─── Sacred Content ─────────────────────────────────────────────────────────

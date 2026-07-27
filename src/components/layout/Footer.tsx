@@ -11,6 +11,7 @@ const footerColumns = [
       { href: "/manifesto", labelKey: "nav.manifesto" },
       { href: "/about", labelKey: "nav.about" },
       { href: "/library", labelKey: "nav.library" },
+      { href: "/s", labelKey: "story.eyebrow" },
       { href: "/experiences", labelKey: "nav.experiences" },
       { href: "/brand", labelKey: "nav.brand" },
     ],
@@ -28,7 +29,7 @@ const footerColumns = [
     links: [
       { href: "/legal/imprint", labelKey: "footer.imprint" },
       { href: "/legal/privacy", labelKey: "footer.privacy" },
-      { href: "/legal/terms", labelKey: "footer.terms" },
+      // /legal/terms has no route — the link 404'd. Restore both together.
     ],
   },
 ] as const;
@@ -42,15 +43,17 @@ function FooterColumn({ title, links }: FooterColumnProps) {
   const headingId = `footer-nav-${title.toLowerCase().replace(/\s+/g, "-")}`;
   return (
     <nav aria-labelledby={headingId} className="flex flex-col gap-3">
-      <h3 id={headingId} className="text-xs font-semibold uppercase tracking-widest text-oe-pure-light/40">
+      {/* /50 is the lowest pure-light alpha clearing WCAG AA (4.5:1) on deep
+          space — /40 measured 3.64:1. */}
+      <h3 id={headingId} className="text-xs font-semibold uppercase tracking-widest text-oe-pure-light/50">
         {title}
       </h3>
-      <ul className="flex flex-col gap-2">
+      <ul className="flex flex-col">
         {links.map(({ href, label }) => (
           <li key={href}>
             <Link
               href={href}
-              className="text-sm text-oe-pure-light/60 transition-colors duration-200 hover:text-oe-pure-light"
+              className="flex min-h-11 items-center text-sm text-oe-pure-light/60 transition-colors duration-200 hover:text-oe-pure-light"
             >
               {label}
             </Link>
@@ -95,7 +98,7 @@ export function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-oe-aurora-violet/10 pt-8 text-xs text-oe-pure-light/30 sm:flex-row">
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-oe-aurora-violet/10 pt-8 text-xs text-oe-pure-light/50 sm:flex-row">
           <span>{t("footer.copyright", { year: currentYear })}</span>
           <span>{t("footer.builtWithLove")}</span>
         </div>

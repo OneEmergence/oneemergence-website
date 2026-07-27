@@ -275,5 +275,13 @@
     "pending": "Waiting for approval",
     "active": "Active",
     "suspended": "Paused"
+  },
+  "story": {
+    "eyebrow": "Pages",
+    "indexTitle": "Stories & Perspectives",
+    "indexDescription": "Selected long-form pieces — perspectives, concepts and invitations, each its own shareable page.",
+    "backToIndex": "All stories",
+    "updated": "Updated {date}",
+    "ctaFallbackTitle": "Let's talk."
   }
 }

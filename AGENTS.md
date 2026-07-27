@@ -60,6 +60,16 @@ See `ARCHITECTURE.md` §III for the full target structure.
 5. **Performance budget**: LCP < 2.5s, CLS < 0.1, INP < 200ms. WebGL is lazy-loaded.
 6. **Accessibility-first mysticism**: WCAG AA baseline, `prefers-reduced-motion` respected, Still mode is a first-class experience.
 
+### Story Pages (`/s/<slug>`)
+Standalone, teilbare Seiten — Blogposts, Info-Seiten, One-Pager für Kunden und Partner.
+**Eine `.mdx`-Datei in `src/content/stories/` ⇒ eine Seite unter `/s/<slug>`.** Keine Route
+anlegen, keine Komponente importieren. Frontmatter steuert Atmosphäre, Akzent, Hero, CTA
+und Sichtbarkeit (`listed: false` = nur per Direktlink, nicht im Index und nicht in der
+Sitemap). Das MDX-Kit (`src/components/content/mdx-kit.tsx`) ist global registriert und
+liefert **null Client-JavaScript** — Scroll-Hintergründe laufen über CSS
+`animation-timeline: view()`, nicht über framer-motion.
+Vor jeder solchen Aufgabe `.agents/skills/story-pages/SKILL.md` lesen.
+
 ### Frontend-Skill-Routing
 Für JEDE Frontend-/Design-Arbeit zuerst `.agents/skills/frontend-workflow/SKILL.md` lesen — es routet zwischen den überlappenden Design-Skills (impeccable, ui-ux-pro-max, frontend-design, accessibility, dataviz) und pinnt die Projekt-Constraints, die deren generische Empfehlungen überstimmen (framer-motion statt GSAP, `useMotionLevel`-Gating statt CSS-Nuke, committed Brand-Tokens).
 

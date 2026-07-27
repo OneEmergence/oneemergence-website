@@ -275,5 +275,13 @@
     "pending": "Wartet auf Freigabe",
     "active": "Aktiv",
     "suspended": "Pausiert"
+  },
+  "story": {
+    "eyebrow": "Seiten",
+    "indexTitle": "Stories & Perspektiven",
+    "indexDescription": "Ausgewählte Langformate — Perspektiven, Konzepte und Einladungen, jede als eigene Seite zum Teilen.",
+    "backToIndex": "Alle Stories",
+    "updated": "Aktualisiert am {date}",
+    "ctaFallbackTitle": "Lass uns sprechen."
   }
 }

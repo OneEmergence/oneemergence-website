@@ -12,6 +12,13 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Vendored agent-skill scripts and generated artifacts — not our source.
+    // Linting them produced ~270 warnings that drowned out real findings.
+    ".agents/**",
+    ".claude/**",
+    ".codex/**",
+    "playwright-report/**",
+    "test-results/**",
   ]),
 ]);
 

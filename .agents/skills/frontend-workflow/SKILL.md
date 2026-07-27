@@ -49,6 +49,7 @@ to load when*, and pins the constraints that override any skill's generic advice
 
 | Task | Use, in order | Skip |
 |---|---|---|
+| **A standalone shareable page** — blog post, info page, client one-pager, whitepaper, "make me a link I can send" | `story-pages` — **stop here, it is self-contained.** One MDX file in `src/content/stories/` ⇒ `/s/<slug>`, with the zero-JS scroll-background kit and a per-page OG card. Do NOT hand-build a route for this | everything below |
 | **New page / section** | 1. `frontend-design` (direction: subject, type, signature element — filtered through constraint 3) → 2. build per AGENTS.md + constraints above → 3. `impeccable critique` then `polish` on the result | `ui-ux-pro-max --design-system` |
 | **New component** (`src/components/ui/`, feature components) | 1. `vercel-composition-patterns` (API shape: no boolean-prop piles, compound components, React 19 no-forwardRef) → 2. build → 3. `impeccable polish` if it has visual surface | — |
 | **Design critique / polish pass** | `impeccable` (`critique` → `polish`; `bolder`/`quieter`/`typeset`/`layout` for targeted fixes; `live` for in-browser iteration when dev server runs) | — |

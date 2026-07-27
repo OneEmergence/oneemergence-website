@@ -19,6 +19,18 @@ export const Difficulty = z.enum(['beginner', 'intermediate', 'advanced'])
 export type Difficulty = z.infer<typeof Difficulty>
 
 /**
+ * A frontmatter date, normalised to a string.
+ *
+ * YAML parses an unquoted `date: 2026-07-27` into a JS `Date`, while a quoted
+ * one stays a string — so requiring `z.string()` here fails the build on a
+ * missing pair of quotes. Authors should not have to know that.
+ */
+export const DateString = z.preprocess(
+  (v) => (v instanceof Date ? v.toISOString().slice(0, 10) : v),
+  z.string().min(1),
+)
+
+/**
  * Shared metadata across all sacred content types.
  */
 export const ContentMeta = z.object({
@@ -31,7 +43,7 @@ export const ContentMeta = z.object({
   difficulty: Difficulty.optional(),
   duration: z.number().positive().optional(), // minutes
   published: z.boolean().default(false),
-  date: z.string().min(1), // ISO date string (YYYY-MM-DD or datetime)
+  date: DateString, // ISO date string (YYYY-MM-DD or datetime)
   cover: z.string().optional(),
   locale: Locale.default('de'),
 })
@@ -111,7 +123,7 @@ export type AnyContentMeta = z.infer<typeof AnyContentMeta>
 export const JournalMeta = z.object({
   title: z.string().min(1),
   slug: z.string().min(1),
-  date: z.string().min(1),
+  date: DateString,
   excerpt: z.string().min(1),
   author: z.string().default('OneEmergence'),
   cover: z.string().optional(),
@@ -120,6 +132,52 @@ export const JournalMeta = z.object({
   locale: Locale.default('de'),
 })
 export type JournalMeta = z.infer<typeof JournalMeta>
+
+// ─── Stories (standalone, shareable long-form pages) ────────────────────────
+
+/** Atmosphere presets — mirrors `AtmosphereVariant` in components/motion/LayerAtmosphere. */
+export const Atmosphere = z.enum(['cosmic', 'solarpunk', 'transitional', 'warm'])
+export type Atmosphere = z.infer<typeof Atmosphere>
+
+/** Accent token used for rules, eyebrows, stat numbers and CTA. */
+export const Accent = z.enum(['violet', 'gold', 'cyan', 'green', 'sand'])
+export type Accent = z.infer<typeof Accent>
+
+export const StoryMeta = z.object({
+  title: z.string().min(1),
+  slug: z.string().min(1),
+  /** One-line deck under the title. */
+  subtitle: z.string().optional(),
+  /** Small label above the title, e.g. "Für Partner" or "Whitepaper". */
+  eyebrow: z.string().optional(),
+  /** Meta description + OG description. Keep it under ~160 chars. */
+  description: z.string().min(1),
+  date: DateString,
+  updated: DateString.optional(),
+  author: z.string().default('OneEmergence'),
+  atmosphere: Atmosphere.default('cosmic'),
+  accent: Accent.default('violet'),
+  hero: z.enum(['full', 'compact', 'cover']).default('full'),
+  cover: z.string().optional(),
+  tags: z.array(z.string()).default([]),
+  /** false ⇒ route 404s. The draft switch. */
+  published: z.boolean().default(true),
+  /** false ⇒ reachable by direct link only: no /s index, no sitemap. */
+  listed: z.boolean().default(true),
+  /** true ⇒ `robots: noindex` on the page. Implied by `listed: false`. */
+  noindex: z.boolean().default(false),
+  /** Closing call to action rendered after the body. */
+  cta: z
+    .object({
+      label: z.string().min(1),
+      href: z.string().min(1),
+      title: z.string().optional(),
+      note: z.string().optional(),
+    })
+    .optional(),
+  locale: Locale.default('de'),
+})
+export type StoryMeta = z.infer<typeof StoryMeta>
 
 // ─── Content directory mapping ──────────────────────────────────────────────
 

@@ -3,24 +3,36 @@ import remarkGfm from 'remark-gfm'
 import rehypeSlug from 'rehype-slug'
 import rehypeAutolinkHeadings from 'rehype-autolink-headings'
 
+import { mdxKit } from '@/components/content/mdx-kit'
+
 /**
  * Custom MDX components available in all content files.
  * These are Server Components by default.
+ *
+ * The `mdx-kit` layout/editorial set (Stage, Lead, PullQuote, Stats, Cards,
+ * Figure, Steps, FAQ, CTA, Reveal, …) is spread in first, so every `.mdx`
+ * under src/content/ can use it with no imports. See
+ * `.agents/skills/story-pages/SKILL.md` for the authoring guide.
  */
 const mdxComponents = {
+  ...mdxKit,
   Callout,
   Prompt,
   Exercise,
 }
 
 function Callout({ children, type = 'note' }: { children: React.ReactNode; type?: 'note' | 'warning' | 'insight' }) {
+  // The accent reads through the tint and a hairline at the top edge. A thick
+  // coloured side tab is the loudest generic-template tell there is.
   const styles: Record<string, string> = {
-    note: 'border-oe-spirit-cyan/30 bg-oe-spirit-cyan/5',
-    warning: 'border-oe-solar-gold/30 bg-oe-solar-gold/5',
-    insight: 'border-oe-aurora-violet/30 bg-oe-aurora-violet/5',
+    note: 'border-oe-spirit-cyan/20 bg-oe-spirit-cyan/[0.04] before:bg-oe-spirit-cyan/50',
+    warning: 'border-oe-solar-gold/20 bg-oe-solar-gold/[0.04] before:bg-oe-solar-gold/50',
+    insight: 'border-oe-aurora-violet/20 bg-oe-aurora-violet/[0.04] before:bg-oe-aurora-violet/50',
   }
   return (
-    <aside className={`my-6 rounded-xl border-l-4 p-5 ${styles[type] ?? styles.note}`}>
+    <aside
+      className={`relative my-6 overflow-hidden rounded-xl border p-5 before:absolute before:inset-x-0 before:top-0 before:h-px before:content-[''] ${styles[type] ?? styles.note}`}
+    >
       {children}
     </aside>
   )

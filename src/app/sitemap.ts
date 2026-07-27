@@ -1,5 +1,5 @@
 import { MetadataRoute } from "next";
-import { getPosts } from "@/lib/content";
+import { getPosts, getStories } from "@/lib/content";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://oneemergence.org";
@@ -48,7 +48,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.5,
     },
     {
-      url: `${baseUrl}/journal`,
+      url: `${baseUrl}/s`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.7,
@@ -81,5 +81,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.6,
   }));
 
-  return [...staticRoutes, ...postRoutes];
+  // `listed: false` stories are deliberately absent: a private link sent to
+  // one recipient must not show up in the sitemap.
+  const storyRoutes: MetadataRoute.Sitemap = getStories()
+    .filter((s) => s.meta.listed)
+    .map(({ meta }) => ({
+      url: `${baseUrl}/s/${meta.slug}`,
+      lastModified: new Date(meta.updated ?? meta.date),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    }));
+
+  return [...staticRoutes, ...postRoutes, ...storyRoutes];
 }

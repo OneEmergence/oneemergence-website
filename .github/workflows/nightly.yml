@@ -9,6 +9,13 @@ jobs:
   perf-and-mobile:
     name: Performance & Mobile Playwright
     runs-on: ubuntu-latest
+    # See ci.yml — `next start` enforces REQUIRED_IN_PROD at boot, so the
+    # Playwright webServer cannot come up without these placeholders.
+    env:
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-anon-key
+      DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
     steps:
       - uses: actions/checkout@v4
 

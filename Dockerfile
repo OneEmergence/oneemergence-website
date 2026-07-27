@@ -91,7 +91,11 @@ ARG NEXT_PUBLIC_SENTRY_DSN=""
 # Build-time-only placeholder — see header. Real value is runtime-only.
 ARG DATABASE_URL="postgresql://build:build@localhost:5432/build"
 
-ENV NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL} \
+# next.config.ts only emits `output: 'standalone'` when this is set — see the
+# comment there. It is load-bearing: without it `next build` emits no
+# .next/standalone and the runner stage's COPY finds nothing.
+ENV NEXT_OUTPUT=standalone \
+    NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL} \
     NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY} \
     DATABASE_URL=${DATABASE_URL} \
     NODE_ENV=production
