@@ -10,7 +10,7 @@ import { z } from 'zod'
 const schema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
 
-  NEXT_PUBLIC_SUPABASE_URL: z.string().min(1).optional(),
+  NEXT_PUBLIC_SUPABASE_URL: z.string().url().optional(),
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1).optional(),
   NEXT_PUBLIC_SITE_URL: z.string().url().optional(),
 
@@ -36,7 +36,16 @@ const REQUIRED_IN_PROD = [
   'DATABASE_URL',
 ] as const
 
-const parsed = schema.safeParse(process.env)
+// Empty values in .env.example mean an optional integration is disabled.
+// Required production values are still checked below after normalization.
+const parsed = schema.safeParse(
+  Object.fromEntries(
+    Object.entries(process.env).map(([key, value]) => [
+      key,
+      value?.trim() === '' ? undefined : value,
+    ])
+  )
+)
 
 if (!parsed.success) {
   console.error('Invalid environment variables:', parsed.error.flatten().fieldErrors)

@@ -2,11 +2,13 @@
 
 import {
   Suspense,
+  useCallback,
   useEffect,
   useLayoutEffect,
   useMemo,
   useRef,
   useState,
+  useSyncExternalStore,
   type ComponentRef,
   type ReactNode,
 } from 'react'
@@ -67,6 +69,7 @@ export interface CameraCommand {
 interface WorldSceneProps {
   palette: WorldScenePalette
   quality: WorldQuality
+  automaticQuality: boolean
   atmosphere: WorldAtmosphere
   selectedId: WorldLandmarkId | null
   game: ResonanceGameState
@@ -108,7 +111,9 @@ const QUALITY: Record<
   },
   medium: {
     dpr: 1.5,
-    antialias: true,
+    // The landmark edges are already antialiased in their sprite textures.
+    // Reserve framebuffer MSAA for the explicitly selected high tier.
+    antialias: false,
     shadows: true,
     shadowSize: 1024,
     terrainSegments: 64,
@@ -170,6 +175,7 @@ const ATMOSPHERE: Record<
 }
 
 const CAMERA_TARGET = new Vector3(7, 0, 3)
+const LOW_FRAMEBUFFER_PIXELS = 450_000
 const CAMERA_DISTANCE = 72
 const CAMERA_AZIMUTH = MathUtils.degToRad(45)
 const CAMERA_ELEVATION = MathUtils.degToRad(30)
@@ -212,6 +218,7 @@ function cameraZoom(width: number, height: number) {
 export function WorldScene({
   palette,
   quality,
+  automaticQuality,
   atmosphere,
   selectedId,
   game,
@@ -223,6 +230,7 @@ export function WorldScene({
   onFailure,
   onQualityDecline,
 }: WorldSceneProps) {
+  const [lowDpr, setLowDpr] = useState(1)
   const settings = QUALITY[quality]
   const atmosphereSettings = ATMOSPHERE[atmosphere]
   const emerged = hasReachedEmergence(game)
@@ -241,11 +249,14 @@ export function WorldScene({
 
   return (
     <Canvas
+      // MSAA is a context-creation option. Only an explicit switch to/from
+      // high needs a fresh canvas; automatic medium -> low keeps the camera.
+      key={settings.antialias ? 'multisampled' : 'single-sampled'}
       aria-hidden="true"
       orthographic
       shadows={settings.shadows ? 'basic' : false}
       frameloop={activeAnimation ? 'always' : 'demand'}
-      dpr={[1, settings.dpr]}
+      dpr={quality === 'low' ? lowDpr : [1, settings.dpr]}
       camera={{
         position: CAMERA_POSITION.toArray(),
         zoom: 11,
@@ -266,16 +277,14 @@ export function WorldScene({
         onReady()
       }}
     >
-      <SceneLifecycle onFailure={onFailure} />
-      <PerformanceMonitor
-        ms={500}
-        iterations={6}
-        flipflops={2}
-        bounds={(refreshRate) => [Math.min(42, refreshRate * 0.62), refreshRate * 0.9]}
-        onDecline={onQualityDecline}
-      />
+      {quality === 'low' ? <ScenePixelBudget onDprChange={setLowDpr} /> : null}
+      <SceneLifecycle exposure={atmosphereSettings.exposure} onFailure={onFailure} />
+      {automaticQuality && activeAnimation && quality !== 'low' ? (
+        <AdaptiveQualityMonitor onDecline={onQualityDecline} />
+      ) : null}
       <SceneBudgetProbe
         quality={quality}
+        automaticQuality={automaticQuality}
         maxDrawCalls={settings.maxDrawCalls}
         maxTriangles={settings.maxTriangles}
         activeStreams={activeStreams}
@@ -439,8 +448,55 @@ export function WorldScene({
   )
 }
 
-function SceneLifecycle({ onFailure }: { onFailure: () => void }) {
+function ScenePixelBudget({ onDprChange }: { onDprChange: (dpr: number) => void }) {
+  const width = useThree((state) => state.size.width)
+  const height = useThree((state) => state.size.height)
+
+  useLayoutEffect(() => {
+    if (width <= 0 || height <= 0) return
+    // Bound only the 3D framebuffer: DOM controls keep their native resolution.
+    // Keep Canvas's prop in sync so its later renders retain this pixel budget.
+    onDprChange(Math.min(1, Math.sqrt(LOW_FRAMEBUFFER_PIXELS / (width * height))))
+  }, [height, onDprChange, width])
+
+  return null
+}
+
+function subscribeVisibility(onChange: () => void) {
+  document.addEventListener('visibilitychange', onChange)
+  return () => document.removeEventListener('visibilitychange', onChange)
+}
+
+function AdaptiveQualityMonitor({ onDecline }: { onDecline: () => void }) {
+  const visible = useSyncExternalStore(
+    subscribeVisibility,
+    () => !document.hidden,
+    () => true
+  )
+  if (!visible) return null
+
+  return (
+    <PerformanceMonitor
+      ms={500}
+      iterations={6}
+      // Drei's "refreshRate" is the highest observed FPS, not the display's
+      // refresh rate: deriving the floor from it accepted a steady 12 FPS.
+      // Five of six slow windows must miss this fixed usability floor.
+      bounds={() => [30, 55]}
+      onDecline={onDecline}
+    />
+  )
+}
+
+function SceneLifecycle({ exposure, onFailure }: { exposure: number; onFailure: () => void }) {
   const gl = useThree((state) => state.gl)
+  const get = useThree((state) => state.get)
+
+  useEffect(() => {
+    const renderer = get()
+    renderer.gl.toneMappingExposure = exposure
+    renderer.invalidate()
+  }, [exposure, get])
 
   useEffect(() => {
     const canvas = gl.domElement
@@ -493,39 +549,59 @@ function AtmosphereBeacon({
 
 function SceneBudgetProbe({
   quality,
+  automaticQuality,
   maxDrawCalls,
   maxTriangles,
   activeStreams,
   activeLandmarks,
 }: {
   quality: WorldQuality
+  automaticQuality: boolean
   maxDrawCalls: number
   maxTriangles: number
   activeStreams: number
   activeLandmarks: number
 }) {
-  const gl = useThree((state) => state.gl)
+  const get = useThree((state) => state.get)
   const invalidate = useThree((state) => state.invalidate)
+  const lastSample = useRef(0)
+
+  const recordBudget = useCallback(() => {
+    const { gl, camera } = get()
+    const { calls, triangles } = gl.info.render
+    const canvas = gl.domElement
+    canvas.dataset.worldAssetFormat = 'isometric-sprites'
+    canvas.dataset.worldLod = quality
+    canvas.dataset.worldQualityMode = automaticQuality ? 'automatic' : 'manual'
+    canvas.dataset.worldDpr = String(gl.getPixelRatio())
+    canvas.dataset.worldAntialias = String(gl.getContext().getContextAttributes()?.antialias)
+    canvas.dataset.worldShadows = String(gl.shadowMap.enabled)
+    canvas.dataset.worldExposure = String(gl.toneMappingExposure)
+    canvas.dataset.worldCameraZoom = String((camera as OrthographicCamera).zoom)
+    canvas.dataset.worldCameraPosition = camera.position.toArray().join(',')
+    canvas.dataset.worldDrawCalls = String(calls)
+    canvas.dataset.worldTriangles = String(triangles)
+    canvas.dataset.worldGeometries = String(gl.info.memory.geometries)
+    canvas.dataset.worldTextures = String(gl.info.memory.textures)
+    canvas.dataset.worldRiverEnergy = String(activeStreams)
+    canvas.dataset.worldActiveLandmarks = String(activeLandmarks)
+    canvas.dataset.worldBudget =
+      calls <= maxDrawCalls && triangles <= maxTriangles ? 'pass' : 'fail'
+  }, [activeLandmarks, activeStreams, automaticQuality, get, maxDrawCalls, maxTriangles, quality])
 
   useEffect(() => {
     invalidate()
-    const frame = requestAnimationFrame(() => {
-      const { calls, triangles } = gl.info.render
-      const canvas = gl.domElement
-      canvas.dataset.worldAssetFormat = 'isometric-sprites'
-      canvas.dataset.worldLod = quality
-      canvas.dataset.worldDrawCalls = String(calls)
-      canvas.dataset.worldTriangles = String(triangles)
-      canvas.dataset.worldGeometries = String(gl.info.memory.geometries)
-      canvas.dataset.worldTextures = String(gl.info.memory.textures)
-      canvas.dataset.worldRiverEnergy = String(activeStreams)
-      canvas.dataset.worldActiveLandmarks = String(activeLandmarks)
-      canvas.dataset.worldBudget =
-        calls <= maxDrawCalls && triangles <= maxTriangles ? 'pass' : 'fail'
-    })
-
+    const frame = requestAnimationFrame(recordBudget)
     return () => cancelAnimationFrame(frame)
-  }, [activeLandmarks, activeStreams, gl, invalidate, maxDrawCalls, maxTriangles, quality])
+  }, [invalidate, recordBudget])
+
+  // The first frame can still contain procedural loading fallbacks. Refresh
+  // the existing diagnostic attributes without re-rendering React each frame.
+  useFrame(({ clock }) => {
+    if (clock.elapsedTime - lastSample.current < 1) return
+    lastSample.current = clock.elapsedTime
+    recordBudget()
+  })
 
   return null
 }
@@ -1138,10 +1214,6 @@ function useIsometricSpriteTexture(src: string, quality: WorldQuality) {
         }
 
         loadedTexture.colorSpace = SRGBColorSpace
-        loadedTexture.anisotropy = Math.min(
-          gl.capabilities.getMaxAnisotropy(),
-          quality === 'low' ? 1 : quality === 'medium' ? 2 : 4
-        )
         loadedTexture.needsUpdate = true
         setTexture(loadedTexture)
       },
@@ -1155,7 +1227,21 @@ function useIsometricSpriteTexture(src: string, quality: WorldQuality) {
       active = false
       pendingTexture.dispose()
     }
-  }, [gl, quality, src])
+  }, [src])
+
+  // A quality change only adjusts sampling; it must not download/recreate
+  // every sprite or briefly restore all procedural fallback models.
+  useEffect(() => {
+    if (!texture) return
+    // Three textures are mutable GPU resources: update their sampler in place
+    // instead of allocating a replacement image/texture for a quality change.
+    // eslint-disable-next-line react-hooks/immutability
+    texture.anisotropy = Math.min(
+      gl.capabilities.getMaxAnisotropy(),
+      quality === 'low' ? 1 : quality === 'medium' ? 2 : 4
+    )
+    texture.needsUpdate = true
+  }, [gl, quality, texture])
 
   return texture
 }

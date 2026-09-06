@@ -2,6 +2,11 @@
 
 > Server-first. Content as system. Motion as hierarchy. Performance as discipline.
 
+Implementation snapshot: **2026-09-06**. Stack and current behavior below are
+checked against the repository. Explicitly marked targets are plans, not shipped
+capabilities; cloud operation still needs the acceptance checks in
+[docs/ROADMAP.md](./docs/ROADMAP.md).
+
 ---
 
 ## I. Stack
@@ -10,16 +15,16 @@
 
 | Technology | Role | Why |
 |---|---|---|
-| **Next.js 15** (App Router) | Framework | Server-first rendering, route groups, server actions, streaming |
+| **Next.js 16.2.1** (App Router) | Framework | Server-first rendering, route groups, server actions, streaming |
 | **React 19** | UI | Server Components, Suspense, `use()`, concurrent features |
 | **TypeScript** (strict) | Language | No `any`. Types are documentation. |
 | **Tailwind CSS v4** | Styling | Design tokens via CSS custom properties, JIT, zero-runtime |
-| **shadcn/ui** | Component primitives | Accessible, composable, ownable — not a dependency but copied source |
-| **Motion** (Framer Motion) | Animation | Layout animations, gesture support, `AnimatePresence`, reduced-motion |
+| **Bespoke UI components** | Component primitives | `src/components/ui/`; shadcn/ui is not adopted |
+| **framer-motion v12** | Animation | Import from `framer-motion`, not `motion/react`; gate motion with `useMotionLevel` |
 | **MDX** | Content | Content as components. Embeddable interactivity in prose. |
 | **next-intl** | i18n | Server-first message loading, type-safe keys, ICU syntax |
 | **Zod** | Validation | Schema-first validation at system boundaries. Shared between client and server. |
-| **React Hook Form** | Forms | Performant, uncontrolled by default, Zod resolver integration |
+| **React state + FormData + Zod** | Forms | Existing forms call feature-owned server actions; React Hook Form is not installed |
 | **Zustand** | Client state | Minimal, no boilerplate. Used for: intensity mode, audio state, UI preferences |
 | **Sentry** | Monitoring | Errors, performance traces, session replay. Non-negotiable from day one. |
 | **Playwright** | Testing | E2E tests for critical flows. Visual regression for sacred motion components. |
@@ -28,10 +33,10 @@
 
 | Technology | Role | When to Use |
 |---|---|---|
-| **React Three Fiber** + **Three.js** | 3D / WebGL | Living Portal, Consciousness Atlas, sacred geometry, particle fields |
-| **GSAP** | Complex animation | Timeline orchestration beyond Motion's capabilities, ScrollTrigger for scroll-driven scenes |
+| **React Three Fiber** + **Three.js** (installed) | 3D / WebGL | Opt-in world-map experience at `/map/immersive`; `/map` remains the lightweight overview |
+| **GSAP** (not installed) | Future complex animation | Deferred; existing scenes use framer-motion and CSS. Add only for a demonstrated requirement |
 | **Lenis** | Smooth scroll | Already installed. Smooth, inertia-based scrolling with programmatic control |
-| **Tone.js** / Web Audio API | Sound | Ambient soundscapes, audio-reactive visuals, Sound Journey content type |
+| **Web Audio API** / **Tone.js** (Tone.js not installed) | Sound | World soundscape and audio controls; Tone.js remains a future option |
 | **D3.js** | Data visualization | Force-directed graph for Consciousness Atlas, collective pulse heatmap |
 
 ### Intelligence Stack (Portal layer, v2+)
@@ -86,7 +91,9 @@ export async function saveJournalEntry(data: JournalEntrySchema) { ... }
 app.post('/api/journal', handler)
 ```
 
-API routes only for webhooks and third-party integrations. Everything else: server actions.
+Server actions own mutations. Route handlers are allowed for webhooks, auth
+callbacks, streaming/AG-UI endpoints, and health checks. Current handlers are
+`/api/guide` (JSON), `/api/health`, and `/auth/callback`; `/api/agent` is planned.
 
 ### Content as System, Not Scattered Pages
 
@@ -109,12 +116,12 @@ Every animation must declare its level (Micro / Flow / Sacred / Event). Higher l
 
 ### Performance Budget
 
-| Metric | Target | Enforcement |
+| Metric | Product target | Current measurement / gap |
 |---|---|---|
-| LCP | < 2.5s | Lighthouse CI in PR checks |
-| CLS | < 0.1 | Playwright visual regression |
-| INP | < 200ms | Sentry performance monitoring |
-| JS bundle (initial) | < 150KB gzipped | Bundle analyzer in CI |
+| LCP | < 2.5s | Nightly Playwright: `/map` 2.5s; other sampled pages allow 3s locally / 5s in CI |
+| CLS | < 0.1 | Nightly Playwright: `/map` 0.1; other sampled pages allow 0.25 |
+| INP | < 200ms | One `/map` interaction probe; Sentry tracing when configured. Not a site-wide measured guarantee |
+| JS bundle (initial) | < 150KB gzipped | Optional local bundle analyzer; no enforced size gate in CI |
 | WebGL | Progressive enhancement | Core experience works without it |
 
 WebGL, Three.js, and GSAP are **lazy-loaded** and **code-split**. They never block initial paint.
@@ -132,7 +139,12 @@ WebGL, Three.js, and GSAP are **lazy-loaded** and **code-split**. They never blo
 
 ## III. Information Architecture
 
-### Route Structure
+### Target Route Structure
+
+This tree includes future `paths`, `visions`, `rituals`, `field/*`, and
+`legal/terms` routes, which do not exist yet. Additional current routes are
+`/brand`, `/s` and `/s/[slug]`, `/map`, `/map/immersive` (its own `(immersive)`
+layout), `/portal/pending`, `/portal/access`, and `/portal/account`.
 
 ```
 app/
@@ -175,7 +187,11 @@ app/
 └── sitemap.ts
 ```
 
-### Source Structure
+### Target Source Structure
+
+Current additions: `features/world-map/` owns the public map and its opt-in
+Three.js scene; `content/stories/` powers standalone shareable pages.
+`features/paths/` is planned. Mutations have moved out of `lib/actions/`.
 
 ```
 src/
@@ -196,7 +212,8 @@ src/
 │   ├── workspaces/           # Membership access, global roles, workspace profiles
 │   └── paths/                # Learning Pathways: progress, stages, flow
 ├── lib/
-│   ├── actions/              # Server actions: saveEntry, updateMap, submitContact
+│   ├── env.ts                # Validated server environment; client public vars stay literal
+│   ├── db/ supabase/ ai/     # Runtime infrastructure, feature actions own mutations
 │   ├── schemas/              # Zod schemas: content types, forms, API responses
 │   ├── content/              # Content loader, MDX pipeline, type validators
 │   ├── analytics/            # Sentry setup, custom events, performance marks
@@ -254,15 +271,21 @@ const ContentMeta = z.object({
 
 ## V. AI Guide Architecture
 
-### System Design
+### Current System Design
 
 ```
-User Input → Role Selection → System Prompt (role-specific) → Claude API (streaming)
+User Input → Role Selection → System Prompt (role-specific) → Claude API (generateObject)
                                                                       ↓
                                                               Structured Output
                                                                       ↓
                                                     Response Renderer (cards, exercises, etc.)
 ```
+
+`POST /api/guide` authenticates the user, checks workspace access and conversation
+ownership, stores messages, and returns one complete JSON response. The model is
+configured through `AI_MODEL` in `src/lib/env.ts`. There is no token stream,
+AG-UI transport, tool execution, or request/cost quota yet. These are Phase 2
+work; quotas and reliable retry/cancellation behavior precede broader AI access.
 
 ### Role System Prompts
 
@@ -270,9 +293,10 @@ Each role has a carefully crafted system prompt that defines:
 - Voice and tone
 - What it may and may not say
 - Output format (Zod-validated structured responses)
-- Context injection: recent journal entries, map nodes, practice history
+- Current context: recent journal excerpts, practice history, global focus themes,
+  and the selected workspace's display name. Map/Records retrieval is planned.
 
-### Response Schema
+### Response Schema (target shape; runtime contract: `src/features/guide/schemas.ts`)
 
 ```typescript
 const GuideResponse = z.object({
@@ -297,29 +321,41 @@ const GuideResponse = z.object({
 - Performance traces on critical routes (Living Portal, Journal, Guide)
 - Session replay for debugging UX issues
 - Custom breadcrumbs for journey flow and guide interactions
-- Alert rules: error spike, LCP regression, Guide API failures
+- Alert rules are an operational target; repository configuration alone does not
+  verify that cloud alerts or dashboards are active.
 
 ### Playwright
 
 - **Smoke tests**: every public route loads, no console errors
-- **Critical flows**: Portal Entry → Dashboard → Journal entry → Save
-- **Visual regression**: Living Portal, sacred motion components, intensity mode switching
+- **Current UI coverage**: public routes, auth forms/redirects, responsive layouts,
+  intensity modes, and map interactions. Account creation through deletion and
+  authenticated Journal/Guide flows still need end-to-end coverage.
+- **RLS coverage**: disposable-project suites under `tests/rls/` cover owner and
+  workspace isolation; they require explicit test credentials and are not part of
+  the PR workflow's selected suites.
 - **Accessibility**: axe-core integration in test suite
 - **Content validation**: all MDX files parse without errors
 
 ### CI Pipeline
 
 ```
-lint → typecheck → unit tests → build → playwright → lighthouse → deploy preview
+PR: lint → typecheck → build → Playwright (Chromium smoke, a11y, content)
+Nightly: Playwright performance + mobile
+Release tag / manual workflow: Docker build + GHCR publish
 ```
+
+Formatting has a local check script but no PR gate. Lighthouse, a dedicated unit
+runner, enforced bundle budgets, and verified preview deployments are targets,
+not present CI stages. PR browser tests use placeholder services, so a green PR
+does not establish cloud account or database readiness.
 
 ---
 
 ## VII. Migration Path from Current State
 
 Status as of the Phase 0 audit (see [docs/ROADMAP.md](./docs/ROADMAP.md) for
-the current phased plan — this section is now a historical checklist, kept
-for traceability.
+the current phased plan) — this section records the foundation work and its
+remaining acceptance gates.
 
 ### Immediate (before new feature work)
 
@@ -333,16 +369,16 @@ for traceability.
 ### Short-term (alongside MVP v1 features)
 
 7. **shadcn/ui** — not adopted; forms/dialogs built as bespoke components instead.
-8. **next-intl** — ✅ scaffolded, 🔄 activating. Cookie-based locale resolution live in `request.ts`; Navbar/Footer migrated to `useTranslations`; remaining pages migrate incrementally (Phase 0 step 7 in ROADMAP).
+8. **next-intl** — ✅ scaffolded, 🔄 activating. Public layouts pin German for static rendering; the dynamic portal resolves `NEXT_LOCALE` from a cookie. Several components use translations; remaining copy migrates incrementally. Public bilingual URLs are a future decision.
 9. **Panel navigation** — not started.
-10. **Feature folders** — ✅ live. `src/features/{auth,workspaces,journal,guide,rituals,map}`; `records` lands in Phase 3.
+10. **Feature folders** — ✅ live. `src/features/{auth,workspaces,journal,guide,rituals,map,world-map}`; `records` lands in Phase 3.
 11. **Content folders** — ✅ done. `src/content/` organized by sacred content type.
 
 ### Before v2 (Portal layer)
 
 12. **Auth & workspace access** — 🔄 in progress. Supabase Auth proves identity; active workspace membership authorizes the private app. Global `user`, `agent`, `superuser`, and `admin` roles provide capability tiers without conflating them with membership status.
 13. **Database** — ✅ governed. **`supabase/schemas` is the declarative desired state**, **`supabase/migrations` is the only append-only deployment channel**, and **`src/lib/db/schema.ts` is the type-safe Drizzle mirror** used by the app. The old hand-written drafts remain archived in `docs/archive/database/`.
-14. **Server actions** — 🔄 in progress. Feature modules own their `actions.ts`; `src/lib/actions/` is being dissolved into features per ROADMAP §II.
+14. **Server actions** — ✅ feature-owned. `src/lib/actions/` no longer exists. Continue normalizing public feature entrypoints when touching modules.
 15. **(portal) route group** — ✅ done. Authenticated layout + Next.js proxy protection live; journal/map/guide/practice ship inside it.
 
 ---
@@ -351,16 +387,16 @@ for traceability.
 
 | Decision | Choice | Rationale |
 |---|---|---|
-| SSR vs SSG | **SSR + ISR** | Dynamic portal content needs SSR. Public pages use ISR for performance. |
+| SSR vs SSG | **Static public pages + dynamic portal** | Public layouts pin a locale for prerendering; authenticated portal reads happen per request. No blanket ISR policy is configured. |
 | State management | **Server state + Zustand islands** | No global client store. Server is the source of truth. Zustand only for UI preferences. |
 | Content pipeline | **MDX on filesystem** | No CMS dependency until editorial team exists. MDX gives component power. |
 | Auth provider | **Supabase Auth** (supersedes the original Auth.js/Better Auth plan) | Ships together with Supabase Postgres/Storage; EU-region hosting available; see ROADMAP Phase 1. |
 | Authorization | **Global capability role + per-workspace membership state** | Keeps account type (`user`, non-human `agent`, `superuser`, `admin`) separate from approval (`pending`, `active`, `suspended`). |
 | Workspace data boundary | **Personal records remain user-owned; workspace sharing is explicit** | Joining a workspace must not silently expose journals, practices, maps, or guide conversations to its admins. |
-| AI integration | **Vercel AI SDK + Claude** | Streaming, structured outputs, edge-compatible. No chatbot framework. |
+| AI integration | **Vercel AI SDK + Claude** | Structured JSON today; streaming and AG-UI are Phase 2 targets. Current Postgres context/persistence runs server-side. |
 | Realtime | **Deferred to v3** | Don't build infrastructure for collective features until personal layer is validated. |
 | Testing strategy | **E2E first** | Sacred motion and journey flows can't be unit tested meaningfully. Playwright is primary. |
-| Deployment | **Vercel (MVP)** → **EU self-host (later)** | Fast iteration now. Data sovereignty when user data exists. |
+| Deployment | **Vercel path + Docker packaging** | Dockerfile, compose, GHCR workflow and health endpoint exist. Standalone output is opt-in via `NEXT_OUTPUT=standalone`; release readiness still requires an actual image/runtime check. |
 
 ---
 

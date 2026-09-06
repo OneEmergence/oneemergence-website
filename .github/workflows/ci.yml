@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [main, dev]
 
+permissions:
+  contents: read
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -14,6 +17,7 @@ jobs:
   quality:
     name: Lint, Type-check & Build
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
@@ -22,7 +26,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: "pnpm"
+          cache: 'pnpm'
 
       - run: pnpm install --frozen-lockfile
 
@@ -32,13 +36,54 @@ jobs:
       - name: Type-check
         run: pnpm typecheck
 
+      - name: Journal autosave scheduling
+        run: pnpm test:journal-autosave
+
       - name: Build
         run: pnpm build
+
+  journal-lifecycle:
+    name: Journal lifecycle (PostgreSQL)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: journal_test
+          POSTGRES_PASSWORD: journal_test
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U journal_test -d postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    # Credentials belong only to this disposable runner-local service.
+    # The test creates a random database and drops only that database afterward.
+    env:
+      JOURNAL_TEST_ADMIN_URL: postgresql://journal_test:journal_test@127.0.0.1:5432/postgres
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Run Journal lifecycle regression
+        run: pnpm test:journal-lifecycle
 
   test:
     name: Playwright Tests
     needs: quality
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     # Playwright's webServer runs `pnpm build && pnpm start`, and `next start`
     # boots with NODE_ENV=production — so src/lib/env.ts enforces
     # REQUIRED_IN_PROD at boot and the server never comes up without these.
@@ -58,25 +103,21 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: "pnpm"
+          cache: 'pnpm'
 
       - run: pnpm install --frozen-lockfile
 
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps chromium
 
-      - name: Run smoke tests
-        run: pnpm exec playwright test tests/smoke --project=chromium
-
-      - name: Run accessibility tests
-        run: pnpm exec playwright test tests/a11y --project=chromium
-
-      - name: Run content validation
-        run: pnpm exec playwright test tests/content --project=chromium
+      # A single invocation builds/starts the app once and keeps every suite
+      # in the same report. GitHub annotations alone do not create HTML.
+      - name: Run smoke, accessibility, content and environment tests
+        run: pnpm exec playwright test tests/smoke tests/a11y tests/content tests/environment --project=chromium --reporter=github,html
 
       - name: Upload test report
         uses: actions/upload-artifact@v4
-        if: failure()
+        if: ${{ !cancelled() }}
         with:
           name: playwright-report
           path: playwright-report/

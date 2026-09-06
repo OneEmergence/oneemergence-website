@@ -520,5 +520,60 @@
     "send": "Nachricht senden",
     "conversation": "Gespräch mit dem Guide",
     "thinking": "Der Guide antwortet…"
+  },
+  "contact": {
+    "eyebrow": "Kontakt",
+    "title": "Schreib uns.",
+    "intro": "Fragen, Ideen oder Interesse an OneEmergence? Bereite hier eine E-Mail an unser Team vor.",
+    "formLabel": "E-Mail-Entwurf vorbereiten",
+    "draftHelp": "Dieses Formular versendet keine Nachricht. Es bereitet einen E-Mail-Entwurf vor, den du in deinem Mailprogramm prüfst und selbst sendest.",
+    "name": "Name",
+    "namePlaceholder": "Dein Name",
+    "email": "E-Mail",
+    "emailPlaceholder": "deine@email.de",
+    "subject": "Betreff",
+    "message": "Nachricht",
+    "messagePlaceholder": "Was liegt dir auf dem Herzen?",
+    "requiredFields": "Felder mit * sind Pflichtfelder.",
+    "prepareDraft": "E-Mail-Entwurf vorbereiten",
+    "openDraft": "Entwurf im Mailprogramm öffnen",
+    "draftReady": "Dein Entwurf ist vorbereitet. Noch wurde nichts gesendet. Öffne ihn in deinem Mailprogramm, prüfe ihn und sende ihn dort selbst ab. Deine Eingaben bleiben hier erhalten.",
+    "emailFallback": "Falls sich kein Mailprogramm öffnet, kopiere deine Nachricht und schreibe direkt an",
+    "subjects": {
+      "general": "Allgemeine Anfrage",
+      "events": "Event / Gathering",
+      "community": "Community & Onboarding",
+      "press": "Presse & Kooperation",
+      "technical": "Technisches Feedback",
+      "other": "Sonstiges"
+    }
+  },
+  "journalEditor": {
+    "editTitle": "Eintrag bearbeiten",
+    "newTitle": "Neuer Eintrag",
+    "titleLabel": "Titel",
+    "titlePlaceholder": "Was bewegt dich?",
+    "contentLabel": "Inhalt",
+    "contentPlaceholder": "Schreibe frei — dieser Raum gehört dir…",
+    "saveButton": "Speichern",
+    "savingButton": "Speichern…",
+    "backButton": "Zurück",
+    "requiredError": "Bitte ergänze einen Titel und einen Inhalt. Deine Eingaben bleiben hier erhalten.",
+    "saveError": "Die letzten Änderungen konnten nicht gespeichert werden. Deine Eingaben bleiben hier erhalten. Versuche es mit „Speichern“ erneut.",
+    "status": {
+      "draft": "Entwurf",
+      "dirty": "Ungespeicherte Änderungen",
+      "saving": "Speichert…",
+      "saved": "Gespeichert",
+      "error": "Nicht gespeichert"
+    }
+  },
+  "newsletter": {
+    "label": "In Verbindung bleiben",
+    "description": "Die Newsletter-Anmeldung ist noch nicht verfügbar. Wenn du mehr erfahren möchtest, schreib uns eine E-Mail.",
+    "contact": "Per E-Mail Kontakt aufnehmen",
+    "subject": "Interesse an OneEmergence",
+    "mailHelp": "Der Link öffnet dein Mailprogramm. Du sendest die Nachricht selbst; damit meldest du dich nicht für einen Newsletter an.",
+    "introduction": "Neuigkeiten und Einladungen teilen wir derzeit im persönlichen Austausch. Schreib uns, wenn du mehr erfahren möchtest."
   }
 }

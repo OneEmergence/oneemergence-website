@@ -1,5 +1,7 @@
 import { z } from 'zod'
 
+export const JournalEntryIdSchema = z.string().uuid()
+
 export const JournalEntryInputSchema = z.object({
   title: z.string().min(1, 'Titel ist erforderlich'),
   content: z.string().min(1, 'Inhalt ist erforderlich'),

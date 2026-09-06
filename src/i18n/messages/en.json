@@ -520,5 +520,60 @@
     "send": "Send message",
     "conversation": "Conversation with the guide",
     "thinking": "The guide is responding…"
+  },
+  "contact": {
+    "eyebrow": "Contact",
+    "title": "Write to us.",
+    "intro": "Questions, ideas or an interest in OneEmergence? Prepare an email to our team here.",
+    "formLabel": "Prepare an email draft",
+    "draftHelp": "This form does not send a message. It prepares an email draft for you to review and send yourself in your email app.",
+    "name": "Name",
+    "namePlaceholder": "Your name",
+    "email": "Email",
+    "emailPlaceholder": "you@example.com",
+    "subject": "Subject",
+    "message": "Message",
+    "messagePlaceholder": "What would you like to share?",
+    "requiredFields": "Fields marked * are required.",
+    "prepareDraft": "Prepare email draft",
+    "openDraft": "Open draft in email app",
+    "draftReady": "Your draft is ready. Nothing has been sent yet. Open it in your email app, review it and send it yourself. Your entries stay here.",
+    "emailFallback": "If no email app opens, copy your message and write directly to",
+    "subjects": {
+      "general": "General enquiry",
+      "events": "Event / Gathering",
+      "community": "Community & Onboarding",
+      "press": "Press & Collaboration",
+      "technical": "Technical feedback",
+      "other": "Other"
+    }
+  },
+  "journalEditor": {
+    "editTitle": "Edit entry",
+    "newTitle": "New entry",
+    "titleLabel": "Title",
+    "titlePlaceholder": "What is on your mind?",
+    "contentLabel": "Content",
+    "contentPlaceholder": "Write freely — this space is yours…",
+    "saveButton": "Save",
+    "savingButton": "Saving…",
+    "backButton": "Back",
+    "requiredError": "Please add a title and some content. Your entries remain here.",
+    "saveError": "Your latest changes could not be saved. Your entries remain here. Select Save to try again.",
+    "status": {
+      "draft": "Draft",
+      "dirty": "Unsaved changes",
+      "saving": "Saving…",
+      "saved": "Saved",
+      "error": "Not saved"
+    }
+  },
+  "newsletter": {
+    "label": "Stay in touch",
+    "description": "Newsletter signup is not available yet. If you would like to learn more, send us an email.",
+    "contact": "Get in touch by email",
+    "subject": "Interest in OneEmergence",
+    "mailHelp": "This link opens your email app. You send the message yourself; this does not sign you up for a newsletter.",
+    "introduction": "For now, we share news and invitations through personal conversations. Write to us if you would like to learn more."
   }
 }

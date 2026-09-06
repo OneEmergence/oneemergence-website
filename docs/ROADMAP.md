@@ -1,5 +1,94 @@
 # OneEmergence — Platform Roadmap
 
+Stand: 2026-09-07 · Aktive Arbeitsgrundlage
+
+## Nächster Stand: verlässlich betreiben, dann gezielt erweitern
+
+Der vorhandene Stack (Next.js 16, React 19, Tailwind 4) und das etablierte
+cosmic → solarpunk → warm Design bleiben die Grundlage. Modernisierung bedeutet
+zuerst verlässliche Nutzerwege, nachvollziehbare Datenänderungen und reproduzierbare
+Prüfungen. Die ursprüngliche Phasenplanung steht weiter unten als Kontext;
+**für neue Aufgaben gilt zuerst diese aktuelle Priorisierung.**
+
+### Stabilisierung vom 6. September
+
+- Produktionsbuild, Lint und TypeScript als Ausgangsbasis geprüft; lokale Website
+  unter `http://localhost:3000` gestartet. Abschließende Testergebnisse stehen im
+  [Prüfprotokoll](./audits/2026-09-06-stabilization.md).
+- Leere optionale Env-Werte werden als nicht konfiguriert behandelt;
+  erforderliche Produktionswerte bleiben verpflichtend. Playwright lädt die
+  gleiche Produktions-Env wie Next, damit lokale Portaltests tatsächlich laufen.
+- Journal-Änderungen aktualisieren Map-Titel/Ausschnitte; Löschen entfernt die
+  verknüpften Inhaltskopien und Kanten in einer gemeinsamen Transaktion.
+- Kontakt/Newsletter erhalten ehrliche E-Mail-Wege statt simulierter Zustellung.
+  Ein produktiver Formular-/Newsletterdienst bleibt ein eigenes Arbeitspaket.
+- Mobile Navigation, Audio-Abschaltung und sichtbare, semantische Homepage-CTAs
+  sind korrigiert und durch Browserchecks abgesichert.
+- README, Architektur und Agent-Instruktionen bilden den implementierten Stand ab.
+  CI sammelt gemeinsame Testberichte und prüft den Journal-Lebenszyklus mit lokalem
+  PostgreSQL; die alte SQL-Sync-Automatik ist eine manuelle Migrationsvorschau.
+- Abschluss lokal: **197 Browserchecks + 9 Performancechecks + 5 SQL-Prüfgruppen
+  bestanden**, 11 erklärte Browser-Skips; Build, Lint und TypeScript grün. Die
+  niedrige Desktop-3D-Bildrate bleibt als messbarer Optimierungsbedarf offen.
+
+### Nächste Schritte umgesetzt (7. September)
+
+- Journal-Autosave und manueller Save teilen eine serialisierte Warteschlange;
+  neue Änderungen werden nachgeführt, Mood-only-Änderungen automatisch gespeichert
+  und bestehende Themen erhalten. Fehler lassen den Entwurf bearbeitbar.
+- Neue Entwürfe behalten bis zum Verlassen des Editors eine stabile UUID. Eine
+  verlorene Create-Antwort führt beim Retry zum selben eigenen Eintrag und seiner
+  bestehenden Map-Kopie. Auch ein Revert nach unbestätigtem Update wird erneut
+  geschrieben, bevor der Editor Erfolg meldet.
+- `pnpm test:accounts:local` erstellt eine frische lokale Supabase-Instanz, spielt
+  die vorhandenen Migrationen ein und prüft den echten UI-/RLS-Lebenszyklus.
+  Eigene Testkonten und die Testinstanz werden wieder entfernt; Cloud-Zugangsdaten
+  werden nicht verwendet. Anleitung: [Account-Abnahme](./testing/accounts.md).
+- 3D-Qualität wird bei dauerhaft weniger als 30 FPS automatisch reduziert;
+  manuelle Auswahl bleibt verbindlich. Die automatische Absenkung und ein
+  Atmosphärenwechsel erhalten Canvas und Kamera. Medium spart den MSAA-Framebuffer.
+  Low begrenzt die interne 3D-Zeichenfläche auf 450.000 Pixel; Text und Bedienung
+  bleiben in nativer Auflösung, kleine mobile Zeichenflächen bei DPR 1.
+- CI prüft Autosave ohne Appserver und Accounts gegen frische lokale Dienste;
+  die Abnahme läuft bei relevanten PR-Änderungen oder manuell. Bestehende
+  Formatierungsaltlasten bleiben ein separater mechanischer Schritt.
+- Abgenommen: 9 Autosave-Tests, 8 SQL-Prüfgruppen, 4 echte lokale Account-/RLS-Tests
+  und abschließend 81 gezielte Desktop-/Mobilprüfungen (9 erwartete Plattform-Skips).
+  Build, Lint und Typprüfung sind grün. Im Software-Renderer steigt die gemessene
+  Desktop-3D-Bildrate von rund 12 auf 33 FPS, mobil bleibt sie bei rund 57 FPS.
+  Details und Prüfgrenzen: [Umsetzungsprotokoll](./audits/2026-09-07-next-steps.md).
+
+### Kleine Roadmap
+
+| Reihenfolge | Arbeitspaket | Abnahme / nächster nutzbarer Stand |
+|---|---|---|
+| 1 | **Cloud-Abnahme der Identität** | Die lokale Account-/RLS-Abnahme und Journal-Retries sind umgesetzt. In separatem Staging folgen externe E-Mail-Verifikation/Passwortreset, OAuth, Avatar-Upload und derselbe Account-Lebenszyklus mit den Hosting-Einstellungen. Historische verwaiste Map-Kopien getrennt inventarisieren und bereinigen. |
+| 2 | **Öffentliche Nutzerwege schärfen** | Home führt erkennbar zu Inhalt, Map oder persönlichem Portal. Kontakt erhält bei Bedarf echten Serverversand mit Fehlerzustand; Newsletter erst mit dauerhaftem Opt-in und Abmeldung. Alle bearbeiteten Wege in DE/EN, per Tastatur, auf Mobilgeräten und in Still prüfen. Öffentliche EN-URLs bewusst planen; ein Cookie allein übersetzt die statisch deutschen Seiten nicht. |
+| 3 | **Guide zuverlässig und dann agentisch machen** | Zuerst pro Konto Request-/Kostenlimits, stabile conversationId bei Providerfehler, sichere Wiederholung und Abbruch. Dann ein kompletter Streaming-Slice: Journal suchen → Quelle zeigen → Map-Änderung vorschlagen → ausdrückliche Bestätigung → genau eine Speicherung. Evals prüfen Quellenbezug, Besitzertrennung, verweigerte Aktionen und Providerfehler. |
+| 3, parallel | **3D-Erlebnis und Hosting messen** | Public/2D bleiben schnell; 3D wird nur bei Bedarf geladen, Still/WebGL-Ausfall behalten alle Inhalte. Grafikprofil auf realem Mittelklasse-Gerät; LCP < 2,5 s, CLS < 0,1, INP < 200 ms als Produktziele messen. Docker-Image bauen, Healthcheck und Runtime-Env prüfen; danach Staging-Abnahme des gewählten Hostings. |
+| 4 | **Akashic Records als kleinen vertikalen Slice beginnen** | Erst nach Identität und stabilem Guide: ein Journaleintrag wird ein nutzereigener Record, erscheint in Suche/Map, wird vom Guide zitiert und verschwindet beim Löschen auch aus abgeleiteten Kopien. Vektorsuche und weitere Record-Typen erst aus diesem nachgewiesenen Bedarf ausbauen. |
+
+### Agentisches Engineering im Repo
+
+Der konkrete Ablauf steht in [ENGINEERING.md](./ENGINEERING.md): ein begrenztes
+Nutzerproblem, klare Dateizuständigkeit, ein beobachtbarer Abnahmetest, dann Änderung
+und gezielte Verifikation. Unabhängige Audits/Dokumentation parallelisieren;
+Build und Browserlast koordinieren. Jede Übergabe nennt geänderte Dateien,
+ausgeführte Befehle, echte Ergebnisse, übersprungene Prüfungen und den nächsten
+kleinen Schritt. `pnpm check` bündelt Lint und TypeScript.
+
+Kein neues Agent-Framework ist für diesen Arbeitsablauf nötig. Der produktseitige
+Guide folgt erst nach den obigen Daten- und Zuverlässigkeitskriterien. Formatierung
+wird an bearbeiteten Dateien vereinheitlicht; bestehende flächige Formatierungs-
+Altlasten werden in einem separaten mechanischen PR bereinigt.
+
+---
+
+## Ursprüngliche Plattformplanung (Juli 2026)
+
+Die folgenden Befunde dokumentieren den damaligen Ausgangsstand; bereits behobene
+Punkte sind keine neue To-do-Liste. Die Zielphasen bleiben als längerfristiger Kontext.
+
 Date: 2026-07-12 · Status: Active implementation
 
 This document turns the website into an **expanding, emergently growing

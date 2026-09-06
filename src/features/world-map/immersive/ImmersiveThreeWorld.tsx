@@ -111,6 +111,7 @@ export function ImmersiveThreeWorld({
   const cameraSurfaceRef = useRef<HTMLDivElement>(null)
   const detailTriggerRef = useRef<HTMLElement | null>(null)
   const [quality, setQuality] = useState<WorldQuality>(initialQuality)
+  const [automaticQuality, setAutomaticQuality] = useState(true)
   const [atmosphere, setAtmosphere] = useState<WorldAtmosphere>('dawn')
   const [cameraCommand, setCameraCommand] = useState<CameraCommand>({
     action: 'reset',
@@ -153,10 +154,11 @@ export function ImmersiveThreeWorld({
   }, [])
 
   const lowerQuality = useCallback(() => {
+    if (!automaticQuality) return
     setQuality((current) =>
       current === 'high' ? 'medium' : current === 'medium' ? 'low' : current
     )
-  }, [])
+  }, [automaticQuality])
 
   useEffect(() => {
     if (!simulationActive) return
@@ -261,6 +263,7 @@ export function ImmersiveThreeWorld({
   }
 
   function cycleQuality() {
+    setAutomaticQuality(false)
     setQuality((current) => {
       const index = QUALITY_ORDER.indexOf(current)
       return QUALITY_ORDER[(index + 1) % QUALITY_ORDER.length]
@@ -315,9 +318,9 @@ export function ImmersiveThreeWorld({
         className="absolute inset-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-oe-spirit-cyan"
       >
         <WorldScene
-          key={`${quality}-${atmosphere}`}
           palette={palette}
           quality={quality}
+          automaticQuality={automaticQuality}
           atmosphere={atmosphere}
           selectedId={selectedId}
           game={game}

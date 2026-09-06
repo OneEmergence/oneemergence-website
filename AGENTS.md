@@ -15,16 +15,23 @@ Dieses Dokument ist der Einstiegspunkt für Claude (und andere Agents), um an On
 - MDX for content, next-intl for i18n (activating incrementally, see below)
 - Supabase (Postgres, Auth, Storage) + Drizzle ORM, Vercel AI SDK
 - Sentry (monitoring), Playwright (E2E tests)
-- Planned, not installed: React Three Fiber / Three.js, GSAP, Tone.js (see ARCHITECTURE.md "Artistic Stack" — opt-in per component when needed)
+- React Three Fiber / Three.js are installed for the public world map; lazy-load WebGL and retain a usable fallback. GSAP and Tone.js remain uninstalled.
 
 ### Planning Documents
 - **`docs/ROADMAP.md`** — current phase, findings, decisions log. Read this first for "what's next."
 - **`VISION.md`** — Product vision, UX philosophy, content system, AI Guide, product staging
 - **`ARCHITECTURE.md`** — Technical stack, coding paradigms, folder structure, migration path
 - Always read `docs/ROADMAP.md` + the relevant planning doc before starting significant feature work.
+- **`docs/ENGINEERING.md`** — local startup, verification tiers, CI coverage and agent handoff. Use executable code/config for current behavior; older plans may describe intended rather than shipped features.
+
+### Reproducible Agent Workflow
+- Inspect `git status --short` before editing and preserve unrelated work. Assign disjoint file ownership when agents work in parallel.
+- Use the pinned Node/pnpm setup and existing scripts; run the smallest relevant check before broadening to lint, typecheck, build and affected browser flows.
+- Coordinate build/dev/test processes: Playwright may reuse port 3000 locally. Record whether tests exercised a development or production server; never treat reuse as proof of a production build.
+- Handoffs record the user-visible change, exact commands and results (including skipped tests), remaining limitations and the next concrete task. A passing public smoke run does not verify authenticated cloud flows, RLS, AI providers or deployment.
 
 ### Design System & Theme
-- Farben sind in `tailwind.config.ts` und `src/app/globals.css` als Design-Tokens konfiguriert.
+- Farben sind in `src/app/globals.css` über `@theme` als Design-Tokens konfiguriert (Tailwind v4, CSS-first).
 - Primärfarben:
   - Background: `--background` (Deep Space / Pure Light)
   - Foreground: `--foreground`
@@ -38,11 +45,12 @@ Dieses Dokument ist der Einstiegspunkt für Claude (und andere Agents), um an On
 ### Dateistruktur (current)
 - `src/app/(marketing)/`: public routes (home, manifesto, about, experiences, library, events, community, contact, journal)
 - `src/app/(portal)/`: authenticated routes (portal entry, inner/journal, inner/map, inner/guide, inner/practice)
-- `src/app/api/`: API routes (guide streaming endpoint; webhooks/auth callbacks land here too)
+- `src/app/(immersive)/`: public full-screen world map under `/map/immersive`
+- `src/app/api/`: Guide JSON endpoint and health probe; streaming/AG-UI is planned, auth callbacks live in `src/app/auth/`.
 - `src/app/auth/`: auth callback routes
 - `src/components/`: `ui/`, `motion/`, `scene/`, `content/`, `layout/`, `sections/`, `providers/`
-- `src/features/`: feature modules — `auth/`, `workspaces/`, `journal/`, `guide/`, `rituals/`, `map/` (each with `components/`, actions co-located)
-- `src/lib/`: `env.ts` (Zod-validated env), `utils.ts`, `db/` (Drizzle schema), `supabase/`, `ai/`, `content/`, `schemas/`, `analytics/`, `auth/`, `actions/` (being dissolved into features)
+- `src/features/`: feature modules — `auth/`, `workspaces/`, `journal/`, `guide/`, `rituals/`, `map/`, `world-map/` (each with `components/`, actions co-located where needed)
+- `src/lib/`: `env.ts` (Zod-validated env), `utils.ts`, `db/` (Drizzle schema), `supabase/`, `ai/`, `content/`, `schemas/`, `analytics/`, `auth/`; server actions live in feature modules.
 - `src/stores/`: Zustand — `intensity.ts`, `audio.ts`, `preferences.ts`
 - `src/i18n/`: next-intl config, `request.ts`, `messages/{de,en}.json`
 - `src/content/`: MDX by sacred content type (`teachings/`, `reflections/`, `practices/`, `transmissions/`, `essays/`, `journeys/`, `journal/`, `pages/`)

@@ -1,65 +1,21 @@
 'use client'
 
-import { useState } from 'react'
-import { motion } from 'framer-motion'
-import { Button } from '@/components/ui/button'
+import { useTranslations } from 'next-intl'
 
 export function NewsletterSignup() {
-  const [email, setEmail] = useState('')
-  const [status, setStatus] = useState<'idle' | 'submitting' | 'success'>('idle')
-
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    if (!email.trim()) return
-    setStatus('submitting')
-    // Placeholder: in production this would call a server action
-    setTimeout(() => {
-      setStatus('success')
-      setEmail('')
-    }, 600)
-  }
-
-  if (status === 'success') {
-    return (
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="text-center"
-      >
-        <p className="font-serif text-xl text-oe-solar-gold">
-          Willkommen im Feld.
-        </p>
-        <p className="mt-2 text-sm text-oe-pure-light/60">
-          Du erhältst bald unsere erste Nachricht.
-        </p>
-      </motion.div>
-    )
-  }
+  const t = useTranslations('newsletter')
+  const href = `mailto:hello@oneemergence.com?subject=${encodeURIComponent(t('subject'))}`
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col items-center gap-4 sm:flex-row sm:gap-3">
-      <label htmlFor="newsletter-email" className="sr-only">
-        E-Mail-Adresse
-      </label>
-      <input
-        id="newsletter-email"
-        type="email"
-        required
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="deine@email.de"
-        disabled={status === 'submitting'}
-        className="w-full max-w-sm rounded-full border border-oe-aurora-violet/30 bg-oe-pure-light/5 px-5 py-3 text-sm text-oe-pure-light placeholder:text-oe-pure-light/55 focus:border-oe-aurora-violet/60 focus:outline-none focus:ring-1 focus:ring-oe-aurora-violet/40 transition-colors disabled:opacity-50"
-      />
-      <Button
-        variant="primary"
-        size="md"
-        type="submit"
-        disabled={status === 'submitting'}
+    <div role="group" aria-label={t('label')} className="flex flex-col items-center gap-4">
+      <p className="max-w-lg text-sm leading-relaxed text-oe-pure-light/70">{t('description')}</p>
+      <a
+        href={href}
+        className="inline-flex min-h-11 items-center justify-center rounded-full bg-oe-aurora-violet-deep px-6 py-3 text-base font-medium text-white transition-colors hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-spirit-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-oe-deep-space"
       >
-        {status === 'submitting' ? 'Wird gesendet...' : 'Eintauchen'}
-      </Button>
-    </form>
+        {t('contact')}
+      </a>
+      <p className="max-w-lg text-xs leading-relaxed text-oe-pure-light/60">{t('mailHelp')}</p>
+    </div>
   )
 }

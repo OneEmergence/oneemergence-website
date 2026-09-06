@@ -1,19 +1,15 @@
 'use client'
 
-import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { motion, type Variants } from 'framer-motion'
 import { Clock, Eye, Compass, Sparkles } from 'lucide-react'
 import { ScrollReveal } from '@/components/motion/ScrollReveal'
 import { StarField } from '@/components/scene/StarField'
 import { LayerAtmosphere } from '@/components/motion/LayerAtmosphere'
 import { NewsletterSignup } from '@/components/sections/NewsletterSignup'
-import { Button } from '@/components/ui/button'
+import { ButtonLink } from '@/components/ui/button'
 
-type AccentColor =
-  | 'oe-spirit-cyan'
-  | 'oe-aurora-violet'
-  | 'oe-living-green'
-  | 'oe-solar-gold'
+type AccentColor = 'oe-spirit-cyan' | 'oe-aurora-violet' | 'oe-living-green' | 'oe-solar-gold'
 
 interface Experience {
   slug: string
@@ -27,28 +23,29 @@ interface Experience {
   available: boolean
 }
 
-const ACCENT_ICON_CLASSES: Record<AccentColor, { container: string; icon: string; label: string }> = {
-  'oe-spirit-cyan': {
-    container: 'border-oe-spirit-cyan/20 bg-oe-spirit-cyan/5',
-    icon: 'text-oe-spirit-cyan/70',
-    label: 'text-oe-spirit-cyan/70',
-  },
-  'oe-aurora-violet': {
-    container: 'border-oe-aurora-violet/20 bg-oe-aurora-violet/5',
-    icon: 'text-oe-aurora-violet-ink',
-    label: 'text-oe-aurora-violet-ink',
-  },
-  'oe-living-green': {
-    container: 'border-oe-living-green/20 bg-oe-living-green/5',
-    icon: 'text-oe-living-green/70',
-    label: 'text-oe-living-green/70',
-  },
-  'oe-solar-gold': {
-    container: 'border-oe-solar-gold/20 bg-oe-solar-gold/5',
-    icon: 'text-oe-solar-gold/70',
-    label: 'text-oe-solar-gold/70',
-  },
-}
+const ACCENT_ICON_CLASSES: Record<AccentColor, { container: string; icon: string; label: string }> =
+  {
+    'oe-spirit-cyan': {
+      container: 'border-oe-spirit-cyan/20 bg-oe-spirit-cyan/5',
+      icon: 'text-oe-spirit-cyan/70',
+      label: 'text-oe-spirit-cyan/70',
+    },
+    'oe-aurora-violet': {
+      container: 'border-oe-aurora-violet/20 bg-oe-aurora-violet/5',
+      icon: 'text-oe-aurora-violet-ink',
+      label: 'text-oe-aurora-violet-ink',
+    },
+    'oe-living-green': {
+      container: 'border-oe-living-green/20 bg-oe-living-green/5',
+      icon: 'text-oe-living-green/70',
+      label: 'text-oe-living-green/70',
+    },
+    'oe-solar-gold': {
+      container: 'border-oe-solar-gold/20 bg-oe-solar-gold/5',
+      icon: 'text-oe-solar-gold/70',
+      label: 'text-oe-solar-gold/70',
+    },
+  }
 
 const experiences: Experience[] = [
   {
@@ -99,6 +96,7 @@ const fadeUp: Variants = {
 }
 
 export function ExperiencesClient() {
+  const t = useTranslations('newsletter')
   return (
     <div className="relative isolate min-h-screen overflow-hidden bg-oe-deep-space text-oe-pure-light">
       <LayerAtmosphere variant="solarpunk" />
@@ -130,8 +128,8 @@ export function ExperiencesClient() {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="mx-auto mt-6 max-w-lg text-base leading-relaxed text-oe-pure-light/55 md:text-lg"
           >
-            Visuelle Essays, geführte Interaktionen und kontemplative Reisen —
-            Erfahrungen, die über Text hinausgehen und dich einladen, zu fühlen.
+            Visuelle Essays, geführte Interaktionen und kontemplative Reisen — Erfahrungen, die über
+            Text hinausgehen und dich einladen, zu fühlen.
           </motion.p>
         </div>
       </section>
@@ -198,11 +196,9 @@ export function ExperiencesClient() {
                     {/* Action */}
                     <div className="mt-5 shrink-0 md:mt-0">
                       {exp.available ? (
-                        <Link href={`/experiences/${exp.slug}`}>
-                          <Button variant="outline" size="md">
-                            Starten
-                          </Button>
-                        </Link>
+                        <ButtonLink href={`/experiences/${exp.slug}`} variant="outline" size="md">
+                          Starten
+                        </ButtonLink>
                       ) : (
                         <span className="inline-flex items-center rounded-full border border-oe-pure-light/10 px-4 py-2 text-xs text-oe-pure-light/55">
                           Bald verfügbar
@@ -240,8 +236,7 @@ export function ExperiencesClient() {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="mx-auto mt-6 max-w-lg text-base text-oe-pure-light/50"
           >
-            Klangstudio-Reisen, interaktive Meditationen und kollektive
-            Zeremonien. Trage dich ein, um als Erste*r davon zu erfahren.
+            {t('introduction')}
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 12 }}

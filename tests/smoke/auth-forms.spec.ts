@@ -8,10 +8,11 @@ test.describe('Portal entry auth forms', () => {
   test('/portal renders login and signup options', async ({ page }) => {
     await page.goto('/portal', { waitUntil: 'domcontentloaded' })
 
-    await expect(page.getByRole('button', { name: 'Anmelden' })).toHaveAttribute(
-      'aria-pressed',
-      'true'
-    )
+    await expect(
+      page
+        .getByRole('group', { name: 'Zugangsart' })
+        .getByRole('button', { name: 'Anmelden', exact: true })
+    ).toHaveAttribute('aria-pressed', 'true')
     await expect(page.getByRole('button', { name: 'Registrieren' })).toHaveAttribute(
       'aria-pressed',
       'false'
@@ -36,7 +37,8 @@ test.describe('Portal entry auth forms', () => {
     const page = await context.newPage()
     await page.goto('/portal', { waitUntil: 'domcontentloaded' })
 
-    await expect(page.locator('[data-motion-level="sacred"]')).toBeVisible()
+    await expect(page.locator('html')).toHaveAttribute('data-intensity', 'still')
+    await expect(page.locator('#login-email')).toBeVisible()
     await expect(page.locator('video')).toHaveCount(0)
     await context.close()
   })

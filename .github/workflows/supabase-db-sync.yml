@@ -1,58 +1,40 @@
-name: Supabase DB Sync
+name: Supabase Migration Preview
 
+# Replaces the legacy DB/supabase SQL replay workflow. The canonical deployment
+# history lives in supabase/migrations; a push must never replay old SQL files.
+# This manually triggered workflow lists pending migrations without applying them.
 on:
-  push:
-    branches: [main, dev]
-    paths:
-      - "DB/supabase/**"
-      - ".github/workflows/supabase-db-sync.yml"
   workflow_dispatch:
 
 permissions:
   contents: read
 
-concurrency:
-  group: supabase-db-sync
-  cancel-in-progress: false
-
 jobs:
-  sync:
-    name: Apply SQL scripts
+  preview:
+    name: Preview pending migrations
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - name: Checkout
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
 
-      - name: Install PostgreSQL client
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends postgresql-client
+      - uses: pnpm/action-setup@v4
 
-      - name: Apply SQL scripts
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Preview migrations
         env:
           SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
         run: |
           set -euo pipefail
 
           if [[ -z "${SUPABASE_DB_URL:-}" ]]; then
-            echo "Missing GitHub secret SUPABASE_DB_URL."
-            echo "Expected: Supabase session-pooler connection string,"
-            echo "e.g. postgresql://postgres.<ref>:<password>@aws-0-<region>.pooler.supabase.com:5432/postgres"
+            echo "Configure the SUPABASE_DB_URL repository secret for the intended database."
             exit 1
           fi
 
-          # ponytail: all scripts are idempotent and numbered — apply everything
-          # in order on every run instead of tracking diffs or migration state.
-          # The [0-8]* glob excludes 99_verify.sql and the rollback/ subfolder.
-          for f in DB/supabase/[0-8]*.sql; do
-            echo "→ Applying $f"
-            psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 --single-transaction -f "$f"
-          done
-
-      - name: Run smoke checks (99_verify.sql)
-        env:
-          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
-        run: |
-          # Fails hard on structural errors (missing table/RPC); result rows
-          # are printed for manual inspection against the comments in the file.
-          psql "$SUPABASE_DB_URL" -v ON_ERROR_STOP=1 -f DB/supabase/99_verify.sql
+          pnpm exec supabase db push --db-url "$SUPABASE_DB_URL" --dry-run

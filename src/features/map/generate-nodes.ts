@@ -1,7 +1,7 @@
 import 'server-only'
 
 import { eq, and } from 'drizzle-orm'
-import { requireDb } from '@/lib/db'
+import type { Database } from '@/lib/db'
 import { mapNodes, mapEdges } from '@/lib/db/schema'
 import { extractThemes } from './extract-themes'
 import { NODE_TYPE_COLORS } from './schemas'
@@ -18,13 +18,12 @@ import { NODE_TYPE_COLORS } from './schemas'
  * Returns the number of new nodes created.
  */
 export async function generateNodesFromJournal(
+  db: Pick<Database, 'select' | 'insert' | 'update'>,
   userId: string,
   entryId: string,
   title: string,
   content: string
 ): Promise<{ newNodes: number; themes: string[] }> {
-  const db = requireDb()
-
   // 1. Create the journal-entry node
   const [entryNode] = await db
     .insert(mapNodes)
@@ -69,12 +68,7 @@ export async function generateNodesFromJournal(
       await db
         .update(mapNodes)
         .set({ size: newSize })
-        .where(
-          and(
-            eq(mapNodes.id, existingTheme.id),
-            eq(mapNodes.userId, userId)
-          )
-        )
+        .where(and(eq(mapNodes.id, existingTheme.id), eq(mapNodes.userId, userId)))
       themeNodeId = existingTheme.id
     } else {
       // Create new theme node

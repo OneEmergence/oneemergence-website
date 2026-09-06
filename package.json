@@ -13,6 +13,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
+    "check": "pnpm lint && pnpm typecheck",
     "format": "prettier --write src",
     "format:check": "prettier --check src",
     "test": "playwright test",
@@ -22,6 +23,9 @@
     "test:perf": "playwright test tests/performance",
     "test:mobile": "playwright test tests/smoke/responsive",
     "test:world-assets": "node scripts/validate-world-map-glb.mjs public/models/world-map/tree/tree-optimized.glb",
+    "test:journal-lifecycle": "node scripts/test-journal-lifecycle.mjs",
+    "test:accounts:local": "node scripts/test-accounts-local.mjs",
+    "test:journal-autosave": "playwright test --config=playwright.unit.config.ts",
     "db:push": "supabase db push",
     "db:diff": "supabase db diff",
     "db:pull": "supabase db pull",
@@ -59,6 +63,7 @@
     "zustand": "^5.0.15"
   },
   "devDependencies": {
+    "@next/env": "16.2.1",
     "@axe-core/playwright": "^4.13.0",
     "@gltf-transform/cli": "^4.5.0",
     "@next/bundle-analyzer": "^16.3.4",

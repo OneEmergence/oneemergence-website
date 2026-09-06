@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { motion, useScroll, useTransform, type Variants } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import { StarField } from '@/components/scene/StarField'
@@ -9,7 +10,8 @@ import { LayerAtmosphere } from '@/components/motion/LayerAtmosphere'
 import { ScrollReveal } from '@/components/motion/ScrollReveal'
 import { ScrollIndicator } from '@/components/motion/ScrollIndicator'
 import { MagneticButton } from '@/components/ui/MagneticButton'
-import { Button } from '@/components/ui/button'
+import { ButtonLink } from '@/components/ui/button'
+import { useMotionLevel } from '@/hooks/useMotionLevel'
 import { NewsletterSignup } from '@/components/sections/NewsletterSignup'
 import type { Post } from '@/lib/content'
 
@@ -31,6 +33,8 @@ const staggerContainer = {
 }
 
 export function LivingPortalClient({ posts }: { posts: PostPreview[] }) {
+  const t = useTranslations('newsletter')
+  const allowFlow = useMotionLevel('flow')
   const { scrollYProgress } = useScroll()
   const heroOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0])
   const heroScale = useTransform(scrollYProgress, [0, 0.15], [1, 0.95])
@@ -43,7 +47,8 @@ export function LivingPortalClient({ posts }: { posts: PostPreview[] }) {
         <StarField />
 
         <motion.div
-          style={{ opacity: heroOpacity, scale: heroScale }}
+          data-motion-level="flow"
+          style={{ opacity: allowFlow ? heroOpacity : 1, scale: allowFlow ? heroScale : 1 }}
           className="relative z-10 flex flex-col items-center px-4 text-center"
         >
           <div className="mb-8">
@@ -51,9 +56,7 @@ export function LivingPortalClient({ posts }: { posts: PostPreview[] }) {
           </div>
 
           <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.2 }}
+            initial={false}
             className="mb-4 text-xs font-semibold uppercase tracking-[0.4em] text-oe-aurora-violet-ink"
           >
             Ein lebendiges Portal
@@ -65,7 +68,7 @@ export function LivingPortalClient({ posts }: { posts: PostPreview[] }) {
               2.5s budget by construction on a mid-tier phone, and permanently
               blank if the JS ever fails. It animates `y` only. */}
           <motion.h1
-            initial={{ y: 24 }}
+            initial={allowFlow ? { y: 24 } : false}
             animate={{ y: 0 }}
             transition={{ duration: 0.9, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
             className="font-serif text-4xl leading-tight text-oe-solar-gold sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl"
@@ -82,34 +85,25 @@ export function LivingPortalClient({ posts }: { posts: PostPreview[] }) {
           />
 
           <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={allowFlow ? { y: 16 } : false}
+            animate={{ y: 0 }}
             transition={{ duration: 0.8, delay: 0.7 }}
             className="mt-6 max-w-xl text-base leading-relaxed text-oe-pure-light/60 sm:text-lg md:text-xl"
           >
-            Eine digitale Heimat, die dich einlädt in eine Erfahrung
-            von Einheit, Freiheit und Liebe.
+            Eine digitale Heimat, die dich einlädt in eine Erfahrung von Einheit, Freiheit und
+            Liebe.
           </motion.p>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1, duration: 0.6 }}
-            className="mt-10 flex flex-wrap justify-center gap-4"
-          >
+          <motion.div initial={false} className="mt-10 flex flex-wrap justify-center gap-4">
             <MagneticButton strength={0.3}>
-              <Link href="/manifesto" className="inline-flex">
-                <Button variant="primary" size="lg">
-                  Manifesto entdecken
-                </Button>
-              </Link>
+              <ButtonLink href="/manifesto" variant="primary" size="lg">
+                Manifesto entdecken
+              </ButtonLink>
             </MagneticButton>
             <MagneticButton strength={0.3}>
-              <Link href="/experiences" className="inline-flex">
-                <Button variant="outline" size="lg">
-                  Erfahrungen erkunden
-                </Button>
-              </Link>
+              <ButtonLink href="/experiences" variant="outline" size="lg">
+                Erfahrungen erkunden
+              </ButtonLink>
             </MagneticButton>
           </motion.div>
         </motion.div>
@@ -218,11 +212,9 @@ export function LivingPortalClient({ posts }: { posts: PostPreview[] }) {
           </motion.div>
 
           <div className="mt-10 text-center">
-            <Link href="/library">
-              <Button variant="ghost" size="md">
-                Alle Inhalte entdecken <ArrowRight size={16} className="ml-1" />
-              </Button>
-            </Link>
+            <ButtonLink href="/library" variant="ghost" size="md">
+              Alle Inhalte entdecken <ArrowRight size={16} className="ml-1" />
+            </ButtonLink>
           </div>
         </div>
       </section>
@@ -260,8 +252,8 @@ export function LivingPortalClient({ posts }: { posts: PostPreview[] }) {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-oe-pure-light/50"
           >
-            Visuelle Essays, geführte Interaktionen und kontemplative Reisen —
-            Erfahrungen, die über Text hinausgehen und dich einladen, zu fühlen.
+            Visuelle Essays, geführte Interaktionen und kontemplative Reisen — Erfahrungen, die über
+            Text hinausgehen und dich einladen, zu fühlen.
           </motion.p>
 
           <motion.div
@@ -297,7 +289,9 @@ export function LivingPortalClient({ posts }: { posts: PostPreview[] }) {
                   data-cursor-hover
                   className="group block rounded-2xl border border-oe-pure-light/8 bg-oe-pure-light/[0.02] p-6 text-left transition-all duration-300 hover:border-oe-spirit-cyan/30 hover:bg-oe-spirit-cyan/5"
                 >
-                  <span className={`text-[10px] font-semibold uppercase tracking-[0.2em] ${EXP_ACCENT_CLASSES[exp.accent] ?? 'text-oe-pure-light/70'}`}>
+                  <span
+                    className={`text-[10px] font-semibold uppercase tracking-[0.2em] ${EXP_ACCENT_CLASSES[exp.accent] ?? 'text-oe-pure-light/70'}`}
+                  >
                     {exp.type}
                   </span>
                   <h3 className="mt-2 font-serif text-lg text-oe-pure-light transition-colors group-hover:text-oe-solar-gold">
@@ -310,11 +304,9 @@ export function LivingPortalClient({ posts }: { posts: PostPreview[] }) {
           </motion.div>
 
           <div className="mt-10">
-            <Link href="/experiences">
-              <Button variant="outline" size="md">
-                Alle Erfahrungen <ArrowRight size={16} className="ml-1" />
-              </Button>
-            </Link>
+            <ButtonLink href="/experiences" variant="outline" size="md">
+              Alle Erfahrungen <ArrowRight size={16} className="ml-1" />
+            </ButtonLink>
           </div>
         </div>
       </section>
@@ -343,9 +335,9 @@ export function LivingPortalClient({ posts }: { posts: PostPreview[] }) {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="mx-auto mt-6 max-w-xl text-base leading-relaxed text-oe-pure-light/50"
           >
-            OneEmergence ist ein lebendiges Feld von Menschen, die spüren, dass eine
-            tiefere Art des Zusammenlebens möglich ist. Sessions, Retreats und
-            gemeinsame Zeremonien — digital und vor Ort.
+            OneEmergence ist ein lebendiges Feld von Menschen, die spüren, dass eine tiefere Art des
+            Zusammenlebens möglich ist. Sessions, Retreats und gemeinsame Zeremonien — digital und
+            vor Ort.
           </motion.p>
           <motion.div
             initial={{ opacity: 0 }}
@@ -354,12 +346,12 @@ export function LivingPortalClient({ posts }: { posts: PostPreview[] }) {
             transition={{ delay: 0.4, duration: 0.5 }}
             className="mt-8 flex flex-wrap justify-center gap-4"
           >
-            <Link href="/events">
-              <Button variant="primary" size="md">Events entdecken</Button>
-            </Link>
-            <Link href="/community">
-              <Button variant="ghost" size="md">Mehr erfahren</Button>
-            </Link>
+            <ButtonLink href="/events" variant="primary" size="md">
+              Events entdecken
+            </ButtonLink>
+            <ButtonLink href="/community" variant="ghost" size="md">
+              Mehr erfahren
+            </ButtonLink>
           </motion.div>
         </div>
       </section>
@@ -387,8 +379,7 @@ export function LivingPortalClient({ posts }: { posts: PostPreview[] }) {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="mx-auto mt-6 max-w-lg text-base text-oe-pure-light/50"
           >
-            Erhalte Impulse, neue Inhalte und Einladungen — direkt in dein Postfach.
-            Kein Spam. Nur das, was zählt.
+            {t('introduction')}
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 12 }}

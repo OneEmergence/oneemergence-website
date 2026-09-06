@@ -1,0 +1,56 @@
+name: Local account acceptance
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'src/features/auth/**'
+      - 'src/features/workspaces/**'
+      - 'src/features/journal/**'
+      - 'src/features/map/**'
+      - 'src/app/(portal)/**'
+      - 'src/app/auth/**'
+      - 'src/lib/auth/**'
+      - 'src/lib/supabase/**'
+      - 'src/lib/env.ts'
+      - 'src/lib/db/**'
+      - 'src/i18n/**'
+      - 'supabase/**'
+      - 'tests/accounts/**'
+      - 'tests/rls/**'
+      - 'tests/helpers/disposable-supabase.ts'
+      - 'scripts/test-accounts-local.mjs'
+      - 'playwright.config.ts'
+      - 'next.config.ts'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/accounts.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: accounts-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  accounts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      # The runner supplies fresh local credentials; no GitHub/cloud secrets.
+      - run: pnpm test:accounts:local
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: account-acceptance-report
+          path: playwright-report/
+          retention-days: 14

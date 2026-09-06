@@ -13,11 +13,7 @@ import { useMotionLevel } from '@/hooks/useMotionLevel'
  * `transform`, which for the duration of the transition would otherwise make
  * this div a containing block for any `position: fixed` descendant.
  */
-export default function MarketingTemplate({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function MarketingTemplate({ children }: { children: React.ReactNode }) {
   const allowFlow = useMotionLevel('flow')
 
   if (!allowFlow) return <>{children}</>
@@ -25,8 +21,9 @@ export default function MarketingTemplate({
   return (
     <motion.div
       data-motion-level="flow"
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
+      // Keep server-rendered content visible even before hydration.
+      initial={{ y: 8 }}
+      animate={{ y: 0 }}
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
     >
       {children}

@@ -1,156 +1,75 @@
 'use client'
 
-import { useTransition, useState, useRef, useCallback, useEffect } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 import { createEntry, updateEntry } from '../actions'
+import { createJournalSaveCoordinator, type JournalDraft } from '../save-coordinator'
 import { MoodTagSelector } from './MoodTagSelector'
 
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-
 interface JournalEditorProps {
-  initialData?: {
-    id: string
-    title: string
-    content: string
-    moodTags: string[]
-    themes: string[]
-  }
+  initialData?: JournalDraft & { id: string }
 }
 
-type AutoSaveStatus = 'idle' | 'saving' | 'saved' | 'error'
-
-const AUTOSAVE_DELAY_MS = 2500
-
-// ---------------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------------
+function persistDraft(id: string | null, draft: JournalDraft, createId: string) {
+  const formData = new FormData()
+  formData.set('title', draft.title)
+  formData.set('content', draft.content)
+  formData.set('moodTags', JSON.stringify(draft.moodTags))
+  formData.set('themes', JSON.stringify(draft.themes))
+  if (!id) formData.set('entryId', createId)
+  return id ? updateEntry(id, formData) : createEntry(formData)
+}
 
 export function JournalEditor({ initialData }: JournalEditorProps) {
   const router = useRouter()
+  const t = useTranslations('journalEditor')
   const [isPending, startTransition] = useTransition()
-  const [moodTags, setMoodTags] = useState<string[]>(initialData?.moodTags ?? [])
-  const [error, setError] = useState<string | null>(null)
+  const submittingRef = useRef(false)
+  const mountedRef = useRef(false)
+  const [coordinator] = useState(() => {
+    // This survives failed create responses for the lifetime of the draft.
+    const createId = initialData?.id ?? crypto.randomUUID()
+    return createJournalSaveCoordinator({
+      initialDraft: initialData ?? { title: '', content: '', moodTags: [], themes: [] },
+      initialId: initialData?.id,
+      persist: (id, draft) => persistDraft(id, draft, createId),
+    })
+  })
+  const { draft, status, error } = useSyncExternalStore(
+    coordinator.subscribe,
+    coordinator.getSnapshot,
+    coordinator.getSnapshot
+  )
 
-  // Controlled title/content for autosave
-  const [title, setTitle] = useState(initialData?.title ?? '')
-  const [content, setContent] = useState(initialData?.content ?? '')
-
-  // Autosave state — use refs to avoid stale closures in the debounce callback
-  const titleRef = useRef(initialData?.title ?? '')
-  const contentRef = useRef(initialData?.content ?? '')
-  const moodTagsRef = useRef<string[]>(initialData?.moodTags ?? [])
-  // ID of the entry that has been persisted (either from initialData or after first autosave)
-  const savedIdRef = useRef<string | null>(initialData?.id ?? null)
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const [autoSaveStatus, setAutoSaveStatus] = useState<AutoSaveStatus>('idle')
-  // Whether autosave has persisted a draft for a brand-new entry. Tracked as
-  // state (not read from savedIdRef) so it is safe to use during render.
-  const [hasSavedDraft, setHasSavedDraft] = useState(false)
-
-  // Keep mood tags ref in sync
   useEffect(() => {
-    moodTagsRef.current = moodTags
-  }, [moodTags])
-
-  // ---------------------------------------------------------------------------
-  // Autosave
-  // ---------------------------------------------------------------------------
-
-  const performAutoSave = useCallback(async () => {
-    const currentTitle = titleRef.current.trim()
-    const currentContent = contentRef.current.trim()
-
-    // Require both title and content before creating/updating
-    if (!currentTitle || !currentContent) return
-
-    setAutoSaveStatus('saving')
-
-    const fd = new FormData()
-    fd.set('title', currentTitle)
-    fd.set('content', currentContent)
-    fd.set('moodTags', JSON.stringify(moodTagsRef.current))
-    fd.set('themes', JSON.stringify([]))
-
-    const id = savedIdRef.current
-    const result = id
-      ? await updateEntry(id, fd)
-      : await createEntry(fd)
-
-    if (result.success) {
-      if (!savedIdRef.current) {
-        savedIdRef.current = result.data.id
-        setHasSavedDraft(true)
-      }
-      setAutoSaveStatus('saved')
-      setTimeout(() => setAutoSaveStatus('idle'), 2000)
-    } else {
-      setAutoSaveStatus('error')
-    }
-  }, [])
-
-  function scheduleAutoSave() {
-    if (debounceRef.current) clearTimeout(debounceRef.current)
-    debounceRef.current = setTimeout(performAutoSave, AUTOSAVE_DELAY_MS)
-  }
-
-  // Cancel pending autosave on unmount
-  useEffect(() => {
+    mountedRef.current = true
+    coordinator.start()
     return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current)
+      mountedRef.current = false
+      coordinator.stop()
     }
-  }, [])
-
-  // ---------------------------------------------------------------------------
-  // Manual submit
-  // ---------------------------------------------------------------------------
+  }, [coordinator])
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    setError(null)
-
-    // Cancel any pending autosave — manual save takes over
-    if (debounceRef.current) clearTimeout(debounceRef.current)
-
-    const form = event.currentTarget
-    const formData = new FormData(form)
-    formData.set('moodTags', JSON.stringify(moodTags))
-    formData.set('themes', JSON.stringify([]))
-
+    // A synchronous guard also covers repeated submits before React renders
+    // the disabled button. The queue is shared with any active autosave.
+    if (submittingRef.current) return
+    submittingRef.current = true
     startTransition(async () => {
-      // If autosave already created this entry, update it instead of creating again
-      const existingId = savedIdRef.current
-      const result = existingId && !initialData
-        ? await updateEntry(existingId, formData)
-        : initialData
-          ? await updateEntry(initialData.id, formData)
-          : await createEntry(formData)
-
-      if (result.success) {
-        router.push('/inner/journal')
-      } else {
-        setError(result.error)
+      try {
+        let saved = await coordinator.flush()
+        while (saved && mountedRef.current && coordinator.getSnapshot().dirty) {
+          saved = await coordinator.flush()
+        }
+        if (saved && mountedRef.current) router.push('/inner/journal')
+      } finally {
+        submittingRef.current = false
       }
     })
   }
-
-  // ---------------------------------------------------------------------------
-  // Status label
-  // ---------------------------------------------------------------------------
-
-  function getStatusLabel(): string {
-    if (isPending) return 'Wird gespeichert...'
-    if (autoSaveStatus === 'saving') return 'Speichert...'
-    if (autoSaveStatus === 'saved') return 'Automatisch gespeichert'
-    if (autoSaveStatus === 'error') return 'Nicht gespeichert'
-    return hasSavedDraft && !initialData ? 'Entwurf gespeichert' : 'Entwurf'
-  }
-
-  // ---------------------------------------------------------------------------
-  // Render
-  // ---------------------------------------------------------------------------
 
   const inputClasses = cn(
     'w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3',
@@ -161,70 +80,68 @@ export function JournalEditor({ initialData }: JournalEditorProps) {
 
   return (
     <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-4">
         <h1 className="font-serif text-2xl text-oe-pure-light">
-          {initialData ? 'Eintrag bearbeiten' : 'Neuer Eintrag'}
+          {initialData ? t('editTitle') : t('newTitle')}
         </h1>
         <span
+          role="status"
           className={cn(
-            'text-xs transition-colors',
-            autoSaveStatus === 'saved' && 'text-green-400/70',
-            autoSaveStatus === 'error' && 'text-red-400/70',
-            autoSaveStatus === 'saving' && 'text-oe-pure-light/50',
-            autoSaveStatus === 'idle' && 'text-oe-pure-light/55'
+            'text-xs',
+            status === 'saved' && 'text-oe-spirit-cyan',
+            status === 'error' && 'text-red-300',
+            status !== 'saved' && status !== 'error' && 'text-oe-pure-light/70'
           )}
         >
-          {getStatusLabel()}
+          {t(`status.${status}`)}
         </span>
       </div>
 
       {error && (
-        <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
-          {error}
+        <div
+          role="alert"
+          className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300"
+        >
+          {error === 'invalid' ? t('requiredError') : t('saveError')}
         </div>
       )}
 
       <div className="space-y-2">
         <label htmlFor="title" className="block text-sm font-medium text-oe-pure-light/70">
-          Titel
+          {t('titleLabel')}
         </label>
         <input
           id="title"
           name="title"
           type="text"
           required
-          value={title}
-          onChange={(e) => {
-            setTitle(e.target.value)
-            titleRef.current = e.target.value
-            scheduleAutoSave()
-          }}
-          placeholder="Was bewegt dich?"
+          value={draft.title}
+          onChange={(event) => coordinator.change({ title: event.target.value })}
+          placeholder={t('titlePlaceholder')}
           className={inputClasses}
         />
       </div>
 
       <div className="space-y-2">
         <label htmlFor="content" className="block text-sm font-medium text-oe-pure-light/70">
-          Inhalt
+          {t('contentLabel')}
         </label>
         <textarea
           id="content"
           name="content"
           required
           rows={12}
-          value={content}
-          onChange={(e) => {
-            setContent(e.target.value)
-            contentRef.current = e.target.value
-            scheduleAutoSave()
-          }}
-          placeholder="Schreibe frei — dieser Raum gehört dir..."
+          value={draft.content}
+          onChange={(event) => coordinator.change({ content: event.target.value })}
+          placeholder={t('contentPlaceholder')}
           className={cn(inputClasses, 'resize-y')}
         />
       </div>
 
-      <MoodTagSelector selectedTags={moodTags} onChange={setMoodTags} />
+      <MoodTagSelector
+        selectedTags={draft.moodTags}
+        onChange={(moodTags) => coordinator.change({ moodTags })}
+      />
 
       <div className="flex items-center gap-4 pt-4">
         <button
@@ -237,14 +154,15 @@ export function JournalEditor({ initialData }: JournalEditorProps) {
             'disabled:cursor-not-allowed disabled:opacity-50'
           )}
         >
-          {isPending ? 'Speichern...' : 'Speichern'}
+          {isPending ? t('savingButton') : t('saveButton')}
         </button>
         <button
           type="button"
           onClick={() => router.back()}
-          className="text-sm text-oe-pure-light/50 transition-colors hover:text-oe-pure-light"
+          disabled={isPending}
+          className="text-sm text-oe-pure-light/70 transition-colors hover:text-oe-pure-light disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Abbrechen
+          {t('backButton')}
         </button>
       </div>
     </form>

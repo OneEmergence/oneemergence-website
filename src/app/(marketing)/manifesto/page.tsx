@@ -1,9 +1,9 @@
 'use client'
 
-import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
-import { Button } from '@/components/ui/button'
+import { ButtonLink } from '@/components/ui/button'
 import { ScrollReveal } from '@/components/motion/ScrollReveal'
 import { StarField } from '@/components/scene/StarField'
 import { EmblemMark } from '@/components/motion/EmblemMark'
@@ -81,21 +81,14 @@ function PrincipleSection({
   const isEven = index % 2 === 0
 
   return (
-    <motion.div
-      ref={ref}
-      style={{ opacity }}
-      className="relative py-16 md:py-24"
-    >
+    <motion.div ref={ref} style={{ opacity }} className="relative py-16 md:py-24">
       <div
         className={`mx-auto flex max-w-5xl flex-col items-center gap-8 px-4 sm:px-6 md:flex-row ${
           isEven ? '' : 'md:flex-row-reverse'
         }`}
       >
         {/* Number / visual accent */}
-        <motion.div
-          style={{ y }}
-          className="flex shrink-0 flex-col items-center"
-        >
+        <motion.div style={{ y }} className="flex shrink-0 flex-col items-center">
           <span
             className={`font-serif text-7xl font-bold md:text-9xl ${PRINCIPLE_ACCENT_CLASSES[principle.accent as PrincipleAccent]?.number}`}
           >
@@ -146,6 +139,7 @@ function PrincipleSection({
 }
 
 export default function ManifestoPage() {
+  const t = useTranslations('newsletter')
   return (
     <div className="relative isolate overflow-hidden bg-oe-deep-space text-oe-pure-light">
       <LayerAtmosphere variant="cosmic" />
@@ -177,9 +171,9 @@ export default function ManifestoPage() {
             transition={{ duration: 0.7, delay: 0.25 }}
             className="mx-auto mt-8 max-w-2xl text-base leading-relaxed text-oe-pure-light/60 md:text-xl"
           >
-            OneEmergence ist kein Programm, keine Bewegung und kein System. Es ist
-            eine offene Einladung — an alle, die spüren, dass etwas Tieferes möglich
-            ist: mehr Verbindung, mehr Wahrhaftigkeit, mehr Leben.
+            OneEmergence ist kein Programm, keine Bewegung und kein System. Es ist eine offene
+            Einladung — an alle, die spüren, dass etwas Tieferes möglich ist: mehr Verbindung, mehr
+            Wahrhaftigkeit, mehr Leben.
           </motion.p>
         </div>
       </section>
@@ -253,8 +247,8 @@ export default function ManifestoPage() {
             transition={{ duration: 0.55, delay: 0.3 }}
             className="mt-6 text-base text-oe-pure-light/50 md:text-lg"
           >
-            Werde Teil der Gemeinschaft und gestalte gemeinsam mit uns den Raum für
-            Einheit, Freiheit und Liebe.
+            Werde Teil der Gemeinschaft und gestalte gemeinsam mit uns den Raum für Einheit,
+            Freiheit und Liebe.
           </motion.p>
           <motion.div
             initial={{ opacity: 0 }}
@@ -263,16 +257,12 @@ export default function ManifestoPage() {
             transition={{ delay: 0.4, duration: 0.5 }}
             className="mt-10 flex flex-wrap justify-center gap-4"
           >
-            <Link href="/community">
-              <Button variant="primary" size="lg">
-                Community beitreten
-              </Button>
-            </Link>
-            <Link href="/contact">
-              <Button variant="outline" size="lg">
-                Kontakt aufnehmen
-              </Button>
-            </Link>
+            <ButtonLink href="/community" variant="primary" size="lg">
+              Community beitreten
+            </ButtonLink>
+            <ButtonLink href="/contact" variant="outline" size="lg">
+              Kontakt aufnehmen
+            </ButtonLink>
           </motion.div>
 
           <motion.div
@@ -282,9 +272,7 @@ export default function ManifestoPage() {
             transition={{ delay: 0.5, duration: 0.5 }}
             className="mt-16"
           >
-            <p className="mb-4 text-sm text-oe-pure-light/55">
-              Oder erhalte unsere Impulse direkt:
-            </p>
+            <p className="mb-4 text-sm text-oe-pure-light/55">{t('introduction')}</p>
             <NewsletterSignup />
           </motion.div>
         </div>
