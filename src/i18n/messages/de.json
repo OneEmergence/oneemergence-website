@@ -2,6 +2,7 @@
   "nav": {
     "home": "Startseite",
     "manifesto": "Manifest",
+    "map": "Emergence Map",
     "about": "Über uns",
     "content": "Inhalte",
     "library": "Bibliothek",
@@ -286,6 +287,225 @@
     "backToIndex": "Alle Stories",
     "updated": "Aktualisiert am {date}",
     "ctaFallbackTitle": "Lass uns sprechen."
+  },
+  "worldMap": {
+    "metadata": {
+      "title": "One Emergence Map",
+      "description": "Eine begehbare solarpunk-mystische Weltkarte der globalen Center und der persönlichen Reise nach Hause."
+    },
+    "eyebrow": "Eine lebende Zukunftskarte",
+    "title": "One Emergence Map",
+    "intro": "Erkunde eine mögliche Welt, in der Bewusstsein, Technologie und lebendige Systeme zu einer gemeinsamen Heimat werden.",
+    "mapAria": "Interaktive One Emergence Weltkarte",
+    "interactionHint": "Gebäude wählen · ziehen zum Bewegen",
+    "exploreCta": "Diesen Weg erkunden",
+    "immersive": {
+      "enter": "Eintauchen",
+      "exit": "Zur Kartenübersicht"
+    },
+    "immersive3d": {
+      "eyebrow": "Drei Tiefen · Ein lebendes Feld",
+      "title": "Das Resonanzfeld",
+      "sceneAria": "Interaktive 3D-Weltkarte mit strategischer Kamera",
+      "places": "Resonanzorte",
+      "atlas": {
+        "open": "Weltatlas",
+        "close": "Weltatlas schließen",
+        "eyebrow": "Drei Tiefen · Fünfzehn Orte",
+        "title": "Alle Orte",
+        "hint": "Wähle einen Ort, um die Kamera dorthin zu führen. Cyan verbindet die globalen Center, Violett zeichnet die Reise nach Hause.",
+        "previewHint": "Dieser Ort ist als erkundbare Landmarke präsent. Seine Resonanzmechanik erwacht in der vollständigen Kampagne.",
+        "visit": "Mehr über diesen Ort"
+      },
+      "settings": {
+        "open": "Welteinstellungen",
+        "close": "Welteinstellungen schließen",
+        "eyebrow": "Deine Perspektive",
+        "title": "Welt gestalten"
+      },
+      "shortNames": {
+        "tree": "Tree",
+        "root-home": "Wurzel",
+        "earth": "Erde"
+      },
+      "selectedPlace": "Ausgewählter Ort",
+      "closePlace": "Ortsdetails schließen",
+      "landmarkState": "Zustand",
+      "states": {
+        "resting": "Ruhend",
+        "attuned": "Eingestimmt",
+        "harmonized": "Harmonisiert"
+      },
+      "locked": "Noch verborgen",
+      "attention": "Aufmerksamkeit",
+      "attentionSummary": "{tree} Aufmerksamkeit beim Tree of Emergence, {root} bei Root Home und {earth} beim Living Earth Institute.",
+      "focus": "Fokussieren",
+      "release": "Lösen",
+      "addAttention": "Aufmerksamkeit zu {place} lenken",
+      "returnAttention": "Aufmerksamkeit von {place} zum Tree of Emergence zurückgeben",
+      "treeHint": "Lenke die drei Lichtströme bewusst. Zwei lassen Resonanz wachsen, einer hält sie stabil.",
+      "resonance": "Resonanz",
+      "coherence": "Kohärenz",
+      "unlockHint": "Sobald {personal} eingestimmt ist, öffnet sich dieses globale Center.",
+      "stabilize": "Verbindung stabilisieren",
+      "stabilizing": "Harmonisierung läuft",
+      "harmonized": "Paar harmonisiert",
+      "quality": "Qualität: {quality}",
+      "qualities": {
+        "low": "Sanft",
+        "medium": "Leuchtend",
+        "high": "Strahlend"
+      },
+      "atmosphere": "Atmosphäre: {atmosphere}",
+      "atmospheres": {
+        "dawn": "Morgengold",
+        "day": "Taglicht",
+        "cosmic": "Kosmosnacht"
+      },
+      "sound": {
+        "controls": "Klangwelt",
+        "start": "Klangwelt aktivieren",
+        "pause": "Klangwelt pausieren",
+        "resume": "Klangwelt fortsetzen",
+        "mute": "Klangwelt stummschalten",
+        "unmute": "Klangwelt einschalten",
+        "volume": "Lautstärke der Klangwelt",
+        "unavailable": "Die Klangwelt ist in diesem Browser nicht verfügbar."
+      },
+      "use2d": "2D-Karte",
+      "use3d": "In 3D zurückkehren",
+      "retry3d": "3D erneut versuchen",
+      "resetJourney": "Resonanzreise zurücksetzen",
+      "campaign": {
+        "progress": "Emergenz",
+        "attentionSummary": "{tree} von {total} Lichtströmen ruhen am Tree; {completed} Verbindungen sind harmonisiert.",
+        "availableAttention": "{available} von {total} Lichtströmen sind frei.",
+        "treeHint": "Wähle im Weltatlas eine persönliche Station. Erwecke sie zuerst und führe den Strom dann in ihr globales Center.",
+        "dissonance": "Dissonanz {value}% · Richte beide Orte wieder gemeinsam aus.",
+        "emergence": "Alle sieben Verbindungen schwingen gemeinsam. Der Tree ist in Emergenz."
+      },
+      "status": {
+        "rootFirst": "Beginne bei Root Home und stimme seine Resonanz ein.",
+        "personalFirst": "Beginne bei {personal} und stimme seine Resonanz ein.",
+        "connecting": "Beide Orte sind offen. Halte ihre Resonanz gemeinsam im Feld.",
+        "ready": "Die Orte antworten einander. Die Verbindung kann stabilisiert werden.",
+        "stabilizing": "Halte an beiden Orten mindestens einen Lichtstrom.",
+        "harmonized": "Beide Orte schwingen jetzt als ein lebendes System."
+      },
+      "camera": {
+        "label": "Strategische Kamera",
+        "keyboardHint": "Kamera bewegen mit Pfeiltasten oder W A S D, zoomen mit Plus und Minus, mit Pos1 zentrieren.",
+        "left": "Kamera nach links bewegen",
+        "right": "Kamera nach rechts bewegen",
+        "up": "Kamera nach oben bewegen",
+        "down": "Kamera nach unten bewegen",
+        "zoomIn": "Kamera heranzoomen",
+        "zoomOut": "Kamera herauszoomen",
+        "reset": "Kamera zentrieren"
+      },
+      "events": {
+        "placeAttuned": "{place} ist eingestimmt.",
+        "globalUnlocked": "Das zugehörige globale Center ist jetzt zugänglich.",
+        "pairReady": "Beide Orte dieser Verbindung sind bereit.",
+        "stabilizationStarted": "Die Harmonisierung hat begonnen.",
+        "pairHarmonized": "Eine weitere Verbindung ist harmonisiert.",
+        "pairInfluence": "Eine Verbindung stärkt nun den nächsten Teil des Feldes.",
+        "pairDissonant": "Eine Verbindung gerät in Dissonanz. Du kannst sie neu ausrichten.",
+        "pairRealigned": "Die Verbindung ist wieder ausgerichtet.",
+        "emergenceReached": "Emergenz: Alle sieben Verbindungen schwingen gemeinsam.",
+        "rejected": {
+          "GLOBAL_LOCKED": "Dieser Ort ist noch verborgen.",
+          "NO_ATTENTION": "An der Quelle ist gerade kein Lichtstrom frei.",
+          "PAIR_COMPLETE": "Dieses Resonanzpaar ist bereits harmonisiert.",
+          "PAIR_NOT_READY": "Beide Orte müssen zuerst eingestimmt sein und je einen Lichtstrom empfangen.",
+          "TARGET_FULL": "Dieser Ort trägt bereits zwei Lichtströme."
+        }
+      }
+    },
+    "categories": {
+      "origin": "Das lebende Feld",
+      "center": "Globales Center",
+      "journey": "Reise nach Hause"
+    },
+    "layers": {
+      "label": "Kartenebenen",
+      "center": "Seven Centers",
+      "journey": "Journey Home"
+    },
+    "controls": {
+      "zoomIn": "Karte vergrößern",
+      "zoomOut": "Karte verkleinern",
+      "reset": "Karte zentrieren",
+      "close": "Details schließen",
+      "previous": "Vorheriger Ort",
+      "next": "Nächster Ort"
+    },
+    "directory": {
+      "title": "Alle Orte",
+      "description": "Jeder Ort ist auch ohne räumliche Navigation direkt erreichbar."
+    },
+    "landmarks": {
+      "tree": {
+        "name": "Tree of Emergence",
+        "description": "Im Zentrum verbindet der lebende Baum alle Center und persönlichen Wege. Seine Wurzeln tragen Wissen, Wasser und Energie; seine Krone öffnet den Blick in das größere Feld."
+      },
+      "council": {
+        "name": "Council of Earth",
+        "description": "Ein offener Kreis für planetare Zusammenarbeit, Mediation und transparente Entscheidungen über gemeinsame Güter."
+      },
+      "noosphere": {
+        "name": "Noosphere Brain & Data Center",
+        "description": "Ein souveräner Wissensraum, in dem Forschung, künstliche Intelligenz und die Akashic Records dem Leben dienen."
+      },
+      "ashram": {
+        "name": "Ashram of Stillness",
+        "description": "Ein terrassierter Rückzugsort im Bergwald für Meditation, Retreats und bewusste Integration."
+      },
+      "energy": {
+        "name": "Regenerative Energy Gardens",
+        "description": "Windblüten, Solarsegler und lebende Speicher bilden eine dezentrale Landschaft der Fülle."
+      },
+      "earth": {
+        "name": "Living Earth Institute",
+        "description": "Gewächshaus-Inseln, Saatgutarchive und Myzelgärten verbinden Nahrung, Wasser und Biodiversität."
+      },
+      "creation": {
+        "name": "House of Creation",
+        "description": "Offene Werkstätten, Bühne und Lernräume geben Kunst, Musik, Erfindung und kultureller Transmission ein Zuhause."
+      },
+      "exchange": {
+        "name": "Gate of Exchange",
+        "description": "Ein solarbetriebener Hafen verbindet Wege über Land, Wasser und Luft und macht Austausch ohne Ausbeutung möglich."
+      },
+      "root-home": {
+        "name": "Root Home",
+        "description": "Muladhara — ein warmes Zuhause in den Wurzeln. Hier beginnen Sicherheit, Erdung und Vertrauen."
+      },
+      "creation-temple": {
+        "name": "Temple of Creation",
+        "description": "Svadhisthana — ein lebendiger Tempel an der Oase für Kreativität, Leidenschaft und Fluss."
+      },
+      "solar-ark": {
+        "name": "Solar Ark",
+        "description": "Manipura — das Schiff der eigenen Kraft. Wille und Selbstführung setzen den Kurs."
+      },
+      "heart-caravan": {
+        "name": "Heart Caravan",
+        "description": "Anahata — ein bewegliches, begrüntes Zuhause. Liebe wird zur inneren Heimat."
+      },
+      "voice-beacon": {
+        "name": "Voice Beacon",
+        "description": "Vishuddha — ein Signalpunkt für Ausdruck, Wahrheit und bewusste Verbindung."
+      },
+      "observatory": {
+        "name": "Observatory of Mind",
+        "description": "Ajna — ein Observatorium für Intuition, Klarheit und die Muster hinter dem Sichtbaren."
+      },
+      "cosmic-control": {
+        "name": "Cosmic Control Center",
+        "description": "Sahasrara — ein schwebender Raum der Einheit. Die Reise nach oben wird zur Rückkehr nach innen."
+      }
+    }
   },
   "notFound": {
     "eyebrow": "404",

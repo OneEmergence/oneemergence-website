@@ -8,6 +8,7 @@ const footerColumns = [
     titleKey: "footer.columns.explore",
     links: [
       { href: "/manifesto", labelKey: "nav.manifesto" },
+      { href: "/map", labelKey: "nav.map" },
       { href: "/about", labelKey: "nav.about" },
       { href: "/library", labelKey: "nav.library" },
       { href: "/s", labelKey: "story.eyebrow" },

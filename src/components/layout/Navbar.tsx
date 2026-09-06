@@ -13,6 +13,7 @@ import { IntensityToggle } from "@/components/ui/IntensityToggle";
 
 const navLinks = [
   { href: "/manifesto", key: "manifesto" },
+  { href: "/map", key: "map" },
   { href: "/experiences", key: "experiences" },
   { href: "/library", key: "library" },
   { href: "/events", key: "events" },

@@ -1,0 +1,18 @@
+[0728/133850.970:ERROR:gpu\command_buffer\service\gl_utils.cc:431] [.WebGL-0x4774001ad400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+[0728/133852.666:ERROR:gpu\command_buffer\service\gl_utils.cc:431] [.WebGL-0x4774001ad400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+[0728/133852.942:ERROR:gpu\command_buffer\service\gl_utils.cc:431] [.WebGL-0x4774001ad400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+[0728/133853.302:ERROR:gpu\command_buffer\service\gl_utils.cc:431] [.WebGL-0x4774001ad400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)
+[0728/141124.373:ERROR:gpu\ipc\client\command_buffer_proxy_impl.cc:484] GPU state invalid after WaitForGetOffsetInRange.
+[0728/141336.243:ERROR:gpu\command_buffer\service\gl_utils.cc:431] [.WebGL-0x4774001abc00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+[0728/141337.297:ERROR:gpu\command_buffer\service\gl_utils.cc:431] [.WebGL-0x4774001abc00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+[0728/141337.568:ERROR:gpu\command_buffer\service\gl_utils.cc:431] [.WebGL-0x4774001abc00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+[0728/141337.812:ERROR:gpu\command_buffer\service\gl_utils.cc:431] [.WebGL-0x4774001abc00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)
+[0728/141526.153:ERROR:gpu\ipc\client\command_buffer_proxy_impl.cc:484] GPU state invalid after WaitForGetOffsetInRange.
+[0728/141739.457:ERROR:gpu\command_buffer\service\gl_utils.cc:431] [.WebGL-0x4774001b3400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+[0728/141740.842:ERROR:gpu\command_buffer\service\gl_utils.cc:431] [.WebGL-0x4774001b3400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+[0728/141741.191:ERROR:gpu\command_buffer\service\gl_utils.cc:431] [.WebGL-0x4774001b3400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+[0728/141741.464:ERROR:gpu\command_buffer\service\gl_utils.cc:431] [.WebGL-0x4774001b3400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)
+[0728/142012.059:ERROR:gpu\ipc\client\command_buffer_proxy_impl.cc:484] GPU state invalid after WaitForGetOffsetInRange.
+[0728/142012.432:ERROR:gpu\ipc\service\gpu_channel_manager.cc:922] ContextResult::kFatalFailure: Failed to create shared context for virtualization.
+[0728/142304.715:ERROR:gpu\ipc\service\gpu_channel_manager.cc:922] ContextResult::kFatalFailure: Failed to create shared context for virtualization.
+[0728/142304.715:ERROR:gpu\ipc\service\gpu_channel_manager.cc:922] ContextResult::kFatalFailure: Failed to create shared context for virtualization.

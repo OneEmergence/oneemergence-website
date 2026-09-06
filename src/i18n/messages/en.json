@@ -2,6 +2,7 @@
   "nav": {
     "home": "Home",
     "manifesto": "Manifesto",
+    "map": "Emergence Map",
     "about": "About",
     "content": "Content",
     "library": "Library",
@@ -286,6 +287,225 @@
     "backToIndex": "All stories",
     "updated": "Updated {date}",
     "ctaFallbackTitle": "Let's talk."
+  },
+  "worldMap": {
+    "metadata": {
+      "title": "One Emergence Map",
+      "description": "An explorable solarpunk-mystical world map of global centers and the personal journey home."
+    },
+    "eyebrow": "A living map of the future",
+    "title": "One Emergence Map",
+    "intro": "Explore a possible world where consciousness, technology, and living systems become a shared home.",
+    "mapAria": "Interactive One Emergence world map",
+    "interactionHint": "Choose a building · drag to move",
+    "exploreCta": "Explore this path",
+    "immersive": {
+      "enter": "Enter the world",
+      "exit": "Back to map"
+    },
+    "immersive3d": {
+      "eyebrow": "Three depths · One living field",
+      "title": "The Resonance Field",
+      "sceneAria": "Interactive 3D world map with strategic camera",
+      "places": "Resonance places",
+      "atlas": {
+        "open": "World atlas",
+        "close": "Close world atlas",
+        "eyebrow": "Three depths · Fifteen places",
+        "title": "All places",
+        "hint": "Choose a place to guide the camera there. Cyan connects the global centers; violet traces the journey home.",
+        "previewHint": "This place is present as an explorable landmark. Its resonance mechanic awakens in the complete campaign.",
+        "visit": "Explore this place"
+      },
+      "settings": {
+        "open": "World settings",
+        "close": "Close world settings",
+        "eyebrow": "Your perspective",
+        "title": "Shape the world"
+      },
+      "shortNames": {
+        "tree": "Tree",
+        "root-home": "Root",
+        "earth": "Earth"
+      },
+      "selectedPlace": "Selected place",
+      "closePlace": "Close place details",
+      "landmarkState": "State",
+      "states": {
+        "resting": "Resting",
+        "attuned": "Attuned",
+        "harmonized": "Harmonized"
+      },
+      "locked": "Still hidden",
+      "attention": "Attention",
+      "attentionSummary": "{tree} attention at the Tree of Emergence, {root} at Root Home, and {earth} at the Living Earth Institute.",
+      "focus": "Focus",
+      "release": "Release",
+      "addAttention": "Guide attention to {place}",
+      "returnAttention": "Return attention from {place} to the Tree of Emergence",
+      "treeHint": "Guide the three streams of light with care. Two grow resonance; one keeps it steady.",
+      "resonance": "Resonance",
+      "coherence": "Coherence",
+      "unlockHint": "This global center opens as soon as {personal} is attuned.",
+      "stabilize": "Stabilize connection",
+      "stabilizing": "Harmonizing",
+      "harmonized": "Pair harmonized",
+      "quality": "Quality: {quality}",
+      "qualities": {
+        "low": "Gentle",
+        "medium": "Luminous",
+        "high": "Radiant"
+      },
+      "atmosphere": "Atmosphere: {atmosphere}",
+      "atmospheres": {
+        "dawn": "Golden dawn",
+        "day": "Daylight",
+        "cosmic": "Cosmic night"
+      },
+      "sound": {
+        "controls": "Soundscape",
+        "start": "Enable soundscape",
+        "pause": "Pause soundscape",
+        "resume": "Resume soundscape",
+        "mute": "Mute soundscape",
+        "unmute": "Unmute soundscape",
+        "volume": "Soundscape volume",
+        "unavailable": "The soundscape is unavailable in this browser."
+      },
+      "use2d": "2D map",
+      "use3d": "Return to 3D",
+      "retry3d": "Try 3D again",
+      "resetJourney": "Reset resonance journey",
+      "campaign": {
+        "progress": "Emergence",
+        "attentionSummary": "{tree} of {total} light streams rest at the Tree; {completed} connections are harmonized.",
+        "availableAttention": "{available} of {total} light streams are free.",
+        "treeHint": "Choose a personal station in the world atlas. Awaken it first, then guide the stream into its global center.",
+        "dissonance": "Dissonance {value}% · Bring both places back into alignment.",
+        "emergence": "All seven connections now resonate together. The Tree has reached Emergence."
+      },
+      "status": {
+        "rootFirst": "Begin at Root Home and attune its resonance.",
+        "personalFirst": "Begin at {personal} and attune its resonance.",
+        "connecting": "Both places are open. Hold their resonance together in the field.",
+        "ready": "The places are answering one another. Their connection can be stabilized.",
+        "stabilizing": "Keep at least one stream of light at both places.",
+        "harmonized": "Both places now resonate as one living system."
+      },
+      "camera": {
+        "label": "Strategic camera",
+        "keyboardHint": "Move the camera with arrow keys or W A S D, zoom with plus and minus, and center with Home.",
+        "left": "Move camera left",
+        "right": "Move camera right",
+        "up": "Move camera up",
+        "down": "Move camera down",
+        "zoomIn": "Zoom camera in",
+        "zoomOut": "Zoom camera out",
+        "reset": "Center camera"
+      },
+      "events": {
+        "placeAttuned": "{place} is attuned.",
+        "globalUnlocked": "The connected global center is now accessible.",
+        "pairReady": "Both places in this connection are ready.",
+        "stabilizationStarted": "Harmonization has begun.",
+        "pairHarmonized": "Another connection is harmonized.",
+        "pairInfluence": "One connection is now strengthening the next part of the field.",
+        "pairDissonant": "A connection has entered dissonance. You can realign it.",
+        "pairRealigned": "The connection is aligned again.",
+        "emergenceReached": "Emergence: all seven connections now resonate together.",
+        "rejected": {
+          "GLOBAL_LOCKED": "This place is still hidden.",
+          "NO_ATTENTION": "No stream of light is free at the source.",
+          "PAIR_COMPLETE": "This resonance pair is already harmonized.",
+          "PAIR_NOT_READY": "Both places must first be attuned and receive one stream of light each.",
+          "TARGET_FULL": "This place already holds two streams of light."
+        }
+      }
+    },
+    "categories": {
+      "origin": "The living field",
+      "center": "Global center",
+      "journey": "Journey home"
+    },
+    "layers": {
+      "label": "Map layers",
+      "center": "Seven Centers",
+      "journey": "Journey Home"
+    },
+    "controls": {
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out",
+      "reset": "Center map",
+      "close": "Close details",
+      "previous": "Previous place",
+      "next": "Next place"
+    },
+    "directory": {
+      "title": "Every place",
+      "description": "Every location remains directly accessible without spatial navigation."
+    },
+    "landmarks": {
+      "tree": {
+        "name": "Tree of Emergence",
+        "description": "At the center, the living tree connects every center and personal path. Its roots carry knowledge, water, and energy; its crown opens into the greater field."
+      },
+      "council": {
+        "name": "Council of Earth",
+        "description": "An open circle for planetary cooperation, mediation, and transparent decisions about shared resources."
+      },
+      "noosphere": {
+        "name": "Noosphere Brain & Data Center",
+        "description": "A sovereign knowledge space where research, artificial intelligence, and the Akashic Records serve life."
+      },
+      "ashram": {
+        "name": "Ashram of Stillness",
+        "description": "A terraced refuge in the mountain forest for meditation, retreats, and conscious integration."
+      },
+      "energy": {
+        "name": "Regenerative Energy Gardens",
+        "description": "Wind flowers, solar sails, and living storage form a decentralized landscape of abundance."
+      },
+      "earth": {
+        "name": "Living Earth Institute",
+        "description": "Greenhouse islands, seed archives, and mycelium gardens connect food, water, and biodiversity."
+      },
+      "creation": {
+        "name": "House of Creation",
+        "description": "Open workshops, a stage, and learning spaces give art, music, invention, and cultural transmission a home."
+      },
+      "exchange": {
+        "name": "Gate of Exchange",
+        "description": "A solar-powered port connects routes across land, water, and air and enables exchange without exploitation."
+      },
+      "root-home": {
+        "name": "Root Home",
+        "description": "Muladhara — a warm home inside the roots. Security, grounding, and trust begin here."
+      },
+      "creation-temple": {
+        "name": "Temple of Creation",
+        "description": "Svadhisthana — a living oasis temple for creativity, passion, and flow."
+      },
+      "solar-ark": {
+        "name": "Solar Ark",
+        "description": "Manipura — the vessel of personal power. Will and self-direction set its course."
+      },
+      "heart-caravan": {
+        "name": "Heart Caravan",
+        "description": "Anahata — a moving green home. Love becomes the home carried within."
+      },
+      "voice-beacon": {
+        "name": "Voice Beacon",
+        "description": "Vishuddha — a signal point for expression, truth, and conscious connection."
+      },
+      "observatory": {
+        "name": "Observatory of Mind",
+        "description": "Ajna — an observatory for intuition, clarity, and the patterns behind the visible."
+      },
+      "cosmic-control": {
+        "name": "Cosmic Control Center",
+        "description": "Sahasrara — a hovering space of unity. The journey upward becomes a return within."
+      }
+    }
   },
   "notFound": {
     "eyebrow": "404",

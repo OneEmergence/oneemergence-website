@@ -25,6 +25,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${siteUrl}/journal`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${siteUrl}/s`, changeFrequency: "weekly", priority: 0.7 },
     { url: `${siteUrl}/experiences`, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${siteUrl}/map`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${siteUrl}/events`, changeFrequency: "weekly", priority: 0.7 },
     { url: `${siteUrl}/community`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${siteUrl}/contact`, changeFrequency: "yearly", priority: 0.5 },

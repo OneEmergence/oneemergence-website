@@ -109,7 +109,7 @@ export default function AboutPage() {
                 <span className="text-xs font-semibold uppercase tracking-widest text-oe-spirit-cyan">
                   {block.label}
                 </span>
-                <span className="font-serif text-4xl text-oe-solar-gold/30">
+                <span className="font-serif text-4xl text-oe-solar-gold/50">
                   {block.year}
                 </span>
                 <div className="h-24 w-px bg-gradient-to-b from-oe-aurora-violet/25 to-oe-warm-sand/20" />
