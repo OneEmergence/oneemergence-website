@@ -30,6 +30,16 @@ Dieses Dokument ist der Einstiegspunkt für Claude (und andere Agents), um an On
 - Coordinate build/dev/test processes: Playwright may reuse port 3000 locally. Record whether tests exercised a development or production server; never treat reuse as proof of a production build.
 - Handoffs record the user-visible change, exact commands and results (including skipped tests), remaining limitations and the next concrete task. A passing public smoke run does not verify authenticated cloud flows, RLS, AI providers or deployment.
 
+### Agent-Rollen (`.claude/agents/`)
+Zwei abgestimmte Rollen mit disjunkter Dateizuständigkeit; Details, Grenzen und Übergabeformat stehen in der jeweiligen Datei. Andere Tools (Codex o. Ä.) lesen dieselben Dateien als Rollenbeschreibung.
+
+| Rolle | Zuständig für | Roadmap |
+|---|---|---|
+| `frontend-artist` | `(marketing)` (ohne `map/`), `src/components/*`, `globals.css`, **alleiniger Owner** von `src/i18n/messages/*.json` | Öffentliche Nutzerwege, Design-Polish |
+| `app-architect` | `src/features/*` (ohne `world-map/`), `api/`, `auth/`, `(portal)/`, `src/lib/`, `supabase/`, `scripts/` | Identität, Guide, Records |
+
+Parallel laufende Rollen starten weder Dev-Server noch Build oder Playwright; der koordinierende Agent integriert, baut, testet und committet. Ergebnisse landen als datiertes Protokoll in `docs/audits/`.
+
 ### Design System & Theme
 - Farben sind in `src/app/globals.css` über `@theme` als Design-Tokens konfiguriert (Tailwind v4, CSS-first).
 - Primärfarben:
