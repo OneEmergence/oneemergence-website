@@ -2,7 +2,7 @@
 
 import { useState, useRef, useCallback, useId } from 'react'
 import { useTranslations } from 'next-intl'
-import { Send } from 'lucide-react'
+import { Send, Square } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { RoleSelector } from './RoleSelector'
 import type { GuideRole } from '../types'
@@ -12,6 +12,8 @@ interface GuideInputProps {
   activeRole: GuideRole
   onRoleChange: (role: GuideRole) => void
   disabled?: boolean
+  /** Present while a request is in flight; turns the send button into stop. */
+  onCancel?: () => void
 }
 
 export function GuideInput({
@@ -19,6 +21,7 @@ export function GuideInput({
   activeRole,
   onRoleChange,
   disabled,
+  onCancel,
 }: GuideInputProps) {
   const [message, setMessage] = useState('')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -55,11 +58,7 @@ export function GuideInput({
   return (
     <div className="border-t border-oe-pure-light/5 bg-oe-deep-space/80 px-4 py-3 backdrop-blur-sm">
       <div className="mb-2">
-        <RoleSelector
-          activeRole={activeRole}
-          onSelect={onRoleChange}
-          disabled={disabled}
-        />
+        <RoleSelector activeRole={activeRole} onSelect={onRoleChange} disabled={disabled} />
       </div>
 
       <div className="flex items-end gap-2">
@@ -82,18 +81,31 @@ export function GuideInput({
             'disabled:opacity-50'
           )}
         />
-        <button
-          onClick={handleSubmit}
-          disabled={disabled || !message.trim()}
-          className={cn(
-            'flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-all',
-            message.trim() && !disabled
-              ? 'bg-oe-aurora-violet/20 text-oe-aurora-violet-ink hover:bg-oe-aurora-violet/30'
-              : 'bg-oe-pure-light/5 text-oe-pure-light/55'
-          )}
-        >
-          <Send className="h-4 w-4" aria-hidden="true" />
-        </button>
+        {onCancel ? (
+          <button
+            type="button"
+            onClick={onCancel}
+            aria-label={t('cancel')}
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-oe-aurora-violet/20 text-oe-aurora-violet-ink transition-all hover:bg-oe-aurora-violet/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-aurora-violet"
+          >
+            <Square className="h-4 w-4" aria-hidden="true" />
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={handleSubmit}
+            aria-label={t('send')}
+            disabled={disabled || !message.trim()}
+            className={cn(
+              'flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-all',
+              message.trim() && !disabled
+                ? 'bg-oe-aurora-violet/20 text-oe-aurora-violet-ink hover:bg-oe-aurora-violet/30'
+                : 'bg-oe-pure-light/5 text-oe-pure-light/55'
+            )}
+          >
+            <Send className="h-4 w-4" aria-hidden="true" />
+          </button>
+        )}
       </div>
     </div>
   )

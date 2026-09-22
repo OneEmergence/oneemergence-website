@@ -23,6 +23,8 @@ const schema = z.object({
   DATABASE_URL: z.string().min(1).optional(),
   ANTHROPIC_API_KEY: z.string().min(1).optional(),
   AI_MODEL: z.string().min(1).default('claude-sonnet-5'),
+  // User messages one account may send the Guide per rolling 24 hours.
+  GUIDE_DAILY_LIMIT: z.coerce.number().int().positive().default(50),
 
   NEXT_PUBLIC_SENTRY_DSN: z.string().min(1).optional(),
   ANALYZE: z.string().optional(),

@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslations } from 'next-intl'
 import { Loader2 } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import { GuideMessage } from './GuideMessage'
 import { GuideInput } from './GuideInput'
 import { GuideWelcome } from './GuideWelcome'
@@ -15,6 +16,12 @@ interface ChatMessage {
   content: string
   guideRole?: GuideRole
   structuredResponse?: GuideResponse | null
+}
+
+interface Failure {
+  text: string
+  calm: boolean
+  retry: { message: string; role: GuideRole } | null
 }
 
 interface GuideChatViewProps {
@@ -31,11 +38,12 @@ export function GuideChatView({
   const t = useTranslations('guide')
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages)
   const [activeRole, setActiveRole] = useState<GuideRole>(initialRole ?? 'mirror')
-  const [conversationId, setConversationId] = useState<string | undefined>(
-    initialConversationId
-  )
+  // Stable before the first request: a lost, failed or cancelled first
+  // response retries into the same conversation instead of creating another.
+  const [conversationId] = useState(() => initialConversationId ?? crypto.randomUUID())
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [failure, setFailure] = useState<Failure | null>(null)
+  const abortRef = useRef<AbortController | null>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
   const hasStarted = messages.length > 0
 
@@ -46,18 +54,24 @@ export function GuideChatView({
     }
   }, [messages, isLoading])
 
-  const handleSend = useCallback(
-    async (message: string, role: GuideRole) => {
-      setError(null)
+  const send = useCallback(
+    async (message: string, role: GuideRole, isRetry: boolean) => {
+      setFailure(null)
       setIsLoading(true)
 
-      // Add user message immediately
-      const userMsg: ChatMessage = {
-        id: crypto.randomUUID(),
-        role: 'user',
-        content: message,
+      // A retry resends the message that is already shown.
+      if (!isRetry) {
+        const userMsg: ChatMessage = {
+          id: crypto.randomUUID(),
+          role: 'user',
+          content: message,
+        }
+        setMessages((prev) => [...prev, userMsg])
       }
-      setMessages((prev) => [...prev, userMsg])
+
+      const controller = new AbortController()
+      abortRef.current = controller
+      const retry = { message, role }
 
       try {
         const res = await fetch('/api/guide', {
@@ -68,30 +82,26 @@ export function GuideChatView({
             role,
             conversationId,
           }),
+          signal: controller.signal,
         })
 
         const data = await res.json()
 
-        if (!res.ok) {
-          if (res.status === 503 && data.configurationRequired) {
-            setError(
-              'Der Guide ist noch nicht bereit — die nötigen Dienste (API-Schlüssel oder Datenbank) sind noch nicht konfiguriert. Bitte versuche es später erneut.'
-            )
-          } else {
-            setError(data.error ?? 'Ein Fehler ist aufgetreten.')
-          }
-          return
+        // Once the server confirms the conversation, keep it addressable.
+        const path = `/inner/guide/${conversationId}`
+        if (data.conversationId && window.location.pathname !== path) {
+          window.history.replaceState({}, '', path)
         }
 
-        // Update conversation ID if this was a new conversation
-        if (data.conversationId && !conversationId) {
-          setConversationId(data.conversationId)
-          // Update URL without navigation
-          window.history.replaceState(
-            {},
-            '',
-            `/inner/guide/${data.conversationId}`
-          )
+        if (!res.ok) {
+          if (data.code === 'limit_reached') {
+            setFailure({ text: t('limitReached'), calm: true, retry: null })
+          } else if (res.status === 503 && data.configurationRequired) {
+            setFailure({ text: t('notConfigured'), calm: false, retry })
+          } else {
+            setFailure({ text: data.error ?? t('error'), calm: false, retry })
+          }
+          return
         }
 
         const response = data.response as GuideResponse
@@ -105,13 +115,25 @@ export function GuideChatView({
         }
         setMessages((prev) => [...prev, assistantMsg])
       } catch {
-        setError('Verbindungsfehler. Bitte versuche es erneut.')
+        setFailure(
+          controller.signal.aborted
+            ? { text: t('cancelled'), calm: true, retry }
+            : { text: t('connectionError'), calm: false, retry }
+        )
       } finally {
+        abortRef.current = null
         setIsLoading(false)
       }
     },
-    [conversationId]
+    [conversationId, t]
   )
+
+  const handleSend = useCallback(
+    (message: string, role: GuideRole) => send(message, role, false),
+    [send]
+  )
+
+  const handleCancel = useCallback(() => abortRef.current?.abort(), [])
 
   const handleRoleSelect = (role: GuideRole) => {
     setActiveRole(role)
@@ -166,15 +188,31 @@ export function GuideChatView({
               )}
             </AnimatePresence>
 
-            {/* Error display */}
-            {error && (
+            {/* Failure display: calm for cancel/limit, alert for errors */}
+            {failure && (
               <motion.div
-                role="alert"
+                role={failure.calm ? 'status' : 'alert'}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="mx-auto max-w-md rounded-xl border border-red-500/25 bg-red-500/5 px-4 py-3 text-center text-sm text-red-300"
+                className={cn(
+                  'mx-auto max-w-md rounded-xl border px-4 py-3 text-center text-sm',
+                  failure.calm
+                    ? 'border-oe-pure-light/10 bg-oe-pure-light/[0.03] text-oe-pure-light/75'
+                    : 'border-red-500/25 bg-red-500/5 text-red-300'
+                )}
               >
-                {error}
+                <p>{failure.text}</p>
+                {failure.retry && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      failure.retry && send(failure.retry.message, failure.retry.role, true)
+                    }
+                    className="mt-2 rounded-lg bg-oe-aurora-violet/20 px-3 py-1.5 text-xs text-oe-aurora-violet-ink transition-colors hover:bg-oe-aurora-violet/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-aurora-violet"
+                  >
+                    {t('retry')}
+                  </button>
+                )}
               </motion.div>
             )}
           </div>
@@ -187,6 +225,7 @@ export function GuideChatView({
         activeRole={activeRole}
         onRoleChange={handleRoleSelect}
         disabled={isLoading}
+        onCancel={isLoading ? handleCancel : undefined}
       />
     </div>
   )
