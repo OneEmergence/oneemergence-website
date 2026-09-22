@@ -343,7 +343,7 @@
       "release": "Release",
       "addAttention": "Guide attention to {place}",
       "returnAttention": "Return attention from {place} to the Tree of Emergence",
-      "treeHint": "Guide the three streams of light with care. Two grow resonance; one keeps it steady.",
+      "treeHint": "Guide the five light streams with care. Two grow resonance; one keeps it stable.",
       "resonance": "Resonance",
       "coherence": "Coherence",
       "unlockHint": "This global center opens as soon as {personal} is attuned.",
@@ -401,7 +401,8 @@
         "down": "Move camera down",
         "zoomIn": "Zoom camera in",
         "zoomOut": "Zoom camera out",
-        "reset": "Center camera"
+        "reset": "Center camera",
+        "panControls": "Show camera movement controls"
       },
       "events": {
         "placeAttuned": "{place} is attuned.",
@@ -420,6 +421,20 @@
           "PAIR_NOT_READY": "Both places must first be attuned and receive one stream of light each.",
           "TARGET_FULL": "This place already holds two streams of light."
         }
+      },
+      "journey": {
+        "next": "Your next step",
+        "progress": "{completed} of {total} connections",
+        "visit": "Visit {place}",
+        "about": "About this place",
+        "begin": "Send two light streams to {place} to grow its resonance.",
+        "awakening": "{place} is awakening. Leave the streams flowing there while you explore the island.",
+        "connect": "Send two light streams to {place}. Keep at least one at the personal place to hold its resonance.",
+        "restore": "Return a light stream to {place} to hold its resonance.",
+        "ready": "Both places are ready. Stabilize their connection now.",
+        "stabilizing": "The connection is taking root. Keep at least one light stream at each place.",
+        "harmonized": "This connection will endure. Discover the next pair in the world atlas.",
+        "complete": "All seven connections are alive. Return to the tree and take in your world."
       }
     },
     "categories": {

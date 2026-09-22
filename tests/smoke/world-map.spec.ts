@@ -125,7 +125,9 @@ test('the immersive atlas exposes and focuses all 15 places without the canvas',
   await page.mouse.up()
   await expect(details).toBeVisible()
 
-  await page.mouse.click(emptyX, emptyY)
+  // Detail framing now brings buildings into the old fixed click coordinate.
+  // The outer corner stays outside the inset HUD and this scene's landmarks.
+  await page.mouse.click(canvasBounds!.x + 2, canvasBounds!.y + canvasBounds!.height - 2)
   await expect(details).toHaveCount(0)
 
   await atlasButton.click()

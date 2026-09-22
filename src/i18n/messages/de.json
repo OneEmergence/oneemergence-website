@@ -343,7 +343,7 @@
       "release": "Lösen",
       "addAttention": "Aufmerksamkeit zu {place} lenken",
       "returnAttention": "Aufmerksamkeit von {place} zum Tree of Emergence zurückgeben",
-      "treeHint": "Lenke die drei Lichtströme bewusst. Zwei lassen Resonanz wachsen, einer hält sie stabil.",
+      "treeHint": "Lenke die fünf Lichtströme bewusst. Zwei lassen Resonanz wachsen, einer hält sie stabil.",
       "resonance": "Resonanz",
       "coherence": "Kohärenz",
       "unlockHint": "Sobald {personal} eingestimmt ist, öffnet sich dieses globale Center.",
@@ -401,7 +401,8 @@
         "down": "Kamera nach unten bewegen",
         "zoomIn": "Kamera heranzoomen",
         "zoomOut": "Kamera herauszoomen",
-        "reset": "Kamera zentrieren"
+        "reset": "Kamera zentrieren",
+        "panControls": "Kamerabewegung einblenden"
       },
       "events": {
         "placeAttuned": "{place} ist eingestimmt.",
@@ -420,6 +421,20 @@
           "PAIR_NOT_READY": "Beide Orte müssen zuerst eingestimmt sein und je einen Lichtstrom empfangen.",
           "TARGET_FULL": "Dieser Ort trägt bereits zwei Lichtströme."
         }
+      },
+      "journey": {
+        "next": "Dein nächster Schritt",
+        "progress": "{completed} von {total} Verbindungen",
+        "visit": "Zu {place}",
+        "about": "Über diesen Ort",
+        "begin": "Lenke zwei Lichtströme zu {place}, damit die Resonanz dort wächst.",
+        "awakening": "{place} erwacht. Lass die Ströme dort fließen; währenddessen kannst du die Insel erkunden.",
+        "connect": "Lenke zwei Lichtströme zu {place}. Behalte mindestens einen am persönlichen Ort, um seine Resonanz zu halten.",
+        "restore": "Lenke wieder einen Lichtstrom zu {place}, um die Resonanz dort zu halten.",
+        "ready": "Beide Orte sind bereit. Stabilisiere jetzt ihre Verbindung.",
+        "stabilizing": "Die Verbindung wächst zusammen. Halte an beiden Orten mindestens einen Lichtstrom.",
+        "harmonized": "Diese Verbindung bleibt erhalten. Entdecke im Weltatlas das nächste Paar.",
+        "complete": "Alle sieben Verbindungen leben. Kehre zum Baum zurück und betrachte deine Welt."
       }
     },
     "categories": {

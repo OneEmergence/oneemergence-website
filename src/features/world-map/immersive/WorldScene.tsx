@@ -16,22 +16,29 @@ import { Canvas, useFrame, useThree, type ThreeEvent } from '@react-three/fiber'
 import { MapControls, PerformanceMonitor, Stars, useCursor, useGLTF } from '@react-three/drei'
 import {
   ACESFilmicToneMapping,
-  BufferGeometry,
+  AdditiveBlending,
   CatmullRomCurve3,
-  Float32BufferAttribute,
+  Color,
   MathUtils,
   Mesh,
   Object3D,
-  RepeatWrapping,
-  SRGBColorSpace,
-  TextureLoader,
   TubeGeometry,
   Vector3,
+  type BufferGeometry,
   type OrthographicCamera,
-  type Texture,
 } from 'three'
-import { WORLD_LANDMARKS, type WorldLandmarkId } from '../landmarks'
+import { LandscapeEnvironment } from './LandscapeEnvironment'
+import { useWorldTexture as useIsometricSpriteTexture } from './useWorldTexture'
+import type { WorldLandmarkId } from '../landmarks'
 import { BlockoutLandmarkModel, type BlockoutLandmarkId } from './BlockoutLandmarkModel'
+import {
+  getWorldCameraFrame,
+  projectedLandmarkBounds,
+  WORLD_CAMERA_OFFSET,
+  WORLD_CAMERA_TARGET,
+  type CameraPanelRect,
+  type WorldCameraFrame,
+} from './cameraFraming'
 import {
   ATTUNED_RESONANCE,
   getCompletedPairCount,
@@ -41,13 +48,16 @@ import {
   TOTAL_ATTENTION,
   type ResonanceGameState,
 } from './game'
+import { GATE_ONE_LANDMARK_IDS, WORLD_LANDMARK_IDS, WORLD_PLACEMENTS } from './placements'
 import {
-  GATE_ONE_LANDMARK_IDS,
-  WORLD_LANDMARK_IDS,
-  WORLD_PLACEMENTS,
-  terrainHeightAt,
-} from './placements'
-import { createRiverCurve, createRiverRibbonGeometry, createTerrainGeometry } from './worldGeometry'
+  createRiverCurve,
+  createRiverRibbonGeometry,
+  createTerrainGeometry,
+  createTreeGroundGlowGeometry,
+  terrainSurfaceHeightAt,
+} from './worldGeometry'
+import { riverDistanceAt, trailDistanceAt } from './landscapeGeometry'
+import { createCliffMaterial, createPaintedWaterMaterial } from './landscapeMaterials'
 import type { WorldScenePalette } from './scenePalette'
 import {
   WORLD_SPRITE_ASSETS,
@@ -72,6 +82,7 @@ interface WorldSceneProps {
   automaticQuality: boolean
   atmosphere: WorldAtmosphere
   selectedId: WorldLandmarkId | null
+  selectionPanel?: CameraPanelRect | null
   game: ResonanceGameState
   canSacred: boolean
   cameraCommand: CameraCommand
@@ -104,7 +115,7 @@ const QUALITY: Record<
     shadowSize: 512,
     terrainSegments: 40,
     terrainRings: 12,
-    forestCount: 26,
+    forestCount: 14,
     stars: 350,
     maxDrawCalls: 205,
     maxTriangles: 120_000,
@@ -118,7 +129,7 @@ const QUALITY: Record<
     shadowSize: 1024,
     terrainSegments: 64,
     terrainRings: 18,
-    forestCount: 52,
+    forestCount: 24,
     stars: 650,
     maxDrawCalls: 355,
     maxTriangles: 250_000,
@@ -130,7 +141,7 @@ const QUALITY: Record<
     shadowSize: 2048,
     terrainSegments: 88,
     terrainRings: 24,
-    forestCount: 78,
+    forestCount: 36,
     stars: 900,
     maxDrawCalls: 520,
     maxTriangles: 420_000,
@@ -174,28 +185,10 @@ const ATMOSPHERE: Record<
   },
 }
 
-const CAMERA_TARGET = new Vector3(7, 0, 3)
+const CAMERA_TARGET = new Vector3(...WORLD_CAMERA_TARGET)
 const LOW_FRAMEBUFFER_PIXELS = 450_000
-const CAMERA_DISTANCE = 72
-const CAMERA_AZIMUTH = MathUtils.degToRad(45)
-const CAMERA_ELEVATION = MathUtils.degToRad(30)
-const CAMERA_OFFSET = new Vector3(
-  Math.sin(CAMERA_AZIMUTH) * Math.cos(CAMERA_ELEVATION) * CAMERA_DISTANCE,
-  Math.sin(CAMERA_ELEVATION) * CAMERA_DISTANCE,
-  Math.cos(CAMERA_AZIMUTH) * Math.cos(CAMERA_ELEVATION) * CAMERA_DISTANCE
-)
+const CAMERA_OFFSET = new Vector3(...WORLD_CAMERA_OFFSET)
 const CAMERA_POSITION = CAMERA_TARGET.clone().add(CAMERA_OFFSET)
-type WorldConnection = readonly [WorldLandmarkId, WorldLandmarkId]
-const CENTER_CONNECTIONS: WorldConnection[] = WORLD_LANDMARKS.filter(
-  ({ layer }) => layer === 'center'
-).map(({ id }) => ['tree', id])
-const JOURNEY_LANDMARK_IDS = WORLD_LANDMARKS.filter(({ layer }) => layer === 'journey').map(
-  ({ id }) => id
-)
-const JOURNEY_CONNECTIONS: WorldConnection[] = JOURNEY_LANDMARK_IDS.slice(1).map((id, index) => [
-  JOURNEY_LANDMARK_IDS[index]!,
-  id,
-])
 
 function isBlockoutLandmarkId(id: WorldLandmarkId): id is BlockoutLandmarkId {
   return !GATE_ONE_LANDMARK_IDS.some((gateOneId) => gateOneId === id)
@@ -211,16 +204,13 @@ function landmarkVisualState(
   return game.attention[id] > 0 || game.resonance[id] >= ATTUNED_RESONANCE ? 'attuned' : 'resting'
 }
 
-function cameraZoom(width: number, height: number) {
-  return width < 640 ? 7 : height < 800 ? 11 : 13
-}
-
 export function WorldScene({
   palette,
   quality,
   automaticQuality,
   atmosphere,
   selectedId,
+  selectionPanel,
   game,
   canSacred,
   cameraCommand,
@@ -331,7 +321,12 @@ export function WorldScene({
       />
       <AtmosphereBeacon atmosphere={atmosphere} palette={palette} animate={ambientMotion} />
 
-      <RtsCameraRig selectedId={selectedId} command={cameraCommand} canFlow={canSacred} />
+      <RtsCameraRig
+        selectedId={selectedId}
+        selectionPanel={selectionPanel}
+        command={cameraCommand}
+        canFlow={canSacred}
+      />
       <Terrain
         palette={palette}
         quality={quality}
@@ -344,7 +339,6 @@ export function WorldScene({
         animate={activeAnimation}
         energy={activeStreams / TOTAL_ATTENTION}
       />
-      <WorldConnections palette={palette} />
       <Forest count={settings.forestCount} quality={quality} />
       {ambientMotion ? <AmbientWisps palette={palette} /> : null}
 
@@ -536,7 +530,12 @@ function AtmosphereBeacon({
     <group ref={ref} position={[25, 16, -23]}>
       <mesh>
         <sphereGeometry args={[1.5, 20, 12]} />
-        <meshBasicMaterial color={color} transparent opacity={0.82} />
+        <meshStandardMaterial
+          color={palette.warmSand}
+          emissive={color}
+          emissiveIntensity={0.06}
+          roughness={0.85}
+        />
       </mesh>
       <mesh rotation={[Math.PI / 2, 0.2, 0]}>
         <torusGeometry args={[2.45, 0.055, 6, 48]} />
@@ -608,116 +607,169 @@ function SceneBudgetProbe({
 
 function RtsCameraRig({
   selectedId,
+  selectionPanel,
   command,
   canFlow,
 }: {
   selectedId: WorldLandmarkId | null
+  selectionPanel?: CameraPanelRect | null
   command: CameraCommand
   canFlow: boolean
 }) {
   const controlsRef = useRef<ComponentRef<typeof MapControls>>(null)
   const invalidate = useThree((state) => state.invalidate)
   const size = useThree((state) => state.size)
+  const get = useThree((state) => state.get)
   const previousCommand = useRef(command.sequence)
-  const previousSelection = useRef(selectedId)
+  const animationFrame = useRef(0)
+  const hasFramed = useRef(false)
+  const panelLeft = selectionPanel?.left
+  const panelTop = selectionPanel?.top
+  const panelWidth = selectionPanel?.width
+  const panelHeight = selectionPanel?.height
+  const framing = useMemo(
+    () =>
+      getWorldCameraFrame(
+        size.width,
+        size.height,
+        selectedId,
+        panelLeft === undefined ||
+          panelTop === undefined ||
+          panelWidth === undefined ||
+          panelHeight === undefined
+          ? null
+          : { left: panelLeft, top: panelTop, width: panelWidth, height: panelHeight }
+      ),
+    [panelHeight, panelLeft, panelTop, panelWidth, selectedId, size.height, size.width]
+  )
+
+  const stopAnimation = useCallback(() => {
+    cancelAnimationFrame(animationFrame.current)
+    animationFrame.current = 0
+  }, [])
+
+  const recordFraming = useCallback(() => {
+    const controls = controlsRef.current
+    if (!controls) return
+    const { gl } = get()
+    const camera = controls.object as OrthographicCamera
+    gl.domElement.dataset.worldCameraSafeBounds = JSON.stringify(framing.safeBounds)
+    gl.domElement.dataset.worldCameraViewOffset = [
+      camera.view?.offsetX ?? 0,
+      camera.view?.offsetY ?? 0,
+    ].join(',')
+    if (selectedId) {
+      gl.domElement.dataset.worldSelectedLandmark = selectedId
+      gl.domElement.dataset.worldSelectedBounds = JSON.stringify(
+        projectedLandmarkBounds(selectedId, size.width, size.height, {
+          target: controls.target.toArray(),
+          zoom: camera.zoom,
+          offsetX: camera.view?.offsetX ?? 0,
+          offsetY: camera.view?.offsetY ?? 0,
+        })
+      )
+    } else {
+      delete gl.domElement.dataset.worldSelectedLandmark
+      delete gl.domElement.dataset.worldSelectedBounds
+    }
+  }, [framing.safeBounds, get, selectedId, size.height, size.width])
+
+  const applyFraming = useCallback(
+    (next: WorldCameraFrame, animate: boolean) => {
+      const controls = controlsRef.current
+      if (!controls || size.width <= 0 || size.height <= 0) return
+      stopAnimation()
+      const camera = controls.object as OrthographicCamera
+      const startTarget = controls.target.clone()
+      const startPosition = camera.position.clone()
+      const startZoom = camera.zoom
+      const startOffsetX = camera.view?.offsetX ?? 0
+      const startOffsetY = camera.view?.offsetY ?? 0
+      const nextTarget = new Vector3(...next.target)
+      const nextPosition = nextTarget.clone().add(CAMERA_OFFSET)
+
+      function apply(progress: number) {
+        controls!.target.lerpVectors(startTarget, nextTarget, progress)
+        camera.position.lerpVectors(startPosition, nextPosition, progress)
+        camera.zoom = MathUtils.lerp(startZoom, next.zoom, progress)
+        camera.setViewOffset(
+          size.width,
+          size.height,
+          MathUtils.lerp(startOffsetX, next.offsetX, progress),
+          MathUtils.lerp(startOffsetY, next.offsetY, progress),
+          size.width,
+          size.height
+        )
+        controls!.update()
+        recordFraming()
+        invalidate()
+      }
+
+      if (!animate) {
+        apply(1)
+        return
+      }
+      const startedAt = performance.now()
+      function move(now: number) {
+        const progress = Math.min(1, (now - startedAt) / 600)
+        apply(1 - (1 - progress) ** 4)
+        animationFrame.current = progress < 1 ? requestAnimationFrame(move) : 0
+      }
+      animationFrame.current = requestAnimationFrame(move)
+    },
+    [invalidate, recordFraming, size.height, size.width, stopAnimation]
+  )
 
   useLayoutEffect(() => {
-    const controls = controlsRef.current
-    if (!controls) return
-    const camera = controls.object as OrthographicCamera
-    camera.zoom = cameraZoom(size.width, size.height)
-    camera.updateProjectionMatrix()
-    controls.update()
-    invalidate()
-  }, [invalidate, size.height, size.width])
-
-  useEffect(() => {
-    if (previousSelection.current === selectedId) return
-    previousSelection.current = selectedId
-    if (!selectedId) return
-
-    const controls = controlsRef.current
-    if (!controls) return
-    const activeControls = controls
-    const camera = activeControls.object as OrthographicCamera
-
-    const placement = WORLD_PLACEMENTS[selectedId]
-    const nextTarget = new Vector3(
-      placement.focus[0] - (size.width >= 1024 ? 10 : 0),
-      placement.focus[1],
-      placement.focus[2] + (size.width < 640 ? 16 : 0)
-    )
-    const startTarget = activeControls.target.clone()
-    const startPosition = camera.position.clone()
-    const nextPosition = nextTarget.clone().add(CAMERA_OFFSET)
-
-    if (!canFlow) {
-      activeControls.target.copy(nextTarget)
-      camera.position.copy(nextPosition)
-      activeControls.update()
-      invalidate()
-      return
-    }
-
-    const startedAt = performance.now()
-    let frame = 0
-
-    function move(now: number) {
-      const progress = Math.min(1, (now - startedAt) / 600)
-      const eased = 1 - (1 - progress) ** 4
-      activeControls.target.lerpVectors(startTarget, nextTarget, eased)
-      camera.position.lerpVectors(startPosition, nextPosition, eased)
-      activeControls.update()
-      invalidate()
-
-      if (progress < 1) frame = requestAnimationFrame(move)
-    }
-
-    frame = requestAnimationFrame(move)
-    return () => cancelAnimationFrame(frame)
-  }, [canFlow, invalidate, selectedId, size.width])
+    // Mount/remount must frame an already selected place before its first paint.
+    applyFraming(framing, hasFramed.current && canFlow)
+    hasFramed.current = true
+    return stopAnimation
+  }, [applyFraming, canFlow, framing, stopAnimation])
 
   useEffect(() => {
     const controls = controlsRef.current
     if (!controls || command.sequence === previousCommand.current) return
     const camera = controls.object as OrthographicCamera
     previousCommand.current = command.sequence
+    stopAnimation()
 
-    const step = 2
+    const step = 2 * Math.SQRT1_2
     const offset = camera.position.clone().sub(controls.target)
 
     switch (command.action) {
       case 'pan-left':
         controls.target.x -= step
+        controls.target.z += step
         break
       case 'pan-right':
         controls.target.x += step
+        controls.target.z -= step
         break
       case 'pan-up':
+        controls.target.x -= step
         controls.target.z -= step
         break
       case 'pan-down':
+        controls.target.x += step
         controls.target.z += step
         break
       case 'zoom-in':
-        camera.zoom = Math.min(24, camera.zoom * 1.15)
+        camera.zoom = Math.min(28, camera.zoom * 1.15)
         camera.updateProjectionMatrix()
         controls.update()
+        recordFraming()
         invalidate()
         return
       case 'zoom-out':
-        camera.zoom = Math.max(5, camera.zoom / 1.15)
+        camera.zoom = Math.max(1, camera.zoom / 1.15)
         camera.updateProjectionMatrix()
         controls.update()
+        recordFraming()
         invalidate()
         return
       case 'reset':
-        controls.target.copy(CAMERA_TARGET)
-        camera.position.copy(CAMERA_POSITION)
-        camera.zoom = cameraZoom(size.width, size.height)
-        camera.updateProjectionMatrix()
-        controls.update()
-        invalidate()
+        applyFraming(framing, canFlow)
         return
     }
 
@@ -725,10 +777,11 @@ function RtsCameraRig({
     controls.target.z = MathUtils.clamp(controls.target.z, -22, 20)
     camera.position.copy(controls.target).add(offset)
     controls.update()
+    recordFraming()
     invalidate()
-  }, [command, invalidate, size.height, size.width])
+  }, [applyFraming, canFlow, command, framing, invalidate, recordFraming, stopAnimation])
 
-  function constrainCamera() {
+  const constrainCamera = useCallback(() => {
     const controls = controlsRef.current
     if (!controls) return
 
@@ -736,6 +789,7 @@ function RtsCameraRig({
     const nextY = MathUtils.clamp(controls.target.y, 0, 7)
     const nextZ = MathUtils.clamp(controls.target.z, -22, 20)
     if (nextX === controls.target.x && nextY === controls.target.y && nextZ === controls.target.z) {
+      recordFraming()
       return
     }
 
@@ -743,20 +797,22 @@ function RtsCameraRig({
     const offset = camera.position.clone().sub(controls.target)
     controls.target.set(nextX, nextY, nextZ)
     camera.position.copy(controls.target).add(offset)
+    recordFraming()
     invalidate()
-  }
+  }, [invalidate, recordFraming])
 
   return (
     <MapControls
       ref={controlsRef}
       onChange={constrainCamera}
+      onStart={stopAnimation}
       makeDefault
       target={CAMERA_TARGET.toArray()}
       enableRotate={false}
       enableDamping={false}
       screenSpacePanning={false}
-      minZoom={5}
-      maxZoom={24}
+      minZoom={1}
+      maxZoom={28}
       mouseButtons={{ LEFT: 2, MIDDLE: 1, RIGHT: 0 }}
     />
   )
@@ -778,44 +834,46 @@ function Terrain({
     [palette, radialSegments, rings]
   )
   const texture = useIsometricSpriteTexture(
-    '/images/world-map/isometric/terrain/living-meadow-v1.webp',
+    '/images/world-map/isometric/terrain/painted-meadow-v2.webp',
     quality
   )
-  const repeatedTexture = useMemo(() => {
-    if (!texture) return null
-    const copy = texture.clone()
-    copy.wrapS = RepeatWrapping
-    copy.wrapT = RepeatWrapping
-    copy.repeat.set(3, 2)
-    copy.needsUpdate = true
-    return copy
-  }, [texture])
-
+  const cliff = useMemo(() => createCliffMaterial(), [])
+  useEffect(() => () => cliff.dispose(), [cliff])
   useEffect(() => () => geometry.dispose(), [geometry])
-  useEffect(() => () => repeatedTexture?.dispose(), [repeatedTexture])
-
   return (
     <group>
       <mesh geometry={geometry} receiveShadow>
-        <meshStandardMaterial vertexColors roughness={0.92} metalness={0} />
+        <meshBasicMaterial
+          key={texture?.uuid ?? 'loading-meadow'}
+          attach="material-0"
+          map={texture}
+          color={texture ? palette.light : palette.green}
+          vertexColors
+          toneMapped={false}
+          fog={false}
+        />
+        <primitive object={cliff} attach="material-1" />
       </mesh>
-      {repeatedTexture ? (
-        <mesh geometry={geometry} position={[0, 0.025, 0]} renderOrder={-1_000_000}>
-          <meshStandardMaterial
-            attach="material-0"
-            map={repeatedTexture}
-            transparent
-            opacity={0.66}
-            roughness={0.96}
-            metalness={0}
-            depthWrite={false}
-            polygonOffset
-            polygonOffsetFactor={-1}
-          />
-          <meshBasicMaterial attach="material-1" visible={false} />
-        </mesh>
-      ) : null}
+      <LandscapeDressing palette={palette} quality={quality} ground={geometry} />
     </group>
+  )
+}
+
+function LandscapeDressing({
+  palette,
+  quality,
+  ground,
+}: {
+  palette: WorldScenePalette
+  quality: WorldQuality
+  ground: BufferGeometry
+}) {
+  const texture = useIsometricSpriteTexture(
+    '/images/world-map/isometric/terrain/landscape-details-v1.webp',
+    quality
+  )
+  return (
+    <LandscapeEnvironment palette={palette} quality={quality} texture={texture} ground={ground} />
   )
 }
 
@@ -830,41 +888,55 @@ function River({
   animate: boolean
   energy: number
 }) {
-  const segments = quality === 'low' ? 32 : quality === 'high' ? 72 : 48
-  const bed = useMemo(() => createRiverRibbonGeometry(2.1, segments, -0.38), [segments])
-  const water = useMemo(() => createRiverRibbonGeometry(1.55, segments, -0.05), [segments])
-  const light = useMemo(() => createRiverRibbonGeometry(0.09, segments, 0.01), [segments])
+  const segments = quality === 'high' ? 72 : 48
+  const bed = useMemo(() => createRiverRibbonGeometry(2.05, segments, 0.025), [segments])
+  const water = useMemo(() => createRiverRibbonGeometry(1.55, segments, 0.075), [segments])
+  const reflections = useMemo(
+    () => [
+      createRiverRibbonGeometry(0.13, 12, 0.105, [0.19, 0.26]),
+      createRiverRibbonGeometry(0.1, 12, 0.105, [0.61, 0.69]),
+    ],
+    []
+  )
   const flowCurve = useMemo(() => createRiverCurve(0.16), [])
+  const waterMaterial = useMemo(
+    () => createPaintedWaterMaterial(palette, energy),
+    [palette, energy]
+  )
+  useEffect(() => () => waterMaterial.dispose(), [waterMaterial])
+  const bankColor = useMemo(
+    () =>
+      new Color(palette.warmSand)
+        .lerp(new Color(palette.green), 0.3)
+        .lerp(new Color(palette.warmDepth), 0.25),
+    [palette]
+  )
 
   useEffect(
     () => () => {
       bed.dispose()
       water.dispose()
-      light.dispose()
     },
-    [bed, light, water]
+    [bed, water]
   )
+  useEffect(() => () => reflections.forEach((geometry) => geometry.dispose()), [reflections])
 
   return (
     <group>
       <mesh geometry={bed}>
-        <meshStandardMaterial color={palette.cosmic} roughness={0.95} />
+        <meshBasicMaterial color={bankColor} toneMapped={false} fog={false} />
       </mesh>
-      <mesh geometry={water}>
-        <meshStandardMaterial
-          color={palette.cyan}
-          emissive={palette.cyan}
-          emissiveIntensity={0.14 + energy * 0.72}
-          roughness={0.26}
-          metalness={0.12}
-          transparent
-          opacity={0.72 + energy * 0.2}
-          depthWrite={false}
-        />
-      </mesh>
-      <mesh geometry={light}>
-        <meshBasicMaterial color={palette.cyan} transparent opacity={0.62 + energy * 0.3} />
-      </mesh>
+      <mesh geometry={water} material={waterMaterial} />
+      {reflections.map((geometry, index) => (
+        <mesh key={index} geometry={geometry} renderOrder={-899_999}>
+          <meshBasicMaterial
+            color={palette.light}
+            transparent
+            opacity={0.12 + energy * 0.1}
+            depthWrite={false}
+          />
+        </mesh>
+      ))}
       {animate
         ? [0, 0.33, 0.66].map((offset) => (
             <RiverMote key={offset} curve={flowCurve} offset={offset} palette={palette} />
@@ -898,42 +970,6 @@ function RiverMote({
   )
 }
 
-function createConnectionGeometry(connections: readonly WorldConnection[]) {
-  const vertices = connections.flatMap(([from, to]) => {
-    const start = WORLD_PLACEMENTS[from].position
-    const end = WORLD_PLACEMENTS[to].position
-
-    return [start[0], start[1] + 0.22, start[2], end[0], end[1] + 0.22, end[2]]
-  })
-  const geometry = new BufferGeometry()
-  geometry.setAttribute('position', new Float32BufferAttribute(vertices, 3))
-  return geometry
-}
-
-function WorldConnections({ palette }: { palette: WorldScenePalette }) {
-  const centerGeometry = useMemo(() => createConnectionGeometry(CENTER_CONNECTIONS), [])
-  const journeyGeometry = useMemo(() => createConnectionGeometry(JOURNEY_CONNECTIONS), [])
-
-  useEffect(
-    () => () => {
-      centerGeometry.dispose()
-      journeyGeometry.dispose()
-    },
-    [centerGeometry, journeyGeometry]
-  )
-
-  return (
-    <group>
-      <lineSegments geometry={centerGeometry}>
-        <lineBasicMaterial color={palette.cyan} transparent opacity={0.28} depthWrite={false} />
-      </lineSegments>
-      <lineSegments geometry={journeyGeometry}>
-        <lineBasicMaterial color={palette.violet} transparent opacity={0.42} depthWrite={false} />
-      </lineSegments>
-    </group>
-  )
-}
-
 function createForestPoints(count: number) {
   let seed = 20260727
   const random = () => {
@@ -942,7 +978,7 @@ function createForestPoints(count: number) {
   }
   const points: Array<readonly [number, number, number, number]> = []
 
-  while (points.length < count) {
+  for (let attempt = 0; points.length < count && attempt < 2000; attempt += 1) {
     const angle = random() * Math.PI * 2
     const radius = Math.sqrt(random()) * 0.88
     const x = 2 + Math.cos(angle) * 40 * radius
@@ -953,8 +989,8 @@ function createForestPoints(count: number) {
         placement.pickRadius + 1.2
     )
 
-    if (clearOfLandmarks) {
-      points.push([x, terrainHeightAt(x, z) + 0.75, z, 0.65 + random() * 0.8])
+    if (clearOfLandmarks && trailDistanceAt(x, z) > 1.8 && riverDistanceAt(x, z) > 2.8) {
+      points.push([x, terrainSurfaceHeightAt(x, z) + 0.75, z, 0.65 + random() * 0.8])
     }
   }
 
@@ -1199,53 +1235,6 @@ function InvisibleMaterial({ color }: { color: string }) {
   )
 }
 
-function useIsometricSpriteTexture(src: string, quality: WorldQuality) {
-  const gl = useThree((state) => state.gl)
-  const [texture, setTexture] = useState<Texture | null>(null)
-
-  useEffect(() => {
-    let active = true
-    const pendingTexture = new TextureLoader().load(
-      src,
-      (loadedTexture) => {
-        if (!active) {
-          loadedTexture.dispose()
-          return
-        }
-
-        loadedTexture.colorSpace = SRGBColorSpace
-        loadedTexture.needsUpdate = true
-        setTexture(loadedTexture)
-      },
-      undefined,
-      () => {
-        if (active) setTexture(null)
-      }
-    )
-
-    return () => {
-      active = false
-      pendingTexture.dispose()
-    }
-  }, [src])
-
-  // A quality change only adjusts sampling; it must not download/recreate
-  // every sprite or briefly restore all procedural fallback models.
-  useEffect(() => {
-    if (!texture) return
-    // Three textures are mutable GPU resources: update their sampler in place
-    // instead of allocating a replacement image/texture for a quality change.
-    // eslint-disable-next-line react-hooks/immutability
-    texture.anisotropy = Math.min(
-      gl.capabilities.getMaxAnisotropy(),
-      quality === 'low' ? 1 : quality === 'medium' ? 2 : 4
-    )
-    texture.needsUpdate = true
-  }, [gl, quality, texture])
-
-  return texture
-}
-
 function IsometricLandmarkSprite({
   asset,
   worldPosition,
@@ -1313,6 +1302,7 @@ function TreeLandmark({
         </mesh>
       }
     >
+      <TreeGroundGlow palette={palette} />
       <IsometricLandmarkSprite
         asset={WORLD_SPRITE_ASSETS.tree}
         worldPosition={WORLD_PLACEMENTS.tree.position}
@@ -1349,6 +1339,23 @@ function TreeLandmark({
       </mesh>
       <pointLight color={palette.gold} intensity={energy} distance={12} position={[0, 8.7, 0]} />
     </InteractiveLandmark>
+  )
+}
+
+function TreeGroundGlow({ palette }: { palette: WorldScenePalette }) {
+  const geometry = useMemo(() => createTreeGroundGlowGeometry(palette), [palette])
+  useEffect(() => () => geometry.dispose(), [geometry])
+
+  return (
+    <mesh geometry={geometry} renderOrder={-800_000} raycast={() => undefined}>
+      <meshBasicMaterial
+        vertexColors
+        transparent
+        blending={AdditiveBlending}
+        depthWrite={false}
+        toneMapped={false}
+      />
+    </mesh>
   )
 }
 

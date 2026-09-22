@@ -145,10 +145,11 @@ test('manual quality survives sustained slow frames and atmosphere changes prese
   await expect(canvas).toHaveAttribute('data-world-lod', 'medium')
   await expect(canvas).toHaveAttribute('data-world-quality-mode', 'manual')
 
+  const initialZoom = Number(await canvas.getAttribute('data-world-camera-zoom'))
   await page.locator('[data-camera-surface]').press('+')
   await expect
     .poll(async () => Number(await canvas.getAttribute('data-world-camera-zoom')))
-    .toBeGreaterThan(13)
+    .toBeGreaterThan(initialZoom)
   const zoom = await canvas.getAttribute('data-world-camera-zoom')
   const position = await canvas.getAttribute('data-world-camera-position')
   await page.getByRole('button', { name: 'Atmosphäre: Morgengold' }).click()

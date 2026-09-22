@@ -68,6 +68,29 @@ Prüfungen. Die ursprüngliche Phasenplanung steht weiter unten als Kontext;
 | 3, parallel | **3D-Erlebnis und Hosting messen** | Public/2D bleiben schnell; 3D wird nur bei Bedarf geladen, Still/WebGL-Ausfall behalten alle Inhalte. Grafikprofil auf realem Mittelklasse-Gerät; LCP < 2,5 s, CLS < 0,1, INP < 200 ms als Produktziele messen. Docker-Image bauen, Healthcheck und Runtime-Env prüfen; danach Staging-Abnahme des gewählten Hostings. |
 | 4 | **Akashic Records als kleinen vertikalen Slice beginnen** | Erst nach Identität und stabilem Guide: ein Journaleintrag wird ein nutzereigener Record, erscheint in Suche/Map, wird vom Guide zitiert und verschwindet beim Löschen auch aus abgeleiteten Kopien. Vektorsuche und weitere Record-Typen erst aus diesem nachgewiesenen Bedarf ausbauen. |
 
+### 3D-Map: von der Karte zur lebendigen Spielwelt
+
+Der [konkrete Map-Game-Plan](./plans/world-map-game.md) entwickelt die öffentliche
+Welt als Solarpunk-Insel im kosmischen Raum weiter: Lebensbaum, verzweigte
+Lichtflüsse und eine bewusst beibehaltene handgemalte 2.5D/3D-Mischung. Dieser
+Sprint liefert Kamera-Framing, ein ruhigeres HUD mit regelgerechter nächster Aktion
+und Wasser-/Küsten-Polish. Lokal sind Build und Lint sowie 122 relevante Prüfungen
+grün (16 bewusst geräteabhängige Skips); siehe [Prüfprotokoll](./audits/2026-09-07-map-game.md).
+Danach folgen ein vollständig spielbares erstes Paar einschließlich 2D/Still
+und Pause, sieben unterscheidbare Paarerlebnisse und gezielte räumliche
+Vertiefung. Fortschritt bedeutet sichtbare Weltveränderung, keine Wartepflicht
+oder XP-Schleife. Der Plan trennt Iststand, Abhängigkeiten und prüfbare Ziele.
+
+Die Landschaft ist anschließend gestalterisch ausgebaut: gemalter Wiesenboden,
+Sandsteinwege und Plätze an allen 15 Orten, Gärten, Schilfufer, Blumenflächen,
+moosige Felsen und eine sichtbar geschichtete Inselkante. Wasser und Vegetation
+teilen die warme Bildsprache der Gebäude. Die Wege folgen auch dem groben
+Geländemesh; neue Details werden gemeinsam gerendert. Siehe
+[Landschafts-Abnahme](./audits/2026-09-07-landscape.md) und
+[Asset-Provenienz mit Prompts](./assets/2026-09-07-landscape.md).
+Der nächste gestalterische Slice verbindet Garten- und Wasserzustände am ersten
+Ortepaar mit dem tatsächlichen Spielfortschritt.
+
 ### Agentisches Engineering im Repo
 
 Der konkrete Ablauf steht in [ENGINEERING.md](./ENGINEERING.md): ein begrenztes

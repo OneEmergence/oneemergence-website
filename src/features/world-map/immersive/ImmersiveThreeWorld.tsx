@@ -16,11 +16,13 @@ import {
   ArrowLeft,
   ArrowRight,
   ArrowUp,
+  ChevronDown,
   Box,
   House,
   LocateFixed,
   MapPinned,
   Minus,
+  Move,
   Plus,
   RotateCcw,
   Settings2,
@@ -49,6 +51,7 @@ import {
   type ResonanceSessionCommand,
 } from './game'
 import { readWorldScenePalette } from './scenePalette'
+import { getAttentionSource, getJourneyStep } from './journey'
 import {
   WorldScene,
   type CameraAction,
@@ -106,6 +109,14 @@ export function ImmersiveThreeWorld({
   const [selectedId, setSelectedId] = useState<WorldLandmarkId | null>(null)
   const [atlasOpen, setAtlasOpen] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [panControlsOpen, setPanControlsOpen] = useState(false)
+  const detailPanelRef = useRef<HTMLElement>(null)
+  const [selectionPanel, setSelectionPanel] = useState<{
+    left: number
+    top: number
+    width: number
+    height: number
+  } | null>(null)
   const atlasButtonRef = useRef<HTMLButtonElement>(null)
   const settingsButtonRef = useRef<HTMLButtonElement>(null)
   const cameraSurfaceRef = useRef<HTMLDivElement>(null)
@@ -141,6 +152,12 @@ export function ImmersiveThreeWorld({
   const globalLocked = selectedPlace === navigationPair.globalId && !pair.globalUnlocked
   const completedPairs = getCompletedPairCount(game)
   const emerged = hasReachedEmergence(game)
+  const journey = getJourneyStep(game)
+  const selectedJourney = getJourneyStep(game, selectedPair)
+  const journeyHint = (step: typeof journey) =>
+    t(`journey.${step.stage}`, {
+      place: world(`landmarks.${step.target}.name`),
+    })
   const simulationActive =
     !emerged &&
     (game.attention.tree < TOTAL_ATTENTION ||
@@ -173,7 +190,10 @@ export function ImmersiveThreeWorld({
   const closeDetails = useCallback((restoreFocus = true) => {
     const trigger = detailTriggerRef.current
     setSelectedId(null)
-    if (restoreFocus) requestAnimationFrame(() => trigger?.focus())
+    if (restoreFocus)
+      requestAnimationFrame(() =>
+        (trigger?.isConnected ? trigger : cameraSurfaceRef.current)?.focus()
+      )
   }, [])
 
   const selectPlace = useCallback((id: WorldLandmarkId, trigger: HTMLElement | null) => {
@@ -187,6 +207,35 @@ export function ImmersiveThreeWorld({
     },
     [selectPlace]
   )
+
+  useEffect(() => {
+    const panel = detailPanelRef.current
+    const surface = cameraSurfaceRef.current
+    if (!panel || !surface) return
+    const measure = () => {
+      const rect = panel.getBoundingClientRect()
+      const canvas = surface.getBoundingClientRect()
+      const next = {
+        left: rect.left - canvas.left,
+        top: rect.top - canvas.top,
+        width: rect.width,
+        height: rect.height,
+      }
+      setSelectionPanel((previous) =>
+        previous &&
+        Object.keys(next).every(
+          (key) => previous[key as keyof typeof next] === next[key as keyof typeof next]
+        )
+          ? previous
+          : next
+      )
+    }
+    const observer = new ResizeObserver(measure)
+    observer.observe(panel)
+    observer.observe(surface)
+    measure()
+    return () => observer.disconnect()
+  }, [selectedId])
 
   useEffect(() => {
     if (!atlasOpen && !settingsOpen && selectedId === null) return
@@ -245,16 +294,7 @@ export function ImmersiveThreeWorld({
   const announcement = describeEvent(session.events.at(-1))
 
   function moveAttention(to: Exclude<AttentionNodeId, 'tree'>) {
-    const selectedPair = getPairForPlace(to)
-    const partner =
-      selectedPair?.personalId === to ? selectedPair.globalId : selectedPair?.personalId
-    const source = (
-      [
-        'tree',
-        ...(partner ? [partner] : []),
-        ...RESONANCE_PAIRS.flatMap(({ personalId, globalId }) => [personalId, globalId]),
-      ] as AttentionNodeId[]
-    ).find((id) => id !== to && game.attention[id] > 0)
+    const source = getAttentionSource(game, to)
     if (source) dispatch({ type: 'MOVE_ATTENTION', from: source, to })
   }
 
@@ -323,6 +363,7 @@ export function ImmersiveThreeWorld({
           automaticQuality={automaticQuality}
           atmosphere={atmosphere}
           selectedId={selectedId}
+          selectionPanel={selectedId ? selectionPanel : null}
           game={game}
           canSacred={canSacred}
           cameraCommand={cameraCommand}
@@ -340,11 +381,13 @@ export function ImmersiveThreeWorld({
       />
 
       <header className="pointer-events-none absolute inset-x-3 top-3 z-20 flex items-start justify-between gap-3 sm:inset-x-5 sm:top-5">
-        <div className="hidden rounded-2xl border border-oe-pure-light/10 bg-oe-deep-space/75 px-4 py-3 backdrop-blur-xl sm:block">
-          <p className="text-[0.62rem] font-medium uppercase tracking-[0.28em] text-oe-spirit-cyan">
-            {t('eyebrow')}
+        <div className="pt-1">
+          <p className="font-serif text-xl leading-none text-oe-pure-light sm:text-2xl">
+            {t('title')}
           </p>
-          <p className="mt-1 font-serif text-2xl leading-none text-oe-pure-light">{t('title')}</p>
+          <p className="mt-2 text-xs text-oe-pure-light/70">
+            {t('journey.progress', { completed: completedPairs, total: RESONANCE_PAIRS.length })}
+          </p>
         </div>
         <div className="pointer-events-auto ml-auto flex gap-2">
           <button
@@ -393,7 +436,7 @@ export function ImmersiveThreeWorld({
 
       <nav
         aria-label={t('places')}
-        className="absolute left-3 top-16 z-20 flex gap-1 rounded-full border border-oe-pure-light/10 bg-oe-deep-space/88 p-1 backdrop-blur-xl sm:left-1/2 sm:top-5 sm:-translate-x-1/2"
+        className="absolute left-3 top-16 z-20 flex gap-1 rounded-full border border-oe-pure-light/10 bg-oe-deep-space/88 p-1 backdrop-blur-xl md:left-1/2 md:-translate-x-1/2 lg:top-5"
       >
         {navigationIds.map((id) => {
           const Icon = id === 'tree' ? TreePine : id === navigationPair.personalId ? House : Sprout
@@ -413,17 +456,35 @@ export function ImmersiveThreeWorld({
                 active
                   ? 'bg-oe-pure-light/10 text-oe-pure-light'
                   : locked
-                    ? 'text-oe-pure-light/35'
-                    : 'text-oe-pure-light/65 hover:bg-oe-pure-light/[0.06]'
+                    ? 'text-oe-pure-light/60'
+                    : 'text-oe-pure-light/75 hover:bg-oe-pure-light/[0.06]'
               )}
             >
               <Icon className="h-4 w-4" aria-hidden="true" />
-              <span className="hidden md:inline">{world(`landmarks.${id}.name`)}</span>
+              <span className="hidden xl:inline">{world(`landmarks.${id}.name`)}</span>
               <span className="tabular-nums text-oe-solar-gold">{game.attention[id]}</span>
             </button>
           )
         })}
       </nav>
+
+      {!selectedId ? (
+        <div
+          data-world-journey
+          className="absolute inset-x-3 bottom-3 z-20 rounded-2xl border border-oe-solar-gold/20 bg-oe-deep-space/95 p-4 sm:bottom-5 sm:left-5 sm:right-auto sm:max-w-sm"
+        >
+          <p className="text-xs font-medium text-oe-solar-gold">{t('journey.next')}</p>
+          <p className="mt-1 text-sm leading-5 text-oe-pure-light/85">{journeyHint(journey)}</p>
+          <button
+            type="button"
+            onClick={(event) => selectPlace(journey.target, event.currentTarget)}
+            className="mt-2 inline-flex min-h-11 items-center gap-2 text-sm text-oe-solar-gold underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-solar-gold"
+          >
+            {t('journey.visit', { place: world(`landmarks.${journey.target}.name`) })}
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </button>
+        </div>
+      ) : null}
 
       {atlasOpen ? (
         <aside
@@ -606,18 +667,19 @@ export function ImmersiveThreeWorld({
 
       {selectedId ? (
         <aside
+          ref={detailPanelRef}
           id="world-place-details"
           aria-labelledby="resonance-place-title"
-          className="absolute inset-x-3 bottom-3 z-20 max-h-[55dvh] overflow-y-auto rounded-2xl border border-oe-spirit-cyan/20 bg-oe-deep-space/94 p-5 shadow-2xl shadow-oe-deep-space/70 backdrop-blur-2xl md:bottom-5 md:left-auto md:right-5 md:top-28 md:w-[22rem] md:max-h-none"
+          className="absolute inset-x-3 bottom-3 z-20 max-h-[42dvh] overflow-y-auto rounded-2xl border border-oe-spirit-cyan/20 bg-oe-deep-space/96 p-4 shadow-2xl shadow-oe-deep-space/50 md:bottom-auto md:left-auto md:right-5 md:top-28 md:max-h-[calc(100dvh-8.25rem)] md:w-[22rem] md:p-5"
         >
-          <div className="flex items-start justify-between gap-4">
+          <div className="flex items-start justify-between gap-3">
             <div>
-              <p className="text-[0.62rem] font-medium uppercase tracking-[0.25em] text-oe-spirit-cyan">
+              <p className="text-xs text-oe-spirit-cyan">
                 {globalLocked ? t('locked') : t('selectedPlace')}
               </p>
               <h2
                 id="resonance-place-title"
-                className="mt-2 font-serif text-3xl leading-none text-oe-pure-light"
+                className="mt-1 font-serif text-3xl leading-none text-oe-pure-light"
               >
                 {world(`landmarks.${selectedId}.name`)}
               </h2>
@@ -626,123 +688,73 @@ export function ImmersiveThreeWorld({
               type="button"
               aria-label={t('closePlace')}
               onClick={() => closeDetails()}
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-oe-pure-light/60 transition-colors hover:bg-oe-pure-light/10 hover:text-oe-pure-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-spirit-cyan"
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-oe-pure-light/70 transition-colors hover:bg-oe-pure-light/10 hover:text-oe-pure-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-spirit-cyan"
             >
               <X className="h-5 w-5" aria-hidden="true" />
             </button>
           </div>
-          <p className="mt-3 line-clamp-3 text-sm leading-6 text-oe-pure-light/60">
-            {world(`landmarks.${selectedId}.description`)}
-          </p>
 
           {selectedPlace ? (
             <>
-              <div className="mt-4 border-y border-oe-pure-light/10 py-4">
-                <div className="flex items-center justify-between gap-3">
-                  <span className="text-xs uppercase tracking-[0.16em] text-oe-pure-light/50">
-                    {t('attention')}
-                  </span>
-                  <span className="font-serif text-xl tabular-nums text-oe-solar-gold">
-                    {selectedAttention} / {PLACE_ATTENTION_CAPACITY}
-                  </span>
-                </div>
-
-                <output aria-live="polite" aria-atomic="true" className="sr-only">
-                  {t('campaign.attentionSummary', {
-                    tree: game.attention.tree,
-                    total: TOTAL_ATTENTION,
-                    completed: completedPairs,
-                  })}
-                </output>
-
-                <div className="mt-3 flex gap-2">
-                  <button
-                    type="button"
-                    data-motion-level="micro"
-                    disabled={!canReturnAttention}
-                    aria-label={t('returnAttention', {
-                      place: world(`landmarks.${selectedPlace}.name`),
-                    })}
-                    onClick={() => returnAttention(selectedPlace)}
-                    className="flex min-h-11 flex-1 items-center justify-center gap-2 rounded-full border border-oe-pure-light/10 text-sm text-oe-pure-light/70 transition-colors hover:bg-oe-pure-light/[0.06] disabled:cursor-not-allowed disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-pure-light"
-                  >
-                    <Minus className="h-4 w-4" aria-hidden="true" />
-                    {t('release')}
-                  </button>
-                  <button
-                    type="button"
-                    data-motion-level="micro"
-                    disabled={!canAddAttention}
-                    aria-label={t('addAttention', {
-                      place: world(`landmarks.${selectedPlace}.name`),
-                    })}
-                    onClick={() => moveAttention(selectedPlace)}
-                    className="flex min-h-11 flex-1 items-center justify-center gap-2 rounded-full border border-oe-solar-gold/35 bg-oe-solar-gold/[0.07] text-sm text-oe-solar-gold transition-colors hover:bg-oe-solar-gold/12 disabled:cursor-not-allowed disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-solar-gold"
-                  >
-                    <Plus className="h-4 w-4" aria-hidden="true" />
-                    {t('focus')}
-                  </button>
-                </div>
-              </div>
-
-              <div className="mt-4">
-                <div className="flex items-center justify-between text-xs">
-                  <label htmlFor="selected-place-resonance" className="text-oe-pure-light/55">
-                    {t('resonance')}
-                  </label>
-                  <span className="tabular-nums text-oe-spirit-cyan">{selectedResonance}%</span>
-                </div>
-                <progress
-                  id="selected-place-resonance"
-                  max={100}
-                  value={selectedResonance}
-                  className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-oe-pure-light/10 accent-oe-spirit-cyan"
-                />
-                {globalLocked ? (
-                  <p className="mt-2 text-xs leading-5 text-oe-pure-light/45">
-                    {t('unlockHint', {
+              <p className="mt-3 text-sm leading-5 text-oe-pure-light/80">
+                {globalLocked
+                  ? t('unlockHint', {
                       personal: world(`landmarks.${navigationPair.personalId}.name`),
-                    })}
-                  </p>
-                ) : null}
-              </div>
-
-              <div className="mt-4">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-oe-pure-light/55">{t('coherence')}</span>
-                  <span className="tabular-nums text-oe-aurora-violet-ink">{pair.coherence}%</span>
-                </div>
-                <progress
-                  aria-label={t('coherence')}
-                  max={100}
-                  value={pair.coherence}
-                  className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-oe-pure-light/10 accent-oe-aurora-violet"
-                />
-                {pair.dissonance > 0 ? (
-                  <p className="mt-2 text-xs leading-5 text-oe-aurora-violet-ink">
-                    {t('campaign.dissonance', { value: pair.dissonance })}
-                  </p>
-                ) : null}
-                <p className="mt-2 text-xs leading-5 text-oe-pure-light/50">
-                  {harmonized
-                    ? t('status.harmonized')
-                    : pair.stabilizing
-                      ? t('status.stabilizing')
-                      : pairReady
-                        ? t('status.ready')
-                        : pair.globalUnlocked
-                          ? t('status.connecting')
-                          : t('status.personalFirst', {
-                              personal: world(`landmarks.${navigationPair.personalId}.name`),
-                            })}
-                </p>
-
+                    })
+                  : journeyHint(selectedJourney)}
+              </p>
+              <output aria-live="polite" aria-atomic="true" className="sr-only">
+                {t('campaign.attentionSummary', {
+                  tree: game.attention.tree,
+                  total: TOTAL_ATTENTION,
+                  completed: completedPairs,
+                })}
+              </output>
+              <div className="mt-3 flex items-center gap-2">
+                <span
+                  title={t('attention')}
+                  className="shrink-0 pr-1 font-serif text-xl tabular-nums text-oe-solar-gold"
+                >
+                  {selectedAttention}
+                  <span className="text-sm text-oe-pure-light/65">
+                    {' '}
+                    / {PLACE_ATTENTION_CAPACITY}
+                  </span>
+                </span>
                 <button
                   type="button"
-                  data-motion-level={harmonized ? 'event' : 'micro'}
+                  data-motion-level="micro"
+                  disabled={!canReturnAttention}
+                  aria-label={t('returnAttention', {
+                    place: world(`landmarks.${selectedPlace}.name`),
+                  })}
+                  onClick={() => returnAttention(selectedPlace)}
+                  className="flex min-h-11 flex-1 items-center justify-center gap-1 rounded-xl border border-oe-pure-light/15 text-sm text-oe-pure-light/80 transition-colors hover:bg-oe-pure-light/[0.06] disabled:cursor-not-allowed disabled:opacity-35 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-pure-light"
+                >
+                  <Minus className="h-4 w-4" aria-hidden="true" />
+                  {t('release')}
+                </button>
+                <button
+                  type="button"
+                  data-motion-level="micro"
+                  disabled={!canAddAttention}
+                  aria-label={t('addAttention', {
+                    place: world(`landmarks.${selectedPlace}.name`),
+                  })}
+                  onClick={() => moveAttention(selectedPlace)}
+                  className="flex min-h-11 flex-1 items-center justify-center gap-1 rounded-xl border border-oe-solar-gold/40 bg-oe-solar-gold/10 px-2 text-sm text-oe-solar-gold transition-colors hover:bg-oe-solar-gold/15 disabled:cursor-not-allowed disabled:opacity-35 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-solar-gold"
+                >
+                  <Plus className="h-4 w-4" aria-hidden="true" />
+                  {t('focus')}
+                </button>
+              </div>
+              {pairReady || pair.stabilizing || harmonized ? (
+                <button
+                  type="button"
+                  data-motion-level="micro"
                   disabled={!pairReady || pair.stabilizing || harmonized}
                   onClick={() => dispatch({ type: 'STABILIZE_PAIR', pairId: navigationPair.id })}
-                  className="mt-3 flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-oe-aurora-violet/45 bg-oe-aurora-violet/10 px-4 text-sm text-oe-aurora-violet-ink transition-colors hover:bg-oe-aurora-violet/15 disabled:cursor-not-allowed disabled:opacity-35 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-aurora-violet"
+                  className="mt-3 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-oe-solar-gold/40 bg-oe-solar-gold/10 px-3 text-sm text-oe-solar-gold transition-colors hover:bg-oe-solar-gold/15 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-solar-gold"
                 >
                   <Sparkles className="h-4 w-4" aria-hidden="true" />
                   {harmonized
@@ -751,15 +763,56 @@ export function ImmersiveThreeWorld({
                       ? t('stabilizing')
                       : t('stabilize')}
                 </button>
+              ) : null}
+              <div className="mt-3 grid grid-cols-2 gap-4">
+                <div>
+                  <div className="flex items-center justify-between gap-2 text-xs">
+                    <label htmlFor="selected-place-resonance" className="text-oe-pure-light/70">
+                      {t('resonance')}
+                    </label>
+                    <span className="tabular-nums text-oe-spirit-cyan">{selectedResonance}%</span>
+                  </div>
+                  <progress
+                    id="selected-place-resonance"
+                    max={100}
+                    value={selectedResonance}
+                    className="mt-2 block h-1.5 w-full overflow-hidden rounded-full bg-oe-pure-light/10 accent-oe-spirit-cyan"
+                  />
+                </div>
+                <div>
+                  <div className="flex items-center justify-between gap-2 text-xs">
+                    <span className="text-oe-pure-light/70">{t('coherence')}</span>
+                    <span className="tabular-nums text-oe-pure-light/90">{pair.coherence}%</span>
+                  </div>
+                  <progress
+                    aria-label={t('coherence')}
+                    max={100}
+                    value={pair.coherence}
+                    className="mt-2 block h-1.5 w-full overflow-hidden rounded-full bg-oe-pure-light/10 accent-oe-solar-gold"
+                  />
+                </div>
               </div>
+              {pair.dissonance > 0 ? (
+                <p className="mt-2 text-xs leading-5 text-oe-pure-light/80">
+                  {t('campaign.dissonance', { value: pair.dissonance })}
+                </p>
+              ) : null}
+              {selectedJourney.target !== selectedPlace && !harmonized ? (
+                <button
+                  type="button"
+                  onClick={() => selectPlace(selectedJourney.target, detailTriggerRef.current)}
+                  className="mt-2 flex min-h-11 items-center gap-2 text-left text-sm text-oe-spirit-cyan underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-spirit-cyan"
+                >
+                  {t('journey.visit', { place: world(`landmarks.${selectedJourney.target}.name`) })}
+                  <ArrowRight className="h-4 w-4 shrink-0" aria-hidden="true" />
+                </button>
+              ) : null}
             </>
           ) : (
-            <div className="mt-4 border-y border-oe-pure-light/10 py-4">
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-xs uppercase tracking-[0.16em] text-oe-pure-light/50">
-                  {t('campaign.progress')}
-                </span>
-                <span className="font-serif text-xl tabular-nums text-oe-solar-gold">
+            <div className="mt-4">
+              <div className="flex items-center justify-between gap-3 text-sm">
+                <span className="text-oe-pure-light/75">{t('campaign.progress')}</span>
+                <span className="tabular-nums text-oe-solar-gold">
                   {completedPairs} / {RESONANCE_PAIRS.length}
                 </span>
               </div>
@@ -767,50 +820,89 @@ export function ImmersiveThreeWorld({
                 aria-label={t('campaign.progress')}
                 max={RESONANCE_PAIRS.length}
                 value={completedPairs}
-                className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-oe-pure-light/10 accent-oe-solar-gold"
+                className="mt-2 block h-1.5 w-full overflow-hidden rounded-full bg-oe-pure-light/10 accent-oe-solar-gold"
               />
-              <p className="mt-3 text-xs leading-5 text-oe-pure-light/55">
-                {emerged ? t('campaign.emergence') : t('campaign.treeHint')}
-              </p>
+              <p className="mt-3 text-sm leading-5 text-oe-pure-light/80">{journeyHint(journey)}</p>
               <p className="mt-2 text-xs text-oe-spirit-cyan">
                 {t('campaign.availableAttention', {
                   available: game.attention.tree,
                   total: TOTAL_ATTENTION,
                 })}
               </p>
+              {!emerged ? (
+                <button
+                  type="button"
+                  onClick={() => selectPlace(journey.target, detailTriggerRef.current)}
+                  className="mt-2 flex min-h-11 items-center gap-2 text-left text-sm text-oe-solar-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-solar-gold"
+                >
+                  {t('journey.visit', { place: world(`landmarks.${journey.target}.name`) })}
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </button>
+              ) : null}
             </div>
           )}
+
+          <details key={selectedId} className="group mt-2 border-t border-oe-pure-light/10">
+            <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 text-xs text-oe-pure-light/75 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-spirit-cyan [&::-webkit-details-marker]:hidden">
+              {t('journey.about')}
+              <ChevronDown className="h-4 w-4 group-open:rotate-180" aria-hidden="true" />
+            </summary>
+            <p className="pb-2 text-sm leading-6 text-oe-pure-light/75">
+              {world(`landmarks.${selectedId}.description`)}
+            </p>
+          </details>
         </aside>
       ) : null}
 
       <div
         role="group"
         aria-label={t('camera.label')}
-        className="absolute right-3 top-32 z-20 grid grid-cols-3 rounded-2xl border border-oe-pure-light/10 bg-oe-deep-space/88 p-1 backdrop-blur-xl lg:bottom-5 lg:left-1/2 lg:right-auto lg:top-auto lg:-translate-x-1/2"
+        className="absolute right-3 top-32 z-20 flex flex-col rounded-2xl border border-oe-pure-light/10 bg-oe-deep-space/90 p-1 lg:bottom-5 lg:left-1/2 lg:right-auto lg:top-auto lg:-translate-x-1/2 lg:flex-row"
       >
-        <span aria-hidden="true" />
-        <CameraButton label={t('camera.up')} onClick={() => sendCamera('pan-up')}>
-          <ArrowUp className="h-4 w-4" aria-hidden="true" />
-        </CameraButton>
         <CameraButton label={t('camera.zoomIn')} onClick={() => sendCamera('zoom-in')}>
           <Plus className="h-4 w-4" aria-hidden="true" />
-        </CameraButton>
-        <CameraButton label={t('camera.left')} onClick={() => sendCamera('pan-left')}>
-          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-        </CameraButton>
-        <CameraButton label={t('camera.reset')} onClick={() => sendCamera('reset')}>
-          <LocateFixed className="h-4 w-4" aria-hidden="true" />
-        </CameraButton>
-        <CameraButton label={t('camera.right')} onClick={() => sendCamera('pan-right')}>
-          <ArrowRight className="h-4 w-4" aria-hidden="true" />
-        </CameraButton>
-        <span aria-hidden="true" />
-        <CameraButton label={t('camera.down')} onClick={() => sendCamera('pan-down')}>
-          <ArrowDown className="h-4 w-4" aria-hidden="true" />
         </CameraButton>
         <CameraButton label={t('camera.zoomOut')} onClick={() => sendCamera('zoom-out')}>
           <Minus className="h-4 w-4" aria-hidden="true" />
         </CameraButton>
+        <CameraButton label={t('camera.reset')} onClick={() => sendCamera('reset')}>
+          <LocateFixed className="h-4 w-4" aria-hidden="true" />
+        </CameraButton>
+        <button
+          type="button"
+          aria-label={t('camera.panControls')}
+          aria-expanded={panControlsOpen}
+          aria-controls="world-pan-controls"
+          onClick={() => setPanControlsOpen((open) => !open)}
+          className="flex h-11 w-11 items-center justify-center rounded-xl text-oe-pure-light/75 hover:bg-oe-pure-light/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-oe-spirit-cyan"
+        >
+          <Move className="h-4 w-4" aria-hidden="true" />
+        </button>
+        <div
+          id="world-pan-controls"
+          hidden={!panControlsOpen}
+          className="absolute right-14 top-0 rounded-2xl border border-oe-pure-light/15 bg-oe-deep-space/95 p-1 lg:bottom-14 lg:left-0 lg:right-auto lg:top-auto"
+        >
+          <div className="grid grid-cols-3">
+            <span />
+            <CameraButton label={t('camera.up')} onClick={() => sendCamera('pan-up')}>
+              <ArrowUp className="h-4 w-4" aria-hidden="true" />
+            </CameraButton>
+            <span />
+            <CameraButton label={t('camera.left')} onClick={() => sendCamera('pan-left')}>
+              <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+            </CameraButton>
+            <span />
+            <CameraButton label={t('camera.right')} onClick={() => sendCamera('pan-right')}>
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </CameraButton>
+            <span />
+            <CameraButton label={t('camera.down')} onClick={() => sendCamera('pan-down')}>
+              <ArrowDown className="h-4 w-4" aria-hidden="true" />
+            </CameraButton>
+            <span />
+          </div>
+        </div>
       </div>
 
       <div className="sr-only" aria-live="polite" aria-atomic="true">

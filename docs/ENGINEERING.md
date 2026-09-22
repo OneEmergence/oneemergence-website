@@ -21,6 +21,24 @@ migrated Supabase test project. `README.md` describes required versus optional
 values. Keep all actual keys in local environment files or the relevant secret
 store; logs and handoffs should report variable names and configuration status.
 
+If Windows development enters a reload loop with Turbopack reporting
+`Next.js package not found`, first check that `require.resolve('next/package.json')`
+works. Stop the dev server and move only `.next/dev/cache/turbopack` into an ignored
+workspace `tmp/` directory, after checking both absolute paths belong to this repo.
+Restart and verify `/map` and `/map/immersive`. This resolved the September 7 map
+session; reinstalling dependencies or changing the workspace root was unnecessary.
+The [persistent development cache](https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopackFileSystemCache)
+survives process restarts. If the error persists, `pnpm dev --webpack` is a
+[supported development fallback](https://nextjs.org/docs/app/api-reference/turbopack).
+Keep production build verification separate from this workaround.
+
+If typechecking reports syntax errors inside generated `.next/dev/types`, stop
+development and regenerate the outputs before editing application types. Preserve
+any diagnostic copy with a non-TypeScript suffix (for example `.d.ts.bak`): the
+current `**/*.ts` include also checks files under ignored `tmp/` directories.
+This occurred during the landscape pass; a fresh production build passed after
+the stale generated declarations were archived outside the TypeScript glob.
+
 ## Verify a change
 
 Install the browser once with `pnpm exec playwright install chromium` (Linux CI
