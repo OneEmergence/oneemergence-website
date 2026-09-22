@@ -534,7 +534,14 @@
     "composerPlaceholder": "Write to the guide…",
     "send": "Send message",
     "conversation": "Conversation with the guide",
-    "thinking": "The guide is responding…"
+    "thinking": "The guide is responding…",
+    "cancel": "Stop response",
+    "retry": "Send again",
+    "cancelled": "Stopped. Your message is kept and can be sent again.",
+    "limitReached": "You have reached your daily Guide allowance. There is room for new questions again within 24 hours.",
+    "notConfigured": "The guide isn't ready yet — the required services (API key or database) are not configured. Please try again later.",
+    "error": "Something went wrong.",
+    "connectionError": "Connection error. Please try again."
   },
   "contact": {
     "eyebrow": "Contact",
@@ -581,6 +588,59 @@
       "saving": "Saving…",
       "saved": "Saved",
       "error": "Not saved"
+    }
+  },
+  "home": {
+    "tagline": "A digital home that invites you into an experience of unity, freedom and love.",
+    "manifesto": "Discover the manifesto",
+    "pathsLabel": "Three ways in",
+    "depth": {
+      "cosmic": "Cosmos",
+      "solarpunk": "Solarpunk",
+      "warm": "Warmth"
+    },
+    "paths": {
+      "library": {
+        "title": "Library",
+        "hint": "Teachings, reflections and practice"
+      },
+      "map": {
+        "title": "Emergence Map",
+        "hint": "An island in the starfield"
+      },
+      "portal": {
+        "title": "Your portal",
+        "hint": "Journal, guide and inner map"
+      }
+    },
+    "library": {
+      "title": "Not information, but experience.",
+      "lead": "Teachings, reflections, practices and sound journeys. Texts you don't skim, but inhabit.",
+      "latest": "Recently published",
+      "cta": "Open the library"
+    },
+    "map": {
+      "title": "An island in cosmic space",
+      "lead": "A tree of life, fifteen places and rivers of light between them. Explore the world of OneEmergence as a map, in 3D or in complete stillness.",
+      "cta": "Enter the map"
+    },
+    "portal": {
+      "title": "A space that is yours alone",
+      "lead": "Write, practise, think things through with the guide and watch your inner map grow. Private, at your own pace.",
+      "roomsLabel": "Inside the portal",
+      "rooms": {
+        "journal": "Journal",
+        "map": "Inner map",
+        "guide": "Guide",
+        "practice": "Practice"
+      },
+      "cta": "Enter the portal",
+      "access": "After you sign up, we activate your access personally."
+    },
+    "community": {
+      "lead": "Rather start together?",
+      "events": "See events",
+      "contact": "Get in touch"
     }
   },
   "newsletter": {

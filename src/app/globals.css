@@ -636,6 +636,304 @@ html[data-intensity="still"] .oe-stage__image {
   content: counter(oe-step);
 }
 
+/* ─── Homepage: the descent through three depths ─────────────────────────────
+ *
+ * Library = cosmic, map = solarpunk, portal = warm. The hero lays the three
+ * out on one line (the "ecliptic"); hovering or focusing a path tints the sky
+ * toward that depth before the visitor commits. Everything here is server
+ * markup + CSS: the draw-in is Flow and gated on `data-intensity`, hover
+ * feedback is Micro and stays in Still.
+ */
+.oe-home [data-depth] {
+  --oe-depth: var(--color-oe-aurora-violet);
+  --oe-depth-ink: var(--color-oe-aurora-violet-ink);
+}
+
+.oe-home [data-depth="solarpunk"] {
+  --oe-depth: var(--color-oe-living-green);
+  --oe-depth-ink: var(--color-oe-living-green);
+}
+
+.oe-home [data-depth="warm"] {
+  --oe-depth: var(--color-oe-solar-gold);
+  --oe-depth-ink: var(--color-oe-warm-sand);
+}
+
+.oe-home :is(.oe-depth-orb, .oe-ecliptic__orb) {
+  display: inline-block;
+  flex: none;
+  border-radius: 9999px;
+  background: var(--oe-depth);
+  box-shadow:
+    0 0 0 4px color-mix(in oklab, var(--oe-depth) 16%, transparent),
+    0 0 18px 2px color-mix(in oklab, var(--oe-depth) 50%, transparent);
+}
+
+.oe-home .oe-depth-orb {
+  width: 0.5rem;
+  height: 0.5rem;
+}
+
+.oe-home .oe-depth-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.875rem;
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  letter-spacing: 0.04em;
+  color: var(--oe-depth-ink);
+}
+
+.oe-home .oe-home-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2.25rem, 1.6rem + 2.4vw, 3.5rem);
+  line-height: 1.05;
+  text-wrap: balance;
+  color: var(--color-oe-pure-light);
+}
+
+/* The ecliptic: vertical descent on phones, one horizon line from sm up. */
+.oe-ecliptic {
+  position: relative;
+}
+
+.oe-ecliptic__list {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0;
+  list-style: none;
+}
+
+.oe-ecliptic__path {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+  min-height: 2.75rem;
+  padding: 0.875rem 1rem;
+  border-radius: 0.75rem;
+  text-align: left;
+  outline: none;
+}
+
+.oe-ecliptic__path:focus-visible {
+  box-shadow: 0 0 0 2px var(--oe-depth-ink);
+}
+
+.oe-ecliptic__orb {
+  position: relative;
+  width: 0.875rem;
+  height: 0.875rem;
+  margin-top: 0.5rem;
+  transition:
+    scale var(--oe-transition-base),
+    box-shadow var(--oe-transition-base);
+}
+
+.oe-ecliptic__path:is(:hover, :focus-visible) .oe-ecliptic__orb {
+  scale: 1.35;
+  box-shadow:
+    0 0 0 6px color-mix(in oklab, var(--oe-depth) 20%, transparent),
+    0 0 32px 6px color-mix(in oklab, var(--oe-depth) 60%, transparent);
+}
+
+.oe-ecliptic__text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.oe-ecliptic__depth {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  color: var(--oe-depth-ink);
+}
+
+.oe-ecliptic__title {
+  font-family: var(--font-serif);
+  font-size: 1.75rem;
+  line-height: 1.1;
+  color: var(--color-oe-pure-light);
+  transition: color var(--oe-transition-base);
+}
+
+.oe-ecliptic__path:is(:hover, :focus-visible) .oe-ecliptic__title {
+  color: var(--oe-depth-ink);
+}
+
+.oe-ecliptic__hint {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: rgb(247 248 251 / 0.62);
+}
+
+.oe-ecliptic__line {
+  position: absolute;
+  top: 1.8rem;
+  bottom: 1.8rem;
+  left: calc(1rem + 0.4375rem);
+  width: 1px;
+  transform-origin: top;
+  background: linear-gradient(
+    to bottom,
+    var(--color-oe-aurora-violet),
+    var(--color-oe-living-green),
+    var(--color-oe-solar-gold)
+  );
+  opacity: 0.55;
+}
+
+@media (min-width: 640px) {
+  .oe-ecliptic__list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .oe-ecliptic__path {
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    height: 100%;
+    padding: 0 1rem 1.25rem;
+    text-align: center;
+  }
+
+  .oe-ecliptic__orb {
+    margin-top: 0;
+  }
+
+  .oe-ecliptic__text {
+    align-items: center;
+  }
+
+  /* One horizon through all three orbs, fading out past the outer two. */
+  .oe-ecliptic__line {
+    top: 0.4375rem;
+    bottom: auto;
+    left: -8%;
+    right: -8%;
+    width: auto;
+    height: 1px;
+    transform-origin: left;
+    background: linear-gradient(
+      to right,
+      transparent,
+      var(--color-oe-aurora-violet) 20%,
+      var(--color-oe-living-green) 50%,
+      var(--color-oe-solar-gold) 80%,
+      transparent
+    );
+  }
+}
+
+/* Sky tint: previews the depth a path leads into. Micro — pure feedback. */
+.oe-home-hero__tints {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.oe-home-hero__tints > span {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  background: radial-gradient(
+    ellipse 55% 50% at var(--oe-tint-x, 50%) 78%,
+    color-mix(in oklab, var(--oe-depth) 28%, transparent),
+    transparent 72%
+  );
+  transition: opacity 900ms var(--oe-ease-out-expo);
+}
+
+.oe-home-hero__tints > [data-depth="cosmic"] {
+  --oe-tint-x: 22%;
+}
+
+.oe-home-hero__tints > [data-depth="warm"] {
+  --oe-tint-x: 78%;
+}
+
+.oe-home-hero:has(.oe-ecliptic__path[data-depth="cosmic"]:is(:hover, :focus-visible))
+  .oe-home-hero__tints > [data-depth="cosmic"],
+.oe-home-hero:has(.oe-ecliptic__path[data-depth="solarpunk"]:is(:hover, :focus-visible))
+  .oe-home-hero__tints > [data-depth="solarpunk"],
+.oe-home-hero:has(.oe-ecliptic__path[data-depth="warm"]:is(:hover, :focus-visible))
+  .oe-home-hero__tints > [data-depth="warm"] {
+  opacity: 1;
+}
+
+.oe-map-window {
+  position: relative;
+  display: block;
+  aspect-ratio: 40 / 21;
+  overflow: hidden;
+  border-radius: 1rem;
+  outline: 1px solid color-mix(in oklab, var(--color-oe-living-green) 30%, transparent);
+  outline-offset: -1px;
+}
+
+.oe-map-window::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(to top, rgb(var(--oe-atmosphere-base) / 0.5), transparent 40%);
+}
+
+.oe-portal-rooms {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  row-gap: 0.25rem;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-serif);
+  font-size: 1.375rem;
+  color: var(--color-oe-warm-sand);
+}
+
+.oe-portal-rooms > li + li::before {
+  content: "·";
+  margin-inline: 0.875rem;
+  color: color-mix(in oklab, var(--color-oe-solar-gold) 60%, transparent);
+}
+
+@keyframes oe-ecliptic-draw-y {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+@keyframes oe-ecliptic-draw-x {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes oe-ecliptic-orb-in {
+  from {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html:is([data-intensity="balanced"], [data-intensity="immersive"]) .oe-ecliptic__line {
+    animation: oe-ecliptic-draw-y 1.4s var(--oe-ease-out-expo) 0.35s both;
+  }
+
+  html:is([data-intensity="balanced"], [data-intensity="immersive"]) .oe-ecliptic__orb {
+    animation: oe-ecliptic-orb-in 0.8s var(--oe-ease-out-expo) both;
+    animation-delay: calc(0.7s + var(--i, 0) * 0.28s);
+  }
+
+  @media (min-width: 640px) {
+    html:is([data-intensity="balanced"], [data-intensity="immersive"]) .oe-ecliptic__line {
+      animation-name: oe-ecliptic-draw-x;
+    }
+  }
+}
+
 /* ─── Intensity mode CSS gates ─── */
 
 /* Still mode: disable all non-micro animations */

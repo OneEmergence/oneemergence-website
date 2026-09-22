@@ -38,7 +38,7 @@ test('contact prepares a complete draft without claiming delivery or clearing th
   // Inspecting the complete draft stops before the user's external email app.
 })
 
-for (const path of ['/', '/manifesto', '/experiences']) {
+for (const path of ['/manifesto', '/experiences']) {
   test(`${path} offers email contact without claiming newsletter signup`, async ({ page }) => {
     await page.goto(path, { waitUntil: 'domcontentloaded' })
     const newsletter = page.locator('[aria-label="In Verbindung bleiben"]')

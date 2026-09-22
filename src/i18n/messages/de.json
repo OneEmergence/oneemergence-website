@@ -534,7 +534,14 @@
     "composerPlaceholder": "Schreibe dem Guide…",
     "send": "Nachricht senden",
     "conversation": "Gespräch mit dem Guide",
-    "thinking": "Der Guide antwortet…"
+    "thinking": "Der Guide antwortet…",
+    "cancel": "Antwort abbrechen",
+    "retry": "Erneut senden",
+    "cancelled": "Abgebrochen. Deine Nachricht bleibt erhalten und kann erneut gesendet werden.",
+    "limitReached": "Dein tägliches Kontingent für den Guide ist erreicht. Innerhalb von 24 Stunden ist wieder Raum für neue Fragen.",
+    "notConfigured": "Der Guide ist noch nicht bereit — die nötigen Dienste (API-Schlüssel oder Datenbank) sind noch nicht konfiguriert. Bitte versuche es später erneut.",
+    "error": "Ein Fehler ist aufgetreten.",
+    "connectionError": "Verbindungsfehler. Bitte versuche es erneut."
   },
   "contact": {
     "eyebrow": "Kontakt",
@@ -581,6 +588,59 @@
       "saving": "Speichert…",
       "saved": "Gespeichert",
       "error": "Nicht gespeichert"
+    }
+  },
+  "home": {
+    "tagline": "Eine digitale Heimat, die dich einlädt in eine Erfahrung von Einheit, Freiheit und Liebe.",
+    "manifesto": "Manifesto entdecken",
+    "pathsLabel": "Drei Wege hinein",
+    "depth": {
+      "cosmic": "Kosmos",
+      "solarpunk": "Solarpunk",
+      "warm": "Wärme"
+    },
+    "paths": {
+      "library": {
+        "title": "Bibliothek",
+        "hint": "Lehren, Reflexionen und Praxis"
+      },
+      "map": {
+        "title": "Emergence Map",
+        "hint": "Eine Insel im Sternenraum"
+      },
+      "portal": {
+        "title": "Dein Portal",
+        "hint": "Journal, Guide und innere Karte"
+      }
+    },
+    "library": {
+      "title": "Nicht Information, sondern Erfahrung.",
+      "lead": "Lehren, Reflexionen, Praktiken und Klangreisen. Texte, die man nicht überfliegt, sondern bewohnt.",
+      "latest": "Zuletzt erschienen",
+      "cta": "Bibliothek öffnen"
+    },
+    "map": {
+      "title": "Eine Insel im kosmischen Raum",
+      "lead": "Ein Lebensbaum, fünfzehn Orte und Lichtflüsse, die sie verbinden. Erkunde die Welt von OneEmergence als Karte, in 3D oder ganz in Ruhe.",
+      "cta": "Karte betreten"
+    },
+    "portal": {
+      "title": "Ein Raum, der nur dir gehört",
+      "lead": "Schreiben, üben, im Gespräch mit dem Guide nachdenken und sehen, wie deine innere Landkarte wächst. Privat, in deinem Tempo.",
+      "roomsLabel": "Im Portal",
+      "rooms": {
+        "journal": "Journal",
+        "map": "Innere Karte",
+        "guide": "Guide",
+        "practice": "Praxis"
+      },
+      "cta": "Portal betreten",
+      "access": "Nach der Anmeldung schalten wir deinen Zugang persönlich frei."
+    },
+    "community": {
+      "lead": "Lieber zuerst gemeinsam?",
+      "events": "Events ansehen",
+      "contact": "Kontakt aufnehmen"
     }
   },
   "newsletter": {
