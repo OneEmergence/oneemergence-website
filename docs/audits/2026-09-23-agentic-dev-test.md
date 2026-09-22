@@ -78,3 +78,40 @@ The first run failed on browser launch, not on application code.
    in Still and Balanced.
 3. **Housekeeping:** rename `test:journal-autosave` to `test:unit` (keep the old alias; update
    `ci.yml` and ENGINEERING.md).
+
+---
+
+## Run 2: the three "Next" items
+
+- **frontend-artist, `/library` as the arrival of depth I:**
+  - Cosmic atmosphere instead of solarpunk. The header is now static server markup with
+    "I · Kosmos", the ecliptic line and an onward link "weiter hinab · II · Emergence Map" → `/map`;
+    on mobile it becomes a vertical drop.
+  - `DepthMark` is now shared in `src/components/ui/`. New `library` i18n namespace; filter pills use
+    `aria-pressed`. Immersive screenshots of home and library taken (`tmp/artist-library/`).
+- **app-architect, retry after reload:**
+  - `/inner/guide/[id]` detects an unanswered user message at the end (`unansweredTail`) and offers
+    "send again". The server reuses the stored row, so there is no duplicate.
+  - Focus moves to retry or the composer after a request ends.
+  - Lost *responses* deliberately stay open: a text match would wrongly repeat old answers when the
+    same text is sent twice. It needs a `retry` flag in the request contract (its own slice).
+- **coordinator:** `pnpm test:unit` replaces `test:journal-autosave` (alias kept); CI, README and
+  ENGINEERING.md updated.
+
+| Command | Result |
+|---|---|
+| `pnpm check` | green |
+| `pnpm test:unit` | 14 passed |
+| `pnpm build` | green |
+| Playwright smoke/a11y/content/environment, chromium, production server | **141 passed, 2 skipped, 0 failed** |
+
+**Still unverified:** everything the Guide does against a live DB/provider; focus behaviour in a
+real browser in the portal; LCP/CLS.
+
+**Next:**
+1. **Guide:** a `retry` flag for lost responses (the stored answer is returned without a provider
+   call), then streaming/AG-UI.
+2. **Frontend:** `/map` header as II · Solarpunk with an onward link to III (coordinate with the
+   world-map plan).
+3. **i18n:** give `PublicIntlProvider` a `timeZone`, then card dates via `useFormatter`.
+   Library type labels in `src/lib/content/library-types.ts` are still German.
