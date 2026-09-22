@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { getConversation } from '@/features/guide/actions'
 import { GuideChatView } from '@/features/guide'
+import { unansweredTail } from '@/features/guide/reliability'
 import { redirect } from 'next/navigation'
 import type { GuideRole, GuideResponse } from '@/lib/schemas/guide'
 
@@ -37,6 +38,7 @@ export default async function GuideConversationPage({
         initialMessages={chatMessages}
         initialRole={conversation.role as GuideRole}
         conversationId={conversation.id}
+        unansweredMessage={unansweredTail(chatMessages[chatMessages.length - 1])}
       />
     </div>
   )

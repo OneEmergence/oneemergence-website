@@ -28,12 +28,15 @@ interface GuideChatViewProps {
   initialMessages?: ChatMessage[]
   initialRole?: GuideRole
   conversationId?: string
+  /** Stored user message at the tail that never got an answer (see `unansweredTail`). */
+  unansweredMessage?: string
 }
 
 export function GuideChatView({
   initialMessages = [],
   initialRole,
   conversationId: initialConversationId,
+  unansweredMessage,
 }: GuideChatViewProps) {
   const t = useTranslations('guide')
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages)
@@ -42,10 +45,33 @@ export function GuideChatView({
   // response retries into the same conversation instead of creating another.
   const [conversationId] = useState(() => initialConversationId ?? crypto.randomUUID())
   const [isLoading, setIsLoading] = useState(false)
-  const [failure, setFailure] = useState<Failure | null>(null)
+  // After a reload, the unanswered tail is offered for retry; the server
+  // reuses that stored message instead of inserting it again.
+  const [failure, setFailure] = useState<Failure | null>(() =>
+    unansweredMessage
+      ? {
+          text: t('unanswered'),
+          calm: true,
+          retry: { message: unansweredMessage, role: initialRole ?? 'mirror' },
+        }
+      : null
+  )
   const abortRef = useRef<AbortController | null>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
+  const composerRef = useRef<HTMLDivElement>(null)
+  const retryRef = useRef<HTMLButtonElement>(null)
+  const requestEnded = useRef(false)
   const hasStarted = messages.length > 0
+
+  // The stop and retry buttons unmount when a request starts or ends, which
+  // drops keyboard focus to <body>. Move it to the next action instead: retry
+  // if offered (e.g. after cancel), otherwise the composer. Never on page load.
+  useEffect(() => {
+    if (isLoading || !requestEnded.current) return
+    requestEnded.current = false
+    if (document.activeElement && document.activeElement !== document.body) return
+    ;(retryRef.current ?? composerRef.current?.querySelector('textarea'))?.focus()
+  }, [isLoading])
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {
@@ -122,6 +148,7 @@ export function GuideChatView({
         )
       } finally {
         abortRef.current = null
+        requestEnded.current = true
         setIsLoading(false)
       }
     },
@@ -204,6 +231,7 @@ export function GuideChatView({
                 <p>{failure.text}</p>
                 {failure.retry && (
                   <button
+                    ref={retryRef}
                     type="button"
                     onClick={() =>
                       failure.retry && send(failure.retry.message, failure.retry.role, true)
@@ -220,13 +248,15 @@ export function GuideChatView({
       </div>
 
       {/* Input area */}
-      <GuideInput
-        onSend={handleSend}
-        activeRole={activeRole}
-        onRoleChange={handleRoleSelect}
-        disabled={isLoading}
-        onCancel={isLoading ? handleCancel : undefined}
-      />
+      <div ref={composerRef}>
+        <GuideInput
+          onSend={handleSend}
+          activeRole={activeRole}
+          onRoleChange={handleRoleSelect}
+          disabled={isLoading}
+          onCancel={isLoading ? handleCancel : undefined}
+        />
+      </div>
     </div>
   )
 }

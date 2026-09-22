@@ -26,3 +26,12 @@ export function isGuideLimitReached(
 ): boolean {
   return reusesStoredMessage ? sentLast24h > limit : sentLast24h >= limit
 }
+
+/**
+ * The content of an unanswered user message at the tail of a stored
+ * conversation (failed, cancelled or lost first response). Sending it again
+ * hits `canReuseUserMessage`, so the retry answers it without a duplicate row.
+ */
+export function unansweredTail(latest: LatestGuideMessage | undefined): string | undefined {
+  return latest?.role === 'user' ? latest.content : undefined
+}
