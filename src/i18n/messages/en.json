@@ -537,6 +537,7 @@
     "thinking": "The guide is responding…",
     "cancel": "Stop response",
     "retry": "Send again",
+    "unanswered": "This message hasn't been answered yet. You can send it again.",
     "cancelled": "Stopped. Your message is kept and can be sent again.",
     "limitReached": "You have reached your daily Guide allowance. There is room for new questions again within 24 hours.",
     "notConfigured": "The guide isn't ready yet — the required services (API key or database) are not configured. Please try again later.",
@@ -642,6 +643,14 @@
       "events": "See events",
       "contact": "Get in touch"
     }
+  },
+  "library": {
+    "title": "Library",
+    "lead": "Teachings, reflections and invitations to accompany you on the way to inner unity.",
+    "onward": "further down",
+    "filterLabel": "Filter content",
+    "all": "All",
+    "empty": "No content in this category yet."
   },
   "newsletter": {
     "label": "Stay in touch",

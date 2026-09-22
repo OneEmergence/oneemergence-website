@@ -7,6 +7,7 @@ import { EmblemMark } from '@/components/motion/EmblemMark'
 import { LayerAtmosphere } from '@/components/motion/LayerAtmosphere'
 import { BreathingOrb } from '@/components/motion/BreathingOrb'
 import { ButtonLink } from '@/components/ui/button'
+import { DepthMark, type Depth } from '@/components/ui/DepthMark'
 import { getLibraryItems } from '@/lib/content'
 import { libraryItemHref, libraryTypeMeta } from '@/lib/content/library-types'
 import { cn } from '@/lib/utils'
@@ -18,8 +19,6 @@ export const metadata = {
   alternates: { canonical: '/' },
 }
 
-type Depth = 'cosmic' | 'solarpunk' | 'warm'
-
 /** The three public paths are the three depths, in descending order. */
 const PATHS = [
   { key: 'library', href: '/library', depth: 'cosmic', numeral: 'I' },
@@ -28,18 +27,6 @@ const PATHS = [
 ] as const satisfies readonly { key: string; href: string; depth: Depth; numeral: string }[]
 
 const PORTAL_ROOMS = ['journal', 'map', 'guide', 'practice'] as const
-
-/** Roman numeral + depth name, set on the same orb the hero's ecliptic uses. */
-function DepthMark({ depth, numeral, label }: { depth: Depth; numeral: string; label: string }) {
-  return (
-    <p data-depth={depth} className="oe-depth-mark">
-      <span aria-hidden="true" className="oe-depth-orb" />
-      <span>
-        {numeral} · {label}
-      </span>
-    </p>
-  )
-}
 
 /**
  * One depth of the descent. Reuses the story-page stage (sticky colour field,

@@ -537,6 +537,7 @@
     "thinking": "Der Guide antwortet…",
     "cancel": "Antwort abbrechen",
     "retry": "Erneut senden",
+    "unanswered": "Auf diese Nachricht kam noch keine Antwort. Du kannst sie erneut senden.",
     "cancelled": "Abgebrochen. Deine Nachricht bleibt erhalten und kann erneut gesendet werden.",
     "limitReached": "Dein tägliches Kontingent für den Guide ist erreicht. Innerhalb von 24 Stunden ist wieder Raum für neue Fragen.",
     "notConfigured": "Der Guide ist noch nicht bereit — die nötigen Dienste (API-Schlüssel oder Datenbank) sind noch nicht konfiguriert. Bitte versuche es später erneut.",
@@ -642,6 +643,14 @@
       "events": "Events ansehen",
       "contact": "Kontakt aufnehmen"
     }
+  },
+  "library": {
+    "title": "Bibliothek",
+    "lead": "Lehren, Reflexionen und Einladungen, als Begleitung auf dem Weg zur inneren Einheit.",
+    "onward": "weiter hinab",
+    "filterLabel": "Inhalte filtern",
+    "all": "Alle",
+    "empty": "Noch keine Inhalte in dieser Kategorie."
   },
   "newsletter": {
     "label": "In Verbindung bleiben",
