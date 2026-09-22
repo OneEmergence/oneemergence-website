@@ -36,8 +36,8 @@ jobs:
       - name: Type-check
         run: pnpm typecheck
 
-      - name: Journal autosave scheduling
-        run: pnpm test:journal-autosave
+      - name: Unit tests (journal autosave, guide decisions)
+        run: pnpm test:unit
 
       - name: Build
         run: pnpm build

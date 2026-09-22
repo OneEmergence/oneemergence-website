@@ -121,7 +121,7 @@ pnpm test:content      # content/MDX validation
 pnpm test:perf         # performance tests
 pnpm test:mobile       # responsive/mobile smoke
 pnpm test:world-assets # validate the world-map GLB asset contract
-pnpm test:journal-autosave # save scheduling; no browser/server required
+pnpm test:unit            # journal autosave + guide decisions; no browser/server required
 pnpm test:accounts:local   # real accounts + RLS in disposable local Supabase (Docker)
 pnpm db:push           # supabase db push (apply migrations)
 pnpm db:diff           # diff migrations against supabase/schemas desired state
