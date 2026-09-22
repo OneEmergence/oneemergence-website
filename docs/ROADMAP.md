@@ -58,6 +58,18 @@ Prüfungen. Die ursprüngliche Phasenplanung steht weiter unten als Kontext;
   Desktop-3D-Bildrate von rund 12 auf 33 FPS, mobil bleibt sie bei rund 57 FPS.
   Details und Prüfgrenzen: [Umsetzungsprotokoll](./audits/2026-09-07-next-steps.md).
 
+### Agentic Dev Test (23. September, Branch `agentic-dev-test`)
+
+- Zwei abgestimmte Rollen (`.claude/agents/frontend-artist.md`, `app-architect.md`)
+  liefen parallel mit disjunkter Dateizuständigkeit.
+- Die Homepage ist jetzt ein Abstieg durch die drei Tiefen mit drei klaren Wegen
+  (Bibliothek, Map, Portal) und wird serverseitig gerendert.
+- Guide: stabile conversationId, Retry ohne Duplikate, Abbruch und ein Tageslimit
+  (`GUIDE_DAILY_LIMIT`) – erste Hälfte von Punkt 3.
+- Build grün, 141 Browserchecks bestanden (2 Skips). Die Guide-Pfade mit echter
+  DB bzw. echtem Provider sind noch offen.
+- Details: [Protokoll](./audits/2026-09-23-agentic-dev-test.md).
+
 ### Kleine Roadmap
 
 | Reihenfolge | Arbeitspaket | Abnahme / nächster nutzbarer Stand |
