@@ -115,3 +115,70 @@ real browser in the portal; LCP/CLS.
    world-map plan).
 3. **i18n:** give `PublicIntlProvider` a `timeZone`, then card dates via `useFormatter`.
    Library type labels in `src/lib/content/library-types.ts` are still German.
+
+---
+
+## Run 3: four parallel lanes plus review
+
+The coordinator ran four agents at once in one checkout, each owning its own files. Three wrote code, one reviewed read-only. The coordinator corrected, integrated, built, tested and committed (`efcb927`..`4fde618`).
+
+- **app-architect, lost Guide responses (ROADMAP item 3):**
+  - **Problem:** the server saved a reply but the client never received it. Retrying created a new turn: a duplicate user row, a second provider call and another tick against the daily limit.
+  - **Fix:** retries now send `retry: true`. When the stored tail is [identical user message, reply], the server returns that reply with no provider call, no insert and no limit tick. The decision is the pure `decideGuideTurn` in `reliability.ts`, covered by 5 new unit tests.
+  - **Coordinator correction:** my brief was ambiguous, and the agent also put *reuse* of an unanswered tail behind the flag. That would have brought back duplicate rows for older bundles and for retyped text. Reuse is safe on a text match, because no reply exists that could be wrongly repeated. Only replay needs the flag.
+- **frontend-artist A, deterministic dates + reading pages in depth I:**
+  - **Problem:** next-intl had no `timeZone`. The client-side library cards formatted dates in the browser's zone, the prerendered HTML in UTC. Visitors west of UTC saw a day shift and got a hydration mismatch.
+  - **Fix:** `request.ts` now sets `Europe/Berlin` once. next-intl 4.14.2 passes the zone through server-rendered `NextIntlClientProvider`s (`react-server/NextIntlClientProviderServer.js`: `timeZone ?? await getTimeZone()`). Library, journal and `ContentGrid` dates use the next-intl formatter. Output is unchanged; `<time>` elements now carry `dateTime`.
+  - **Reading pages:** `/library/[type]/[slug]` opens with the shared `DepthMark` (I · Kosmos) and ends with the descent row to `/map`.
+- **frontend-artist B, `/events` in depth III** (the agent's pick after reviewing five pages):
+  - **Before:** all six hardcoded gatherings were dated 2025, so every visitor saw only the empty state. That state promised a sign-up form that didn't exist, and "Nächstes Event" on `/community` led back to it. The page was entirely `"use client"`, with ungated motion and the h1 at opacity 0 until hydration.
+  - **Now:** a Server Component with an `events` namespace (DE/EN), warm atmosphere and `DepthMark` III. An honest empty state leads to `/contact` ("Einladung anfragen"), and the page continues on to `/portal`.
+  - **Removed:** the unreachable event data. It remains in git history (`8ff2bff`).
+- **Coordinator:**
+  - **Portal dashboard:** the greeting (`getHours()`) and the date were computed in each runtime's own zone. For Berlin users, server and browser disagreed around every greeting boundary. Both now use the zone the portal inherits from `request.ts`.
+  - **New `tests/i18n/messages-parity.spec.ts`** in the unit tier, which CI runs. It fails when a key exists in only one of DE/EN. Before the run: 483 = 483 keys. After three agents edited the files in parallel: still equal.
+
+### Review of runs 1–2 (read-only)
+
+**Scope:** `git diff dev...HEAD` of the first 8 branch commits, pinned to `8ff2bff`.
+
+**Verified as sound:**
+- Ownership check for a client-supplied `conversationId`: a foreign id → `onConflictDoNothing` → 404, with no leak and no overwrite.
+- Abort consistency: an unanswered tail, by design.
+- DE/EN keys of the new namespaces.
+- Hydration safety of `HomeHeroDrift`.
+
+**Open findings, not fixed in this run:**
+
+1. **Medium-high: the daily limit has a count-then-insert race** (`src/app/api/guide/route.ts`). Count and insert are separate round trips with no lock.
+   - *Failure:* parallel requests at 49/50 all pass; a script gets well over `GUIDE_DAILY_LIMIT` paid calls.
+   - *Fix:* count + insert in one transaction with a per-user `pg_advisory_xact_lock`. It needs a check against real Postgres, so it wasn't done blind here.
+2. **Medium: cancel-and-retry of the same message** never counts again against the limit and triggers a new provider call each time. This was already known and is marked `ponytail:` in the route.
+   - *Fix:* an attempt counter per message.
+3. **Low: duplicate bubble in the client.** A first message that failed offline and is re-sent as text through the composer (instead of the retry button) shows twice, while the server stores one row.
+   - *Fix:* allow only the retry button while a failure is shown.
+
+### Verification (coordinator)
+
+| Command | Result |
+|---|---|
+| `pnpm check` (lint + tsc) | green |
+| `pnpm test:unit` | **20 passed** (10 Guide, 9 Journal, 1 i18n parity) |
+| `pnpm build` | green, no `ENVIRONMENT_FALLBACK`; `/events` ○ static, `/library/[type]/[slug]` and `/journal/[slug]` ● SSG (prerendering preserved) |
+| Playwright smoke/a11y/content/environment, chromium, **production server** (`pnpm start` on 127.0.0.1:3000 from the build above, reused via `PLAYWRIGHT_BASE_URL`) | **141 passed, 2 skipped, 0 failed** (3.8 min), the same as runs 1–2 |
+| `curl` against that server | `/events` shows the new copy, the old eyebrow is gone; the reading page shows the descent row and `<time dateTime="2026-03-20">20. März 2026</time>` |
+
+### Not verified
+
+- **Guide:** the replay path has never run against a live DB or provider. Only the pure decision function is tested; the route branch that exits before the limit count is not.
+- **Visual:** no lane took screenshots. Not checked: contrast of the warm atmosphere behind `/events` text, the focus ring of the closing `DepthMark` link, and the stacked end of the reading page (Community box plus descent row, two onward paths).
+- **Dashboard fix:** typechecked only. The portal requires sign-in, and the public suites don't reach it.
+
+### Next
+
+1. **Guide, atomic limit (review finding 1):** count and insert in one transaction with a per-user advisory lock, checked against local PostgreSQL (like `test:journal-lifecycle`). Done when two parallel requests at 49/50 give exactly one 200 and one 429.
+2. **Guide:** a route-level test with stubbed `db`/provider. Done when `retry: true` against a stored [user X, reply Y] returns 200 with Y and runs no count query, no insert and no provider call, even at the limit.
+3. **`/community`:** the same upgrade as `/events` (Server Component, namespace, depth, `ButtonLink` instead of `router.push`).
+4. **i18n:** move the German literals in `library/[type]/[slug]` and `journal/[slug]` to next-intl (reusing `common.*`).
+5. **Decide:** whether the reading page keeps the Community box next to the descent row.
+6. **Stays with the world-map plan:** `/map` header as II · Solarpunk.

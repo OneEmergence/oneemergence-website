@@ -68,6 +68,12 @@ Prüfungen. Die ursprüngliche Phasenplanung steht weiter unten als Kontext;
   (`GUIDE_DAILY_LIMIT`) – erste Hälfte von Punkt 3.
 - Build grün, 141 Browserchecks bestanden (2 Skips). Die Guide-Pfade mit echter
   DB bzw. echtem Provider sind noch offen.
+- Lauf 3 (vier parallele Lanes, eine davon Review): Eine gespeicherte, aber nie
+  angekommene Guide-Antwort wird bei `retry` ohne Providerabruf ausgeliefert.
+  Datumsangaben laufen einheitlich über Europe/Berlin (kein Tagesversatz,
+  kein Hydration-Mismatch, auch nicht im Dashboard). `/events` und die
+  Leseseiten tragen die Tiefen-Sprache. Die DE/EN-Schlüsselparität ist als
+  Unit-Test gesichert.
 - Details: [Protokoll](./audits/2026-09-23-agentic-dev-test.md).
 
 ### Kleine Roadmap
