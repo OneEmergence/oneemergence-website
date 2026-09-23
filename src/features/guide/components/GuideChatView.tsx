@@ -107,6 +107,9 @@ export function GuideChatView({
             message,
             role,
             conversationId,
+            // Only retries carry the flag (dropped when undefined): it lets the
+            // server replay a reply that was stored but never arrived.
+            retry: isRetry || undefined,
           }),
           signal: controller.signal,
         })

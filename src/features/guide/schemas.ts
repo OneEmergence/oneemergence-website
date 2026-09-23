@@ -62,6 +62,8 @@ export const GuideMessageInput = z.object({
   message: z.string().min(1).max(4000),
   role: GuideRole,
   conversationId: GuideConversationId.optional(),
+  // Set only by a retry affordance: lets the server replay a reply that never arrived.
+  retry: z.boolean().optional(),
 })
 export type GuideMessageInput = z.infer<typeof GuideMessageInput>
 

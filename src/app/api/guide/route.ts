@@ -7,7 +7,7 @@ import { and, count, desc, eq, gt } from 'drizzle-orm'
 import { GuideMessageInput, GuideResponse } from '@/lib/schemas/guide'
 import { getUserContext } from '@/features/guide/context'
 import { buildSystemPrompt } from '@/features/guide/prompts'
-import { canReuseUserMessage, isGuideLimitReached } from '@/features/guide/reliability'
+import { decideGuideTurn, isGuideLimitReached } from '@/features/guide/reliability'
 import { getWorkspaceAccess } from '@/features/workspaces'
 import { env, siteUrl } from '@/lib/env'
 
@@ -45,7 +45,7 @@ export async function POST(request: Request) {
       return Response.json({ error: parsed.error.issues[0].message }, { status: 400 })
     }
 
-    const { message, role, conversationId } = parsed.data
+    const { message, role, conversationId, retry } = parsed.data
     const provider = requireAnthropic()
     const db = requireDb()
     const [workspaceProfileRows, profileRows] = await Promise.all([
@@ -83,13 +83,29 @@ export async function POST(request: Request) {
     let reuseUserMessage = false
     if (existing && conversationId) {
       convId = conversationId
-      const [latest] = await db
-        .select({ role: guideMessages.role, content: guideMessages.content })
+      const tail = await db
+        .select({
+          role: guideMessages.role,
+          content: guideMessages.content,
+          structuredResponse: guideMessages.structuredResponse,
+        })
         .from(guideMessages)
         .where(eq(guideMessages.conversationId, conversationId))
         .orderBy(desc(guideMessages.createdAt))
-        .limit(1)
-      reuseUserMessage = canReuseUserMessage(latest, message)
+        .limit(2)
+      const turn = decideGuideTurn(tail, message, retry === true)
+      // A reply that was stored but never reached the client: answer with it
+      // again, before the limit check, without an insert or provider call.
+      if (turn === 'replay') {
+        return Response.json({
+          conversationId: convId,
+          response: (tail[0].structuredResponse as GuideResponse | null) ?? {
+            text: tail[0].content,
+            role: existing.role,
+          },
+        })
+      }
+      reuseUserMessage = turn === 'reuse'
     }
     const conversationRole = existing?.role ?? role
 
