@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { BookOpen, Flame, Sparkles } from 'lucide-react'
+import { useFormatter, useTimeZone } from 'next-intl'
 import { cn } from '@/lib/utils'
 import { OnboardingFlow } from './OnboardingFlow'
 import { usePreferencesStore } from '@/stores/preferences'
@@ -48,7 +49,14 @@ export function DashboardClient({
   impulseSource,
   onboardingCompleted,
 }: DashboardClientProps) {
-  const greeting = getGreeting()
+  const format = useFormatter()
+  const timeZone = useTimeZone()
+  // Server (UTC) and browser must read the clock in the same configured zone
+  // (src/i18n/request.ts), or greeting and date differ on hydration for hours a day.
+  const now = new Date()
+  const greeting = getGreeting(
+    Number(new Intl.DateTimeFormat('en-US', { hour: 'numeric', hourCycle: 'h23', timeZone }).format(now))
+  )
   // Also check Zustand store — if completed in a previous session (localStorage), don't show
   const localCompleted = usePreferencesStore(
     (s) => s.preferences.onboardingCompleted
@@ -72,7 +80,7 @@ export function DashboardClient({
           {greeting}, {userName ?? 'Reisender'}
         </h1>
         <p className="mt-1 text-sm text-oe-pure-light/55">
-          {new Date().toLocaleDateString('de-DE', {
+          {format.dateTime(now, {
             weekday: 'long',
             day: 'numeric',
             month: 'long',
@@ -157,8 +165,7 @@ export function DashboardClient({
   )
 }
 
-function getGreeting(): string {
-  const hour = new Date().getHours()
+function getGreeting(hour: number): string {
   if (hour < 6) return 'Stille Nacht'
   if (hour < 12) return 'Guten Morgen'
   if (hour < 17) return 'Guten Tag'
