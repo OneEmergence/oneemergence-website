@@ -659,5 +659,16 @@
     "subject": "Interest in OneEmergence",
     "mailHelp": "This link opens your email app. You send the message yourself; this does not sign you up for a newsletter.",
     "introduction": "For now, we share news and invitations through personal conversations. Write to us if you would like to learn more."
+  },
+  "events": {
+    "title": "Spaces of encounter",
+    "lead": "Online and in person: places where real contact can happen. Gatherings, retreats and reading circles.",
+    "empty": {
+      "title": "No gathering is announced right now.",
+      "lead": "The next dates are taking shape. For now we share invitations personally. Write to us and you will hear about them before they go public.",
+      "cta": "Ask for an invitation"
+    },
+    "onwardLabel": "Onward",
+    "onward": "Or continue on your own:"
   }
 }

@@ -1,278 +1,64 @@
-"use client";
+import { getTranslations } from 'next-intl/server'
+import { ArrowRight } from 'lucide-react'
+import { LayerAtmosphere } from '@/components/motion/LayerAtmosphere'
+import { ButtonLink } from '@/components/ui/button'
+import { DepthMark } from '@/components/ui/DepthMark'
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { LayerAtmosphere } from "@/components/motion/LayerAtmosphere";
-
-type EventType = "online" | "live" | "retreat";
-
-interface Event {
-  id: string;
-  title: string;
-  subtitle: string;
-  /**
-   * ISO start date, used for filtering. `date` stays the display string —
-   * `new Date("12. April 2025")` is Invalid Date, so filtering on the display
-   * value would drop everything or nothing, non-deterministically.
-   */
-  startsAt: string;
-  date: string;
-  time: string;
-  location: string;
-  type: EventType;
-  spots: number | null;
-  description: string;
-  featured?: boolean;
-}
-
-const events: Event[] = [
-  {
-    id: "1",
-    title: "Feld-Gespräch: Stille & Sprache",
-    subtitle: "Ein geführter Kreis über das, was zwischen den Worten lebt",
-    startsAt: "2025-04-12",
-    date: "12. April 2025",
-    time: "19:00 – 21:00 Uhr",
-    location: "Online via Circle",
-    type: "online",
-    spots: 18,
-    description:
-      "In diesem Gespräch erkunden wir gemeinsam, was Stille uns lehren kann — und wie echte Sprache aus ihr entsteht. Ein Raum für Tiefe, keine Performance.",
-    featured: true,
-  },
-  {
-    id: "2",
-    title: "Embodiment Morning",
-    subtitle: "Körperarbeit, Atemübungen & stilles Essen",
-    startsAt: "2025-05-03",
-    date: "3. Mai 2025",
-    time: "09:00 – 13:00 Uhr",
-    location: "München, Schwabing",
-    type: "live",
-    spots: 12,
-    description:
-      "Ein halber Tag voller sanfter Körperanker: Somatic Movement, Atemarbeit und gemeinsames schweigendes Frühstück. Begrenzte Plätze.",
-  },
-  {
-    id: "3",
-    title: "Lesezirkel: Kapitel der Verbindung",
-    subtitle: "Gemeinsames Lesen & Reflektieren",
-    startsAt: "2025-04-28",
-    date: "28. April 2025",
-    time: "18:30 – 20:00 Uhr",
-    location: "Online via Circle",
-    type: "online",
-    spots: null,
-    description:
-      "Wir lesen gemeinsam ausgewählte Passagen zu Themen wie Bindung, Autonomie und Vertrauen — und teilen, was sie in uns bewegt.",
-  },
-  {
-    id: "4",
-    title: "Retreat: In die Stille gehen",
-    subtitle: "3 Tage Wald, Schweigen und Begegnung",
-    startsAt: "2025-06-20",
-    date: "20. – 22. Juni 2025",
-    time: "Anreise Fr. 16:00 Uhr",
-    location: "Bayerischer Wald",
-    type: "retreat",
-    spots: 16,
-    description:
-      "Unser jährliches Sommer-Retreat: Drei Tage tief im Wald, abseits von Bildschirmen und Lärm. Tagesstruktur mit Stille, Kreisen und freier Zeit in der Natur.",
-    featured: true,
-  },
-  {
-    id: "5",
-    title: "Q&A mit Mia: Psychedelik & Integration",
-    subtitle: "Offene Fragen, ehrliche Antworten",
-    startsAt: "2025-05-15",
-    date: "15. Mai 2025",
-    time: "20:00 – 21:30 Uhr",
-    location: "Online via Circle",
-    type: "online",
-    spots: null,
-    description:
-      "Mia beantwortet Fragen zu bewusster Exploration, Integration und dem Umgang mit schwierigen Erfahrungen. Kein Dogma, nur Offenheit.",
-  },
-  {
-    id: "6",
-    title: "Workshop: Grenzen & Kontakt",
-    subtitle: "Theorie & Praxis in kleiner Gruppe",
-    startsAt: "2025-06-07",
-    date: "7. Juni 2025",
-    time: "10:00 – 16:00 Uhr",
-    location: "Berlin, Mitte",
-    type: "live",
-    spots: 10,
-    description:
-      "Wie entstehen gesunde Grenzen, ohne den Kontakt zu verlieren? Ein Ganztages-Workshop mit Theorie, Übungen und intensivem Austausch.",
-  },
-];
-
-const typeConfig: Record<EventType, { label: string; color: string }> = {
-  online: { label: "Online", color: "text-oe-spirit-cyan border-oe-spirit-cyan/40 bg-oe-spirit-cyan/10" },
-  live: { label: "Live", color: "text-oe-solar-gold border-oe-solar-gold/40 bg-oe-solar-gold/10" },
-  retreat: { label: "Retreat", color: "text-oe-living-green border-oe-living-green/40 bg-oe-living-green/10" },
-};
-
-function EventCard({ event, index }: { event: Event; index: number }) {
-  const cfg = typeConfig[event.type];
+/**
+ * Depth III of the homepage descent: the warm stage's "Lieber zuerst gemeinsam?"
+ * lands here, and the page hands the visitor back on to the portal. Static
+ * server markup, no motion.
+ */
+// ponytail: no event data source exists. The six hardcoded gatherings were all
+// dated 2025 and filtered out for every visitor; render a list above the empty
+// state once real dates come from a source.
+export default async function EventsPage() {
+  const t = await getTranslations('events')
+  const th = await getTranslations('home')
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 32 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.55, delay: index * 0.08 }}
-      className={`relative rounded-2xl border p-4 sm:p-6 md:p-8 transition-all duration-300 group hover:-translate-y-1 ${
-        event.featured
-          ? "border-oe-solar-gold/30 bg-gradient-to-br from-oe-solar-gold/8 to-oe-living-green/5"
-          : "border-oe-living-green/15 bg-oe-depth-solarpunk/50 hover:border-oe-living-green/40"
-      }`}
-    >
-      {event.featured && (
-        <span className="absolute -top-3 left-8 px-3 py-1 rounded-full text-xs font-semibold bg-oe-solar-gold text-oe-deep-space tracking-wide">
-          Empfohlen
-        </span>
-      )}
+    <div className="relative isolate min-h-screen overflow-hidden bg-oe-deep-space pt-24 pb-16 text-oe-pure-light md:pt-28 md:pb-20">
+      <LayerAtmosphere variant="warm" />
+      <div className="mx-auto max-w-4xl px-4 sm:px-6">
+        <header>
+          <DepthMark depth="warm" numeral="III" label={th('depth.warm')} />
+          <h1 className="mt-8 text-balance font-serif text-5xl leading-none text-oe-pure-light sm:text-6xl md:text-7xl">
+            {t('title')}
+          </h1>
+          <p className="mt-6 max-w-xl text-lg leading-relaxed text-oe-pure-light/75">{t('lead')}</p>
+        </header>
 
-      <div className="flex flex-wrap items-start justify-between gap-4 mb-5">
-        <div>
-          <span
-            className={`inline-block mb-3 px-3 py-1 rounded-full text-xs font-semibold border ${cfg.color}`}
+        <section aria-labelledby="events-empty-title" className="mt-16 md:mt-20">
+          <h2
+            id="events-empty-title"
+            className="text-balance font-serif text-3xl text-oe-pure-light md:text-4xl"
           >
-            {cfg.label}
-          </span>
-          <h3 className="font-serif text-2xl text-oe-solar-gold leading-tight">
-            {event.title}
-          </h3>
-          <p className="mt-1 text-sm text-oe-living-green">{event.subtitle}</p>
-        </div>
-        {event.spots !== null && (
-          <div className="text-right flex-shrink-0">
-            <p className="text-2xl font-serif text-oe-pure-light">{event.spots}</p>
-            <p className="text-xs text-oe-pure-light/55 uppercase tracking-widest">Plätze</p>
-          </div>
-        )}
-      </div>
-
-      <p className="text-sm leading-relaxed text-oe-pure-light/60 mb-6">
-        {event.description}
-      </p>
-
-      <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
-        <div className="space-y-1">
-          <p className="text-xs font-semibold text-oe-pure-light/80">{event.date}</p>
-          <p className="text-xs text-oe-pure-light/55">{event.time}</p>
-          <p className="text-xs text-oe-pure-light/55">{event.location}</p>
-        </div>
-        {/* Registration runs over the contact form until a booking flow
-            exists. Both buttons were inert <button>s with no handler — the
-            card's entire purpose did nothing when clicked. */}
-        <Link
-          href={`/contact?event=${encodeURIComponent(event.title)}`}
-          data-cursor-hover
-          className="inline-flex min-h-11 items-center rounded-full border border-oe-living-green/40 bg-oe-living-green/15 px-5 text-xs text-oe-pure-light transition-colors duration-200 hover:bg-oe-living-green/25 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-oe-solar-gold"
-        >
-          Platz anfragen
-        </Link>
-      </div>
-    </motion.div>
-  );
-}
-
-export default function EventsPage() {
-  const router = useRouter();
-
-  // Compare date-only so an event does not vanish partway through its own day.
-  const today = new Date().toISOString().slice(0, 10);
-  const upcoming = events.filter((event) => event.startsAt >= today);
-
-  return (
-    <div className="relative isolate overflow-hidden bg-oe-deep-space text-oe-pure-light">
-      <LayerAtmosphere variant="solarpunk" />
-      {/* Hero */}
-      <section className="flex flex-col items-center justify-center min-h-[50vh] sm:min-h-[60vh] px-6 pt-24 pb-16 text-center">
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6 }}
-          className="mb-4 text-xs font-semibold uppercase tracking-widest text-oe-living-green"
-        >
-          Gatherings & Events
-        </motion.p>
-        <motion.h1
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.1 }}
-          className="font-serif text-3xl sm:text-5xl leading-tight text-oe-solar-gold md:text-6xl lg:text-7xl"
-        >
-          Räume der
-          <br />
-          Begegnung
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.3 }}
-          className="mt-8 max-w-xl text-lg leading-relaxed text-oe-pure-light/70"
-        >
-          Online und live — Orte, an denen echter Kontakt entstehen kann. Kommende
-          Gatherings, Retreats und Lesekreise.
-        </motion.p>
-      </section>
-
-      {/* Events Grid */}
-      <section className="px-4 sm:px-6 py-12 md:py-16">
-        <div className="mx-auto max-w-4xl space-y-8">
-          {upcoming.length > 0 ? (
-            upcoming.map((event, i) => (
-              <EventCard key={event.id} event={event} index={i} />
-            ))
-          ) : (
-            /* The page used to advertise events that were over a year past,
-               still offering "18 Plätze". No upcoming events is a real state
-               and needs to look like one. */
-            <div className="rounded-2xl border border-oe-pure-light/10 bg-oe-pure-light/[0.03] px-6 py-14 text-center">
-              <p className="font-serif text-2xl text-oe-pure-light">
-                Gerade ist kein Gathering ausgeschrieben.
-              </p>
-              <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-oe-pure-light/60">
-                Die nächsten Termine entstehen. Trag dich unten ein, dann
-                erfährst du davon, bevor sie öffentlich werden.
-              </p>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* Newsletter CTA */}
-      <section className="px-6 py-24 text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="mx-auto max-w-xl"
-        >
-          <h2 className="font-serif text-3xl text-oe-pure-light md:text-4xl">
-            Keine Veranstaltung verpassen
+            {t('empty.title')}
           </h2>
-          <p className="mt-4 text-base text-oe-pure-light/60">
-            Werde Teil der Community und erhalte persönliche Einladungen zu neuen Events.
+          <p className="mt-4 max-w-xl text-base leading-relaxed text-oe-pure-light/75">
+            {t('empty.lead')}
           </p>
-          <div className="mt-8">
-            <Button
-              variant="primary"
-              size="lg"
-              onClick={() => router.push("/community")}
-            >
-              Community beitreten
-            </Button>
-          </div>
-        </motion.div>
-      </section>
+          <ButtonLink
+            href="/contact"
+            variant="primary"
+            size="md"
+            className="mt-8 min-h-11 bg-oe-solar-gold text-oe-deep-space hover:opacity-90 focus-visible:ring-oe-solar-gold focus-visible:ring-offset-oe-deep-space"
+          >
+            {t('empty.cta')}
+            <ArrowRight aria-hidden="true" size={16} />
+          </ButtonLink>
+        </section>
+
+        <nav
+          aria-label={t('onwardLabel')}
+          className="mt-24 flex flex-wrap items-center gap-x-4 gap-y-3 border-t border-oe-warm-sand/15 pt-8 text-sm text-oe-pure-light/65"
+        >
+          <span>{t('onward')}</span>
+          <DepthMark href="/portal" depth="warm" numeral="III" label={th('paths.portal.title')}>
+            <ArrowRight aria-hidden="true" size={14} />
+          </DepthMark>
+        </nav>
+      </div>
     </div>
-  );
+  )
 }

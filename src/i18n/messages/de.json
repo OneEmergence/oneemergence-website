@@ -659,5 +659,16 @@
     "subject": "Interesse an OneEmergence",
     "mailHelp": "Der Link öffnet dein Mailprogramm. Du sendest die Nachricht selbst; damit meldest du dich nicht für einen Newsletter an.",
     "introduction": "Neuigkeiten und Einladungen teilen wir derzeit im persönlichen Austausch. Schreib uns, wenn du mehr erfahren möchtest."
+  },
+  "events": {
+    "title": "Räume der Begegnung",
+    "lead": "Online und live: Orte, an denen echter Kontakt entstehen kann. Gatherings, Retreats und Lesekreise.",
+    "empty": {
+      "title": "Gerade ist kein Gathering ausgeschrieben.",
+      "lead": "Die nächsten Termine entstehen. Einladungen teilen wir derzeit persönlich. Schreib uns, dann erfährst du davon, bevor sie öffentlich werden.",
+      "cta": "Einladung anfragen"
+    },
+    "onwardLabel": "Weiter",
+    "onward": "Oder für dich allein weiter:"
   }
 }
