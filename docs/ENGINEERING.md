@@ -71,7 +71,7 @@ Additional checks depend on the changed surface:
 | Performance | `pnpm exec playwright test tests/performance --project=chromium` |
 | World-map model | `pnpm test:world-assets` |
 | Journal/map persistence | `pnpm test:journal-lifecycle` — [local PostgreSQL setup and scope](./testing/journal-lifecycle.md) |
-| Pure logic (journal autosave, Guide request decisions) | `pnpm test:unit`: controlled requests/timers, no browser/server |
+| Pure logic (journal autosave, Guide request decisions, DE/EN message key parity) | `pnpm test:unit`: controlled requests/timers, no browser/server |
 | Accounts and RLS | `pnpm test:accounts:local` — [fresh local Supabase stack and real browser lifecycle](./testing/accounts.md) |
 | Formatting | `pnpm format:check` |
 | Full configured suite | `pnpm test` |
