@@ -27,6 +27,10 @@ export default getRequestConfig(async ({ requestLocale }) => {
   return {
     locale,
     messages: (await import(`./messages/${locale}.json`)).default,
+    // One zone for server and browser, or a prerendered date can shift a day
+    // west of UTC and mismatch on hydration. `NextIntlClientProvider` rendered
+    // from a Server Component inherits this; no prop needed.
+    timeZone: 'Europe/Berlin',
   }
 })
 

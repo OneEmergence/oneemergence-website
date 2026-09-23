@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { motion, type Variants } from "framer-motion";
+import { useFormatter } from "next-intl";
 import { ParallaxImage } from "@/components/motion/ParallaxImage";
 import type { Post } from "@/lib/content";
 
@@ -18,6 +19,8 @@ const cardVariants: Variants = {
 };
 
 export function ContentGrid({ posts }: { posts: PostPreview[] }) {
+  const format = useFormatter();
+
   if (posts.length === 0) {
     return (
       <p className="text-center text-oe-pure-light/55">
@@ -73,8 +76,11 @@ export function ContentGrid({ posts }: { posts: PostPreview[] }) {
             </div>
 
             <div className="relative p-5 sm:p-7">
-              <time className="font-mono text-xs text-oe-pure-light/55 tracking-wider">
-                {new Date(post.date).toLocaleDateString("de-DE", {
+              <time
+                dateTime={post.date}
+                className="font-mono text-xs text-oe-pure-light/55 tracking-wider"
+              >
+                {format.dateTime(new Date(post.date), {
                   day: "numeric",
                   month: "long",
                   year: "numeric",

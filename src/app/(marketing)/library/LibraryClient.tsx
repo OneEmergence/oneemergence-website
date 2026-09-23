@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence, type Variants } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { useFormatter, useTranslations } from 'next-intl'
 import type { LibraryItem } from '@/lib/content'
 import { libraryItemHref, libraryTypeMeta, type LibraryType } from '@/lib/content/library-types'
 
@@ -19,6 +19,7 @@ const cardVariants: Variants = {
 export function LibraryClient({ items }: { items: LibraryItem[] }) {
   const t = useTranslations('library')
   const tc = useTranslations('common')
+  const format = useFormatter()
   const [activeFilter, setActiveFilter] = useState<FilterId>('all')
 
   // Only offer filters for types that actually have entries, so the four
@@ -92,8 +93,11 @@ export function LibraryClient({ items }: { items: LibraryItem[] }) {
                     </span>
                   </div>
 
-                  <time className="font-mono text-xs tracking-wider text-oe-pure-light/55">
-                    {new Date(item.date).toLocaleDateString('de-DE', {
+                  <time
+                    dateTime={item.date}
+                    className="font-mono text-xs tracking-wider text-oe-pure-light/55"
+                  >
+                    {format.dateTime(new Date(item.date), {
                       day: 'numeric',
                       month: 'long',
                       year: 'numeric',

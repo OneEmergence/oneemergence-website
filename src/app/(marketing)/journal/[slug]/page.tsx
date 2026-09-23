@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import { getFormatter } from "next-intl/server";
 import { getPostBySlug, getPosts, getAdjacentPosts } from "@/lib/content";
 import { LayerAtmosphere } from "@/components/motion/LayerAtmosphere";
 
@@ -55,6 +56,7 @@ export default async function JournalPost({
   if (!post) notFound();
 
   const { prev, next } = getAdjacentPosts(slug);
+  const format = await getFormatter();
 
   return (
     <div className="relative isolate min-h-screen overflow-hidden bg-oe-deep-space">
@@ -91,8 +93,8 @@ export default async function JournalPost({
         </h1>
 
         <div className="mt-5 flex flex-wrap items-center gap-4 text-sm text-oe-pure-light/55">
-          <time>
-            {new Date(post.meta.date).toLocaleDateString("de-DE", {
+          <time dateTime={post.meta.date}>
+            {format.dateTime(new Date(post.meta.date), {
               day: "numeric",
               month: "long",
               year: "numeric",

@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
+import { getFormatter, getTranslations } from 'next-intl/server'
+import { ArrowRight } from 'lucide-react'
 import {
   getPostBySlug,
   getContentBySlug,
@@ -12,6 +14,7 @@ import {
   LayerAtmosphere,
   type AtmosphereVariant,
 } from '@/components/motion/LayerAtmosphere'
+import { DepthMark } from '@/components/ui/DepthMark'
 import { CONTENT_TYPE_DIRS, type ContentType, type AnyContentMeta } from '@/lib/schemas/content'
 import { VALID_LIBRARY_TYPES, libraryTypeMeta } from '@/lib/content/library-types'
 
@@ -167,6 +170,9 @@ export default async function LibraryDetailPage({
 
   const typeMeta = libraryTypeMeta(type)
   const atmosphere = ATMOSPHERE_BY_TYPE[type] ?? 'transitional'
+  const format = await getFormatter()
+  const t = await getTranslations('library')
+  const th = await getTranslations('home')
 
   // ── Adjacent items for navigation ──────────────────────────────────────
   const allItems = getLibraryItems()
@@ -212,6 +218,12 @@ export default async function LibraryDetailPage({
           &larr; Zurück zur Bibliothek
         </Link>
 
+        {/* Depth I of the homepage descent, the same mark as the library index.
+            Block wrapper: `.oe-depth-mark` is inline-flex and would join the back link's line. */}
+        <div className="mb-6">
+          <DepthMark depth="cosmic" numeral="I" label={th('depth.cosmic')} />
+        </div>
+
         {/* Type indicator */}
         <div className="mb-3 flex items-center gap-3">
           <span className={`inline-block h-2 w-2 rounded-full ${typeMeta.dotColor}`} />
@@ -236,8 +248,8 @@ export default async function LibraryDetailPage({
         </h1>
 
         <div className="mt-5 flex flex-wrap items-center gap-4 text-sm text-oe-pure-light/55">
-          <time>
-            {new Date(date).toLocaleDateString('de-DE', {
+          <time dateTime={date}>
+            {format.dateTime(new Date(date), {
               day: 'numeric',
               month: 'long',
               year: 'numeric',
@@ -369,6 +381,16 @@ export default async function LibraryDetailPage({
           >
             Community beitreten
           </Link>
+        </div>
+
+        {/* Onward: the same descent as the library index header, I → II. */}
+        <div className="oe-descent mt-16">
+          <DepthMark depth="cosmic" numeral="I" label={th('depth.cosmic')} />
+          <span aria-hidden="true" className="oe-descent__line" data-motion-level="flow" />
+          <span className="hidden text-sm text-oe-pure-light/60 sm:inline">{t('onward')}</span>
+          <DepthMark href="/map" depth="solarpunk" numeral="II" label={th('paths.map.title')}>
+            <ArrowRight aria-hidden="true" size={14} />
+          </DepthMark>
         </div>
       </div>
     </div>

@@ -684,7 +684,7 @@ html[data-intensity="still"] .oe-stage__image {
   color: var(--oe-depth-ink);
 }
 
-/* Library header: the stretch of the ecliptic between I and II. The mark
+/* Library header and reading-page close: the stretch of the ecliptic between I and II. The mark
    is where the visitor stands; the far end is the quiet way onward. */
 .oe-descent {
   display: flex;
